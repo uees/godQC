@@ -20,6 +20,7 @@ class CreateProductBatchesTable extends Migration
             $table->string('batch_number');
             $table->string('amount')->nullable();
             $table->unsignedInteger('tests_num')->default(0);
+            $table->string('memo')->nullable();
             $table->timestamps();
         });
     }

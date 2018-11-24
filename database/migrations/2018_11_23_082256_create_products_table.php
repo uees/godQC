@@ -24,6 +24,7 @@ class CreateProductsTable extends Migration
             $table->string('spec')->nullable();
             $table->string('label_viscosity')->nullable();
             $table->string('viscosity_width')->nullable();
+            $table->text('metas')->nullable();
             $table->timestamps();
         });
     }

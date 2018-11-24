@@ -17,6 +17,7 @@ class CreateTestMethodsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('file');
+            $table->text('content')->nullable();
             $table->timestamps();
         });
     }

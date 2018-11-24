@@ -19,6 +19,8 @@ class CreateCustomerRequirementsTable extends Migration
             $table->string('product')->nullable();
             $table->string('item');
             $table->string('requirement');
+            $table->string('value_type')->nullable();
+            $table->string('value')->nullable();
             $table->timestamps();
         });
     }

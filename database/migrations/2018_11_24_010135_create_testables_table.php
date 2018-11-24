@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTestWaysTable extends Migration
+class CreateTestablesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,13 @@ class CreateTestWaysTable extends Migration
      */
     public function up()
     {
-        // 检测流程
-        Schema::create('test_ways', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->text('way');
+        Schema::create('testables', function (Blueprint $table) {
+            $table->unsignedInteger('test_way_id');
+            $table->unsignedInteger('testable_id');
+            $table->string('testable_type', '64');
             $table->timestamps();
+
+            $table->index(['testable_type', 'testable_id']);
         });
     }
 
@@ -29,6 +30,6 @@ class CreateTestWaysTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('test_ways');
+        Schema::dropIfExists('testables');
     }
 }

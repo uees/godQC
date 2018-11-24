@@ -21,6 +21,7 @@ class CreateProductDisposesTable extends Migration
             $table->unsignedBigInteger('to_record_id')->nullable();
             $table->text('method')->nullable();
             $table->string('author')->nullable();
+            $table->string('memo')->nullable();
             $table->timestamps();
         });
     }

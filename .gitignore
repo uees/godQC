@@ -1,7 +1,8 @@
-/node_modules
 /vendor
-/.idea
-/.vagrant
+
+node_modules/
+.idea/
+.vagrant/
 npm-debug.log
 yarn-error.log
 
@@ -12,7 +13,7 @@ app/storage/
 # Laravel 5 & Lumen specific
 /public/hot
 /public/storage
-/public/fonts
+/public/static
 /storage/*.key
 .env.*.php
 .env.php

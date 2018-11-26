@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\TestRecord;
+use App\Http\Controllers\Controller;
+use App\Role;
 use Illuminate\Http\Request;
 
-class TestRecordController extends Controller
+class RoleController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +42,10 @@ class TestRecordController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\TestRecord  $testRecord
+     * @param  \App\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function show(TestRecord $testRecord)
+    public function show(Role $role)
     {
         //
     }
@@ -52,10 +53,10 @@ class TestRecordController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\TestRecord  $testRecord
+     * @param  \App\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function edit(TestRecord $testRecord)
+    public function edit(Role $role)
     {
         //
     }
@@ -64,10 +65,10 @@ class TestRecordController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TestRecord  $testRecord
+     * @param  \App\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TestRecord $testRecord)
+    public function update(Request $request, Role $role)
     {
         //
     }
@@ -75,10 +76,10 @@ class TestRecordController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\TestRecord  $testRecord
+     * @param  \App\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TestRecord $testRecord)
+    public function destroy(Role $role)
     {
         //
     }

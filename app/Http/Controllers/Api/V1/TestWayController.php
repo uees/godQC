@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
-use App\ProductBatch;
+use App\Http\Controllers\Controller;
+use App\TestWay;
 use Illuminate\Http\Request;
 
-class ProductBatchController extends Controller
+class TestWayController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +42,10 @@ class ProductBatchController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\ProductBatch  $productBatch
+     * @param  \App\TestWay  $testWay
      * @return \Illuminate\Http\Response
      */
-    public function show(ProductBatch $productBatch)
+    public function show(TestWay $testWay)
     {
         //
     }
@@ -52,10 +53,10 @@ class ProductBatchController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\ProductBatch  $productBatch
+     * @param  \App\TestWay  $testWay
      * @return \Illuminate\Http\Response
      */
-    public function edit(ProductBatch $productBatch)
+    public function edit(TestWay $testWay)
     {
         //
     }
@@ -64,10 +65,10 @@ class ProductBatchController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\ProductBatch  $productBatch
+     * @param  \App\TestWay  $testWay
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ProductBatch $productBatch)
+    public function update(Request $request, TestWay $testWay)
     {
         //
     }
@@ -75,10 +76,10 @@ class ProductBatchController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\ProductBatch  $productBatch
+     * @param  \App\TestWay  $testWay
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ProductBatch $productBatch)
+    public function destroy(TestWay $testWay)
     {
         //
     }

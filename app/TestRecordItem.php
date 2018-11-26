@@ -19,7 +19,7 @@ class TestRecordItem extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function test_record()
+    public function testRecord()
     {
         return $this->belongsTo(TestRecord::class);
     }

@@ -110,20 +110,26 @@ export const asyncRouterMap = [
     ]
   },
   {
-    path: 'test/fqc',
+    path: '/test/fqc',
     component: Layout,
+    meta: {
+      roles: ['admin', 'fqc']
+    },
     children: [
       {
         path: 'index',
         component: () => import('@/views/documentation/index'),
         name: 'test-fqc',
-        meta: { title: '成品检测', icon: 'tab' }
+        meta: { title: '成品检测', icon: 'guide' }
       }
     ]
   },
   {
-    path: 'test/iqc',
+    path: '/test/iqc',
     component: Layout,
+    meta: {
+      roles: ['admin', 'iqc']
+    },
     children: [
       {
         path: 'index',
@@ -134,62 +140,62 @@ export const asyncRouterMap = [
     ]
   },
   {
-    path: 'test/methods',
+    path: '/test/methods',
     component: Layout,
     children: [
       {
         path: 'index',
         component: () => import('@/views/documentation/index'),
         name: 'test-methods',
-        meta: { title: '检测方法', icon: 'guide' }
+        meta: { title: '检测方法', icon: 'table' }
       }
     ]
   },
   {
-    path: 'test/ways',
+    path: '/test/ways',
     component: Layout,
     children: [
       {
         path: 'index',
         component: () => import('@/views/documentation/index'),
         name: 'test-ways',
-        meta: { title: '检测流程', icon: 'guide' }
+        meta: { title: '检测流程', icon: 'size' }
       }
     ]
   },
   {
-    path: 'products',
+    path: '/products',
     component: Layout,
     children: [
       {
         path: 'index',
         component: () => import('@/views/documentation/index'),
         name: 'products',
-        meta: { title: '产品', icon: 'guide' }
+        meta: { title: '产品', icon: 'star' }
       }
     ]
   },
   {
-    path: 'categories',
+    path: '/categories',
     component: Layout,
     children: [
       {
         path: 'categories',
-        component: () => import('@/views/documentation/index'),
+        component: () => import('@/views/categories/index'),
         name: 'categories',
-        meta: { title: '产品分类' }
+        meta: { title: '产品分类', icon: 'list' }
       }
     ]
   },
   {
-    path: 'customers',
+    path: '/customers',
     component: Layout,
     children: [
       {
         path: 'customers',
         component: () => import('@/views/documentation/index'),
         name: 'customers',
-        meta: { title: '客户' }
+        meta: { title: '客户', icon: 'tree' }
       }
     ]
   },

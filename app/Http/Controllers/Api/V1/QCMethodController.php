@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\TestMethod;
 use Illuminate\Http\Request;
 
-class TestMethodController extends Controller
+class QCMethodController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,16 +14,6 @@ class TestMethodController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
     {
         //
     }
@@ -46,17 +36,6 @@ class TestMethodController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(TestMethod $testMethod)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\TestMethod  $testMethod
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(TestMethod $testMethod)
     {
         //
     }

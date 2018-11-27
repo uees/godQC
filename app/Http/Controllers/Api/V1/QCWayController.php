@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\TestRecord;
+use App\TestWay;
 use Illuminate\Http\Request;
 
-class TestRecordController extends Controller
+class QCWayController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,16 +14,6 @@ class TestRecordController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
     {
         //
     }
@@ -42,21 +32,10 @@ class TestRecordController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\TestRecord  $testRecord
+     * @param  \App\TestWay  $testWay
      * @return \Illuminate\Http\Response
      */
-    public function show(TestRecord $testRecord)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\TestRecord  $testRecord
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(TestRecord $testRecord)
+    public function show(TestWay $testWay)
     {
         //
     }
@@ -65,10 +44,10 @@ class TestRecordController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TestRecord  $testRecord
+     * @param  \App\TestWay  $testWay
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TestRecord $testRecord)
+    public function update(Request $request, TestWay $testWay)
     {
         //
     }
@@ -76,10 +55,10 @@ class TestRecordController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\TestRecord  $testRecord
+     * @param  \App\TestWay  $testWay
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TestRecord $testRecord)
+    public function destroy(TestWay $testWay)
     {
         //
     }

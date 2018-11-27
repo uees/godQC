@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Cache;
 
 trait ApiResponseTrait
 {
@@ -155,5 +156,27 @@ trait ApiResponseTrait
     public function unauthorized($message = '401 Unauthorized!')
     {
         return $this->failed($message, HttpResponse::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * sql 语句黑名单检测机制检测机制
+     *
+     * @param $query
+     * @param int $limit
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function checkBlacklist($query, $limit = 40)
+    {
+        if (is_null(request('per_page')) || (int)request('per_page') > $limit) {
+            $key = 'sql:' . $query->toSql();
+            if (Cache::has($key)) {
+                return $this->tooLarge();
+            }
+
+            if ($query->count() > $limit) {
+                Cache::forever($key, date('Y-m-d H:i:s'));
+                return $this->tooLarge();
+            }
+        }
     }
 }

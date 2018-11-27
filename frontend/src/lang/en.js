@@ -73,9 +73,10 @@ export default {
     size: 'Global Size'
   },
   login: {
-    title: 'Login Form',
+    title: 'Login to System',
     logIn: 'Log in',
     username: 'Username',
+    email: 'Email',
     password: 'Password',
     any: 'any',
     thirdparty: 'Or connect with',

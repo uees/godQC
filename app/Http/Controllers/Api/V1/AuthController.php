@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Client;
@@ -14,7 +15,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api')->only('me');
+        $this->middleware('auth:api')->only(['me', 'logout', 'logoutAnywhere']);
 
         if (!isset(static::$passwordClient)) {
             static::$passwordClient = Client::where('password_client', 1)
@@ -56,8 +57,35 @@ class AuthController extends Controller
         return Route::dispatch($request);
     }
 
-    public function me(Request $request)
+    public function logout()
     {
-        return UserResource::make($request->user());
+        $token = \Auth::guard('api')->user()->token();
+        if ($token->delete()){
+            \DB::table('oauth_refresh_tokens')
+                ->where('access_token_id', $token->id)
+                ->delete();
+        }
+
+        return $this->message('登出成功');
+    }
+
+    public function logoutAnywhere()
+    {
+        $token_ids = \Auth::guard('api')->user()->tokens->pluck('id')->toArray();
+        if (\Auth::guard('api')->user()->tokens()->delete()) {
+            \DB::table('oauth_refresh_tokens')
+                ->whereIn('access_token_id', $token_ids)
+                ->delete();
+        }
+
+        return $this->message('登出成功');
+    }
+
+    public function me()
+    {
+        $user_id = \Auth::guard('api')->id();
+        $user = User::with('roles')->find($user_id);
+
+        return UserResource::make($user);
     }
 }

@@ -2,9 +2,9 @@
   <div class="dashboard-editor-container">
     <div class=" clearfix">
       <pan-thumb :image="avatar" style="float: left"> Your roles:
-        <span v-for="item in roles" :key="item" class="pan-info-roles">{{ item }}</span>
+        <span v-for="item in roles" :key="item.name" class="pan-info-roles">{{ item.display_name }}({{ item.name }})</span>
       </pan-thumb>
-      <github-corner style="position: absolute; top: 0px; border: 0; right: 0;"/>
+      <github-corner style="position: absolute; top: 0; border: 0; right: 0;"/>
       <div class="info-container">
         <span class="display_name">{{ name }}</span>
         <span style="font-size:20px;padding-top:20px;display:inline-block;">Editor's Dashboard</span>
@@ -49,7 +49,7 @@ export default {
   .dashboard-editor-container {
     background-color: #e3e3e3;
     min-height: 100vh;
-    padding: 50px 60px 0px;
+    padding: 50px 60px 0;
     .pan-info-roles {
       font-size: 12px;
       font-weight: 700;

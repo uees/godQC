@@ -1,27 +1,27 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.BASE_API, // api 的 base_url
-  timeout: 5000 // request timeout
+  timeout: 30000 // request timeout 30s
 })
 
 // request interceptor
 service.interceptors.request.use(
   config => {
     // Do something before request is sent
-    if (store.getters.token) {
-      // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
-      config.headers['X-Token'] = getToken()
+    if (store.getters.accessToken) {
+      config.headers['Authorization'] = 'Bearer ' + store.getters.accessToken
     }
     return config
   },
   error => {
     // Do something with request error
-    console.log(error) // for debug
+    if (process.env.NODE_ENV === 'development') {
+      console.log(error) // for debug
+    }
     Promise.reject(error)
   }
 )
@@ -63,12 +63,25 @@ service.interceptors.response.use(
   //   }
   // },
   error => {
-    console.log('err' + error) // for debug
+    if (process.env.NODE_ENV === 'development') {
+      console.log('err' + error) // for debug
+    }
+
+    let $message
+
+    if (error.response) {
+      const data = error.response.data
+      $message = data.message || (data.data && data.data.message) || error.message
+    } else {
+      $message = error.message
+    }
+
     Message({
-      message: error.message,
+      message: $message,
       type: 'error',
       duration: 5 * 1000
     })
+
     return Promise.reject(error)
   }
 )

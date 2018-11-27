@@ -37,18 +37,18 @@ function filterAsyncRouter(routes, roles) {
 const permission = {
   state: {
     routers: constantRouterMap,
-    addRouters: []
+    addedRouters: []
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
-      state.addRouters = routers
+      state.addedRouters = routers
       state.routers = constantRouterMap.concat(routers)
     }
   },
   actions: {
     GenerateRoutes({ commit }, data) {
       return new Promise(resolve => {
-        const { roles } = data
+        const roles = data.roles.map(role => role.name) // 对象数组转为字符串数组
         let accessedRouters
         if (roles.includes('admin')) {
           accessedRouters = asyncRouterMap

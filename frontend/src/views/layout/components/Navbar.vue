@@ -45,6 +45,8 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+
+    <div class="logo">容大ERP</div>
   </div>
 </template>
 
@@ -93,7 +95,7 @@ export default {
 .navbar {
   height: 50px;
   line-height: 50px;
-  border-radius: 0px !important;
+  border-radius: 0 !important;
   .hamburger-container {
     line-height: 58px;
     height: 50px;
@@ -106,6 +108,14 @@ export default {
   .errLog-container {
     display: inline-block;
     vertical-align: top;
+  }
+  .logo {
+    float: right;
+    height: 100%;
+    padding-right: 30px;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: blue;
   }
   .right-menu {
     float: right;

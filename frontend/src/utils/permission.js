@@ -10,14 +10,7 @@ export default function checkPermission(value) {
     const roles = store.getters && store.getters.roles
     const permissionRoles = value
 
-    const hasPermission = roles.some(role => {
-      return permissionRoles.includes(role)
-    })
-
-    if (!hasPermission) {
-      return false
-    }
-    return true
+    return roles.some(role => permissionRoles.includes(role))
   } else {
     console.error(`need roles! Like v-permission="['admin','editor']"`)
     return false

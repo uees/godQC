@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TestRecordResource;
 use App\TestRecord;
-use App\ProductBatch;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 
 class QCRecordController extends Controller
@@ -13,13 +13,13 @@ class QCRecordController extends Controller
     public function index()
     {
         $perPage = $this->perPage();
-
         $name_condition = queryCondition('product_name', \request('q'));
         $batch_condition = queryCondition('batch_number', \request('q'));
 
-        $query = ProductBatch::where($name_condition)
-            ->orWhere($batch_condition)
-            ->testRecords();
+        $query = TestRecord::whereHas('batch', function (Builder $query) use ($name_condition, $batch_condition) {
+            $query->where($name_condition)
+                ->orWhere($batch_condition);
+        });
 
         $query = $this->parseWhere($query, ['created_at', 'conclusion']);
 

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductDisposeRequest;
 use App\Http\Resources\ProductDisposeResource;
 use App\ProductDispose;
-use App\ProductBatch;
+use Illuminate\Database\Query\Builder;
 
 class ProductDisposeController extends Controller
 {
@@ -19,11 +19,10 @@ class ProductDisposeController extends Controller
         $method_condition = queryCondition('method', \request('q'));
 
         $query = ProductDispose::where($method_condition)
-            ->union(
-                ProductBatch::where($name_condition)
-                ->orWhere($batch_condition)
-                ->disposes()
-            );
+            ->orWhereHas('batch', function (Builder $query) use ($name_condition, $batch_condition) {
+                $query->where($name_condition)
+                    ->orWhere($batch_condition);
+            });
 
         $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 

@@ -18,7 +18,7 @@ class ProductDispose extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function productBatch()
+    public function batch()
     {
         return $this->belongsTo(ProductBatch::class);
     }

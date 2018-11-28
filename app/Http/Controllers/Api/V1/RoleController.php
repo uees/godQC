@@ -3,63 +3,50 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RoleRequest;
+use App\Http\Resources\RoleResource;
 use App\Role;
-use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $name_condition = queryCondition('name', \request('q'));
+
+        $roles = Role::where($name_condition)->get(); // 直接获取所有
+
+        return RoleResource::collection($roles);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function store(RoleRequest $request)
     {
-        //
+        $role = new Role();
+
+        $role->fill($request->all())->save();
+
+        return RoleResource::make($role);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Role  $role
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Role $role)
     {
-        //
+        return RoleResource::make($role);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Role  $role
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Role $role)
+
+    public function update(RoleRequest $request, Role $role)
     {
-        //
+        $role->fill($request->all())->save();
+
+        return RoleResource::make($role);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Role  $role
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(Role $role)
     {
-        //
+        $role->delete();
+
+        return $this->noContent();
     }
 }

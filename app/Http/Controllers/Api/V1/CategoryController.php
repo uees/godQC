@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use App\Category;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Http\Resources\CategoryResource;
 
@@ -11,8 +11,12 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        // 直接获取所有分类
-        $categories = Category::get();
+        $name_condition = queryCondition('name', \request('q'));
+        $slug_condition = queryCondition('slug', \request('q'));
+
+        $categories = Category::where($name_condition)
+            ->orWhere($slug_condition)
+            ->get(); // 直接获取所有分类
 
         return CategoryResource::collection($categories);
     }
@@ -45,5 +49,10 @@ class CategoryController extends Controller
         $category->delete();
 
         return $this->noContent();
+    }
+
+    public function selectTestWay()
+    {
+        // todo
     }
 }

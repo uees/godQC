@@ -2,64 +2,64 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use App\Customer;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\CustomerRequest;
+use App\Http\Resources\CustomerResource;
 
 class CustomerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $perPage = $this->perPage();
+        $name_condition = queryCondition('name', \request('q'));
+
+        $pagination = Customer::where($name_condition)
+            ->paginate($perPage)
+            ->appends(request()->except('page'));
+
+        return CustomerResource::collection($pagination);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function store(CustomerRequest $request)
     {
-        //
+        $customer = new Customer();
+
+        $customer->fill($request->all())
+            ->save();
+
+        return CustomerResource::make($customer);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Customer $customer)
+
+    public function show($id)
     {
-        //
+        $customer = Customer::with(['requirements', 'products'])
+            ->where('id', $id)
+            ->firstOrFail();
+
+        return CustomerResource::make($customer);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Customer $customer)
+
+    public function update(CustomerRequest $request, Customer $customer)
     {
-        //
+        $customer->fill($request->all())->save();
+
+        return CustomerResource::make($customer);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(Customer $customer)
     {
-        //
+        $customer->delete();
+
+        return $this->noContent();
+    }
+
+    public function selectProducts()
+    {
+        // todo
     }
 }

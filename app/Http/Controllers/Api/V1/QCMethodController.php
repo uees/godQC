@@ -3,63 +3,55 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QCMethodRequest;
+use App\Http\Resources\TestMethodResource;
 use App\TestMethod;
-use Illuminate\Http\Request;
 
 class QCMethodController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $perPage = $this->perPage();
+        $name_condition = queryCondition('name', \request('q'));
+        $content_condition = queryCondition('content', \request('q'));
+
+        $pagination = TestMethod::where($name_condition)
+            ->orWhere($content_condition)
+            ->paginate($perPage)
+            ->appends(request()->except('page'));
+
+        return TestMethodResource::collection($pagination);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function store(QCMethodRequest $request)
     {
-        //
+        $testMethod = new TestMethod();
+
+        $testMethod->fill($request->all())->save();
+
+        return TestMethodResource::make($testMethod);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\TestMethod  $testMethod
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(TestMethod $testMethod)
     {
-        //
+        return TestMethodResource::make($testMethod);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TestMethod  $testMethod
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, TestMethod $testMethod)
+
+    public function update(QCMethodRequest $request, TestMethod $testMethod)
     {
-        //
+        $testMethod->fill($request->all())->save();
+
+        return TestMethodResource::make($testMethod);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\TestMethod  $testMethod
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(TestMethod $testMethod)
     {
-        //
+        $testMethod->delete();
+
+        return $this->noContent();
     }
 }

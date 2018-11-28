@@ -2,64 +2,37 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use App\CustomerRequirement;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\CustomerRequirementRequest;
+use App\Http\Resources\CustomerRequirementResource;
 
 class CustomerRequirementController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function store(CustomerRequirementRequest $request)
     {
-        //
+        $requirement = new CustomerRequirement();
+
+        $requirement->fill($request->all())
+            ->save();
+
+        return CustomerRequirementResource::make($requirement);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function update(CustomerRequirementRequest $request, CustomerRequirement $customerRequirement)
     {
-        //
+        $customerRequirement->fill($request->all())
+            ->save();
+
+        return CustomerRequirementResource::make($customerRequirement);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\CustomerRequirement  $customerRequirement
-     * @return \Illuminate\Http\Response
-     */
-    public function show(CustomerRequirement $customerRequirement)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\CustomerRequirement  $customerRequirement
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, CustomerRequirement $customerRequirement)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\CustomerRequirement  $customerRequirement
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(CustomerRequirement $customerRequirement)
     {
-        //
+        $customerRequirement->delete();
+
+        return $this->noContent();
     }
 }

@@ -16,7 +16,7 @@ class CreateCustomerRequirementsTable extends Migration
         Schema::create('customer_requirements', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('customer_id');
-            $table->string('product')->nullable();
+            $table->unsignedInteger('product_id')->nullable();
             $table->string('item');
             $table->string('requirement');
             $table->string('value_type')->nullable();

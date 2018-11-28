@@ -3,63 +3,57 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductBatchRequest;
+use App\Http\Resources\ProductBatchResource;
 use App\ProductBatch;
-use Illuminate\Http\Request;
 
 class ProductBatchController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $perPage = $this->perPage();
+        $name_condition = queryCondition('product_name', \request('q'));
+        $batch_condition = queryCondition('batch_number', \request('q'));
+
+        $pagination = ProductBatch::where($name_condition)
+            ->orWhere($batch_condition)
+            ->paginate($perPage)
+            ->appends(request()->except('page'));
+
+        return ProductBatchResource::collection($pagination);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function store(ProductBatchRequest $request)
     {
-        //
+        $productBatch = new ProductBatch();
+
+        $productBatch->fill($request->all())
+            ->save();
+
+        return ProductBatchResource::make($productBatch);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\ProductBatch  $productBatch
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(ProductBatch $productBatch)
     {
-        //
+        return ProductBatchResource::make($productBatch);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\ProductBatch  $productBatch
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, ProductBatch $productBatch)
+
+    public function update(ProductBatchRequest $request, ProductBatch $productBatch)
     {
-        //
+        $productBatch->fill($request->all())
+            ->save();
+
+        return ProductBatchResource::make($productBatch);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\ProductBatch  $productBatch
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(ProductBatch $productBatch)
     {
-        //
+        $productBatch->delete();
+
+        return $this->noContent();
     }
 }

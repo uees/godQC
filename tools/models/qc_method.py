@@ -14,5 +14,5 @@ class Product(Base):
     name = Column(String(256))
     file = Column(String(256), nullable=True)
     content = Column(Text, nullable=True)
-    created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('NOW()'))
+    created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('CURRENT_TIMESTAMP'))
     updated_at = Column(TIMESTAMP(True), nullable=True)

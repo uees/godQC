@@ -4,7 +4,9 @@ import os
 
 from dotenv import load_dotenv
 
-env_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../.env')
+ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
+
+env_path = os.path.join(ROOT_PATH, '../.env')
 load_dotenv(dotenv_path=env_path)
 
 DB_CONNECTION = os.getenv('DB_CONNECTION')

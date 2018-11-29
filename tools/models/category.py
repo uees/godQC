@@ -14,5 +14,5 @@ class Category(Base):
     name = Column(String(256))
     slug = Column(String(256))
     memo = Column(Text, nullable=True)
-    created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('NOW()'))
+    created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('CURRENT_TIMESTAMP'))
     updated_at = Column(TIMESTAMP(True), nullable=True)

@@ -21,5 +21,5 @@ class Product(Base):
     label_viscosity = Column(String(256), nullable=True)
     viscosity_width = Column(String(256), nullable=True)
     metas = Column(Text, nullable=True)
-    created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('NOW()'))
+    created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('CURRENT_TIMESTAMP'))
     updated_at = Column(TIMESTAMP(True), nullable=True)

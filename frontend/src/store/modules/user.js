@@ -3,6 +3,7 @@ import { login, logout, refresh, getUserInfo } from '../../api/login'
 
 const user = {
   state: {
+    id: '',
     name: '',
     email: '',
     avatar: '',
@@ -13,6 +14,9 @@ const user = {
   },
 
   mutations: {
+    SET_ID: (state, id) => {
+      state.id = id
+    },
     SET_NAME: (state, name) => {
       state.name = name
     },
@@ -75,6 +79,7 @@ const user = {
           } else {
             reject('getInfo: roles must be a non-null array !')
           }
+          commit('SET_ID', data.id)
           commit('SET_EMAIL', data.email)
           commit('SET_NAME', data.name)
           commit('SET_AVATAR', data.avatar)

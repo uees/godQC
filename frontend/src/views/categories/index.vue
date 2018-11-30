@@ -62,7 +62,7 @@
 </template>
 
 <script>
-export function newCategory() {
+export function newObj() {
   return {
     id: 0,
     slug: '',
@@ -83,17 +83,7 @@ export default {
       queryParams: {
         search: ''
       },
-      obj: newCategory(),
-      objRules: {
-        slug: { required: true, message: '请输入型号', trigger: 'blur' },
-        name: { required: true, message: '请输入名称', trigger: 'blur' }
-      },
-      dialogFormVisible: false,
-      dialogStatus: '',
-      textMap: {
-        update: '编辑',
-        create: '创建'
-      }
+      obj: newObj()
     }
   },
   methods: {

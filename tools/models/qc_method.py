@@ -6,9 +6,9 @@ from sqlalchemy import (TIMESTAMP, Column, Integer, String,
 from .base import Base
 
 
-class Product(Base):
+class QCMethod(Base):
 
-    __tablename__ = 'products'
+    __tablename__ = 'test_methods'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(256))

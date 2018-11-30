@@ -1,7 +1,8 @@
 # -- coding: utf-8 -*-
 
-from sqlalchemy import (TIMESTAMP, Column, Integer, String,
-                        Text, text)
+from sqlalchemy import (TIMESTAMP, Column, ForeignKey, Integer, String, Text,
+                        text)
+from sqlalchemy.orm import relationship
 
 from .base import Base
 
@@ -11,6 +12,7 @@ class Product(Base):
     __tablename__ = 'products'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    category_id = Column(Integer, ForeignKey('categories.id'))
     internal_name = Column(String(256))
     market_name = Column(String(256))
     part_a = Column(String(256), nullable=True)
@@ -23,3 +25,5 @@ class Product(Base):
     metas = Column(Text, nullable=True)
     created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('CURRENT_TIMESTAMP'))
     updated_at = Column(TIMESTAMP(True), nullable=True)
+
+    category = relationship("Category", back_populates="products")

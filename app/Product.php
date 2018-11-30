@@ -9,6 +9,7 @@ class Product extends Model
     use MetaTrait;
 
     protected $fillable = [
+        'category_id',
         'internal_name',
         'market_name',
         'part_a',
@@ -19,6 +20,14 @@ class Product extends Model
         'label_viscosity',
         'viscosity_width',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

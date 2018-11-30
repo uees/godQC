@@ -11,12 +11,17 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $name_condition = queryCondition('name', \request('q'));
-        $slug_condition = queryCondition('slug', \request('q'));
+        $query = Category::query();
 
-        $categories = Category::where($name_condition)
-            ->orWhere($slug_condition)
-            ->get(); // 直接获取所有分类
+        if (\request()->filled('q')) {
+            $name_condition = queryCondition('name', \request('q'));
+            $slug_condition = queryCondition('slug', \request('q'));
+
+            $query = $query->where($name_condition)
+                ->orWhere($slug_condition);
+        }
+
+        $categories = $query->get(); // 直接获取所有分类
 
         return CategoryResource::collection($categories);
     }

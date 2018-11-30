@@ -1,7 +1,7 @@
 # -- coding: utf-8 -*-
 
-from sqlalchemy import (TIMESTAMP, Column, Integer, String,
-                        Text, text)
+from sqlalchemy import TIMESTAMP, Column, Integer, String, Text, text
+from sqlalchemy.orm import relationship
 
 from .base import Base
 
@@ -16,3 +16,5 @@ class Category(Base):
     memo = Column(Text, nullable=True)
     created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('CURRENT_TIMESTAMP'))
     updated_at = Column(TIMESTAMP(True), nullable=True)
+
+    products = relationship("Product", back_populates="category")

@@ -22,6 +22,16 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
     Route::get('users/me', 'AuthController@me');
 
     Route::apiResources([
+        'categories' => 'CategoryController',
+        'customers' => 'CustomerController',
+        'customer-requirements' => 'CustomerRequirementController',
+        'product-batchs' => 'ProductBatchController',
+        'products' => 'ProductController',
+        'product-disposes' => 'ProductDisposeController',
+        'qc-methods' => 'QCMethodController',
+        'qc-records' => 'QCRecordController',
+        'qc-ways' => 'QCWayController',
+        'roles' => 'RoleController',
         'users' => 'UserController',
     ]);
 });

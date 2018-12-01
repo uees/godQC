@@ -49,7 +49,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.api.delete(row).then(response => {
+        this.api.delete(row.id).then(response => {
           const index = this.tableData.indexOf(row)
           this.tableData.splice(index, 1)
           this.$message({

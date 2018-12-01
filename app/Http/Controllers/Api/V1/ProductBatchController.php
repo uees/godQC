@@ -12,13 +12,17 @@ class ProductBatchController extends Controller
     public function index()
     {
         $perPage = $this->perPage();
-        $name_condition = queryCondition('product_name', \request('q'));
-        $batch_condition = queryCondition('batch_number', \request('q'));
+        $query = ProductBatch::query();
 
-        $pagination = ProductBatch::where($name_condition)
-            ->orWhere($batch_condition)
-            ->paginate($perPage)
-            ->appends(request()->except('page'));
+        if (\request()->filled('q')) {
+            $name_condition = queryCondition('product_name', \request('q'));
+            $batch_condition = queryCondition('batch_number', \request('q'));
+
+            $query = $query->where($name_condition)
+                ->orWhere($batch_condition);
+        }
+
+        $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 
         return ProductBatchResource::collection($pagination);
     }
@@ -50,10 +54,12 @@ class ProductBatchController extends Controller
     }
 
 
-    public function destroy(ProductBatch $productBatch)
+    public function destroy($id)
     {
-        $productBatch->delete();
+        if (ProductBatch::destroy($id)){
+            return $this->noContent();
+        }
 
-        return $this->noContent();
+        return $this->failed('操作失败');
     }
 }

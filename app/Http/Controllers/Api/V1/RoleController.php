@@ -11,9 +11,15 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $name_condition = queryCondition('name', \request('q'));
+        $query = Role::query();
 
-        $roles = Role::where($name_condition)->get(); // 直接获取所有
+        if (\request()->filled('q')) {
+            $name_condition = queryCondition('name', \request('q'));
+
+            $query = $query->where($name_condition);
+        }
+
+        $roles = $query->get(); // 直接获取所有
 
         return RoleResource::collection($roles);
     }
@@ -43,10 +49,12 @@ class RoleController extends Controller
     }
 
 
-    public function destroy(Role $role)
+    public function destroy($id)
     {
-        $role->delete();
+        if (Role::destroy($id)) {
+            return $this->noContent();
+        }
 
-        return $this->noContent();
+        return $this->failed('操作失败');
     }
 }

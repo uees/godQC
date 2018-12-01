@@ -11,14 +11,13 @@ class QCWayController extends Controller
 {
     public function index()
     {
+        $perPage = $this->perPage();
         $query = TestWay::query();
 
         if (\request()->filled('q')) {
             $name_condition = queryCondition('name', \request('q'));
             $query=$query->where($name_condition);
         }
-
-        $perPage = $this->perPage();
 
         $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 
@@ -50,10 +49,12 @@ class QCWayController extends Controller
     }
 
 
-    public function destroy(TestWay $testWay)
+    public function destroy($id)
     {
-        $testWay->delete();
+        if (TestWay::destroy($id)) {
+            return $this->noContent();
+        }
 
-        return $this->noContent();
+        return $this->failed('操作失败');
     }
 }

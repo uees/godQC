@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\QCMethodRequest;
 use App\Http\Resources\TestMethodResource;
 use App\TestMethod;
-use App\TestRecord;
 
 class QCMethodController extends Controller
 {
@@ -14,7 +13,7 @@ class QCMethodController extends Controller
     {
         $perPage = $this->perPage();
 
-        $query = TestRecord::query();
+        $query = TestMethod::query();
 
         if (\request()->filled('q')) {
             $name_condition = queryCondition('name', \request('q'));
@@ -53,10 +52,12 @@ class QCMethodController extends Controller
     }
 
 
-    public function destroy(TestMethod $testMethod)
+    public function destroy($id)
     {
-        $testMethod->delete();
+        if (TestMethod::destroy($id)) {
+            return $this->noContent();
+        }
 
-        return $this->noContent();
+        return $this->failed('操作失败');
     }
 }

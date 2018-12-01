@@ -12,11 +12,17 @@ class UserController extends Controller
     public function index()
     {
         $perPage = $this->perPage();
-        $name_condition = queryCondition('name', \request('q'));
-        $email_condition = queryCondition('email', \request('q'));
+        $query = User::query();
 
-        $pagination = User::where($name_condition)
-            ->orWhere($email_condition)
+        if (\request()->filled('q')) {
+            $name_condition = queryCondition('name', \request('q'));
+            $email_condition = queryCondition('email', \request('q'));
+
+            $query = $query->where($name_condition)
+                ->orWhere($email_condition);
+        }
+
+        $pagination = $query
             ->paginate($perPage)
             ->appends(request()->except('page'));
 
@@ -48,10 +54,12 @@ class UserController extends Controller
     }
 
 
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        $user->delete();
+        if (User::destroy($id)) {
+            return $this->noContent();
+        }
 
-        return $this->noContent();
+        return $this->failed('操作失败');
     }
 }

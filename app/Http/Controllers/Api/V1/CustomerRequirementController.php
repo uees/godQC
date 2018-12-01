@@ -29,10 +29,12 @@ class CustomerRequirementController extends Controller
     }
 
 
-    public function destroy(CustomerRequirement $customerRequirement)
+    public function destroy($id)
     {
-        $customerRequirement->delete();
+        if (CustomerRequirement::destroy($id)) {
+            return $this->noContent();
+        }
 
-        return $this->noContent();
+        return $this->failed('操作失败');
     }
 }

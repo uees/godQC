@@ -12,13 +12,17 @@ class ProductController extends Controller
     public function index()
     {
         $perPage = $this->perPage();
-        $internal_name_condition = queryCondition('internal_name', \request('q'));
-        $market_name_condition = queryCondition('market_name', \request('q'));
+        $query = Product::query();
 
-        $pagination = Product::where($internal_name_condition)
-            ->orWhere($market_name_condition)
-            ->paginate($perPage)
-            ->appends(request()->except('page'));
+        if (\request()->filled('q')) {
+            $internal_name_condition = queryCondition('internal_name', \request('q'));
+            $market_name_condition = queryCondition('market_name', \request('q'));
+
+            $query = $query->where($internal_name_condition)
+                ->orWhere($market_name_condition);
+        }
+
+        $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 
         return ProductResource::collection($pagination);
     }
@@ -50,11 +54,13 @@ class ProductController extends Controller
     }
 
 
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        $product->delete();
+        if (Product::destroy($id)) {
+            return $this->noContent();
+        }
 
-        return $this->noContent();
+        return $this->failed('操作失败');
     }
 
     public function selectTestWay()

@@ -55,11 +55,13 @@ class CustomerController extends Controller
     }
 
 
-    public function destroy(Customer $customer)
+    public function destroy($id)
     {
-        $customer->delete();
+        if(Customer::destroy($id)) {
+            return $this->noContent();
+        }
 
-        return $this->noContent();
+        return $this->failed('操作失败');
     }
 
     public function selectProducts()

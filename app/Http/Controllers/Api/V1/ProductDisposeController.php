@@ -14,15 +14,19 @@ class ProductDisposeController extends Controller
     {
         $perPage = $this->perPage();
 
-        $name_condition = queryCondition('product_name', \request('q'));
-        $batch_condition = queryCondition('batch_number', \request('q'));
-        $method_condition = queryCondition('method', \request('q'));
+        $query = ProductDispose::query();
 
-        $query = ProductDispose::where($method_condition)
-            ->orWhereHas('batch', function (Builder $query) use ($name_condition, $batch_condition) {
-                $query->where($name_condition)
-                    ->orWhere($batch_condition);
-            });
+        if (\request()->filled('q')) {
+            $name_condition = queryCondition('product_name', \request('q'));
+            $batch_condition = queryCondition('batch_number', \request('q'));
+            $method_condition = queryCondition('method', \request('q'));
+
+            $query = $query->where($method_condition)
+                ->orWhereHas('batch', function (Builder $query) use ($name_condition, $batch_condition) {
+                    $query->where($name_condition)
+                        ->orWhere($batch_condition);
+                });
+        }
 
         $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 
@@ -55,10 +59,12 @@ class ProductDisposeController extends Controller
     }
 
 
-    public function destroy(ProductDispose $productDispose)
+    public function destroy($id)
     {
-        $productDispose->delete();
+        if (ProductDispose::destroy($id)) {
+            return $this->noContent();
+        }
 
-        return $this->noContent();
+        return $this->failed('操作失败');
     }
 }

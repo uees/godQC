@@ -13,13 +13,17 @@ class QCRecordController extends Controller
     public function index()
     {
         $perPage = $this->perPage();
-        $name_condition = queryCondition('product_name', \request('q'));
-        $batch_condition = queryCondition('batch_number', \request('q'));
+        $query = TestRecord::query();
 
-        $query = TestRecord::whereHas('batch', function (Builder $query) use ($name_condition, $batch_condition) {
-            $query->where($name_condition)
-                ->orWhere($batch_condition);
-        });
+        if (\request()->filled('q')) {
+            $name_condition = queryCondition('product_name', \request('q'));
+            $batch_condition = queryCondition('batch_number', \request('q'));
+
+            $query = $query->whereHas('batch', function (Builder $query) use ($name_condition, $batch_condition) {
+                $query->where($name_condition)
+                    ->orWhere($batch_condition);
+            });
+        }
 
         $query = $this->parseWhere($query, ['created_at', 'conclusion']);
 
@@ -60,12 +64,16 @@ class QCRecordController extends Controller
     }
 
 
-    public function destroy(TestRecord $testRecord)
+    public function destroy($id)
     {
-        $testRecord->delete();
+        $testRecord = TestRecord::find($id);
 
-        $testRecord->items()->delete();
+        if (TestRecord::destroy($id)) {
+            $testRecord->items()->delete();
 
-        return $this->noContent();
+            return $this->noContent();
+        }
+
+        return $this->failed('操作失败');
     }
 }

@@ -49,11 +49,13 @@ class CategoryController extends Controller
         return CategoryResource::make($category);
     }
 
-    public function destroy(Category $category)
+    public function destroy($id)
     {
-        $category->delete();
+        if (Category::destroy($id)){
+            return $this->noContent();
+        }
 
-        return $this->noContent();
+        return $this->failed('操作失败');
     }
 
     public function selectTestWay()

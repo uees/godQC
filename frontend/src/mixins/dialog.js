@@ -7,12 +7,12 @@ export default {
       required: true
     },
     propObj: {
-      type: Object,
+      types: [Object, undefined],
       required: true
     }
   },
 
-  data () {
+  data() {
     return {
       api: undefined,
       obj: this.newObj(),
@@ -46,18 +46,19 @@ export default {
   },
 
   methods: {
-    newObj () { // createObj 需要继承者实现
+    newObj() { // createObj 需要继承者实现
       return {}
     },
-    resetObj () {
+    resetObj() {
       this.obj = this.newObj()
     },
-    create () {
+    create() {
       this.$refs['obj_form'].validate(valid => {
         if (valid) {
           this.obj.user_id = this.user.id
           this.api.add(this.obj).then(response => {
-            this.obj = response.data.data // 灰常重要！！！
+            const { data } = response.data
+            this.obj = data // 灰常重要！！！
             this.done()
           })
         } else {
@@ -65,12 +66,13 @@ export default {
         }
       })
     },
-    update () {
+    update() {
       this.$refs['obj_form'].validate(valid => {
         if (valid) {
           this.obj.modified_user_id = this.user.id
-          this.api.update(this.obj).then(response => {
-            this.obj = response.data.data // 灰常重要！！！
+          this.api.update(this.obj.id, this.obj).then(response => {
+            const { data } = response.data
+            this.obj = data // 灰常重要！！！
             this.done()
           })
         } else {
@@ -78,9 +80,9 @@ export default {
         }
       })
     },
-    done () {
+    done() {
       // 当一个子组件改变了一个带 .sync 的 prop 的值时，这个变化也会同步到父组件中所绑定的值
-      this.$emit('update:updateObj', this.obj) // <comp :obj.sync="obj"></comp>
+      this.$emit('update:propObj', this.obj) // <comp :obj.sync="obj"></comp>
       if (this.action === 'create') {
         this.$emit('createDone')
       } else if (this.action === 'update') {
@@ -94,7 +96,7 @@ export default {
       })
       this.close()
     },
-    close () {
+    close() {
       this.dialogFormVisible = false
       this.$emit('update:action', '')
       this.resetObj()

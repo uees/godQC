@@ -13,12 +13,12 @@
           <el-input v-model="obj.name"/>
         </el-form-item>
 
-        <el-form-item label="型号" prop="slug">
-          <el-input v-model="obj.slug"/>
+        <el-form-item label="文档">
+          <el-input v-model="obj.file"/>
         </el-form-item>
 
-        <el-form-item label="备注">
-          <el-input v-model="obj.memo"/>
+        <el-form-item label="内容">
+          <el-input v-model="obj.content" :rows="10" type="textarea" placeholder="请输入内容"/>
         </el-form-item>
       </el-form>
 
@@ -33,14 +33,14 @@
 
 <script>
 import dialog from '@/mixins/dialog'
-import { categoryApi } from '@/api/basedata'
+import { qcMethodApi } from '@/api/qc'
 
 export function newObj() {
   return {
     id: 0,
-    slug: '',
     name: '',
-    memo: '',
+    file: '',
+    content: '',
     created_at: {
       date: '',
       timezone_type: '',
@@ -61,10 +61,9 @@ export default {
   ],
   data() {
     return {
-      api: categoryApi,
+      api: qcMethodApi,
       objRules: {
-        name: { required: true, message: '必填项', trigger: 'blur' },
-        slug: { required: true, message: '必填项', trigger: 'blur' }
+        name: { required: true, message: '必填项', trigger: 'blur' }
       }
     }
   },

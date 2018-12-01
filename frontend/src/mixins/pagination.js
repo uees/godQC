@@ -3,21 +3,22 @@ export default {
     return {
       total: 0,
       pageCount: 0,
-      pageSizes: [20, 50],
+      pageSizes: [20, 40],
       queryParams: {
         page: 1,
-        perPage: 20
+        per_page: 20
       }
     }
   },
 
   methods: {
     pagination (response) {
-      this.total = response.data.count
-      this.pageCount = Math.ceil(response.data.count / this.queryParams.perPage)
+      const { meta } = response.data
+      this.total = +meta.total
+      this.pageCount = Math.ceil(this.total / this.queryParams.per_page)
     },
     handleSizeChange (val) {
-      this.queryParams.perPage = val
+      this.queryParams.per_page = val
       this.fetchData()
     },
     handleCurrentChange (val) {

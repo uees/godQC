@@ -13,12 +13,8 @@
           <el-input v-model="obj.name"/>
         </el-form-item>
 
-        <el-form-item label="型号" prop="slug">
-          <el-input v-model="obj.slug"/>
-        </el-form-item>
-
-        <el-form-item label="备注">
-          <el-input v-model="obj.memo"/>
+        <el-form-item label="检测项目">
+          <el-input v-model="obj.way"/>
         </el-form-item>
       </el-form>
 
@@ -33,14 +29,13 @@
 
 <script>
 import dialog from '@/mixins/dialog'
-import { categoryApi } from '@/api/basedata'
+import { qcWayApi } from '@/api/qc'
 
 export function newObj() {
   return {
     id: 0,
-    slug: '',
     name: '',
-    memo: '',
+    way: [],
     created_at: {
       date: '',
       timezone_type: '',
@@ -61,10 +56,9 @@ export default {
   ],
   data() {
     return {
-      api: categoryApi,
+      api: qcWayApi,
       objRules: {
-        name: { required: true, message: '必填项', trigger: 'blur' },
-        slug: { required: true, message: '必填项', trigger: 'blur' }
+        name: { required: true, message: '必填项', trigger: 'blur' }
       }
     }
   },

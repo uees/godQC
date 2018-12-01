@@ -1,59 +1,57 @@
 export default {
-  data () {
+  data() {
     return {
-      tabledata: [],
+      api: undefined,
+      tableData: [],
       listLoading: false,
       updateIndex: -1,
       queryParams: {
-        search: ''
+        q: ''
       },
       propObj: undefined,
       action: ''
     }
   },
 
-  created () {
+  created() {
     this.fetchData()
   },
 
   methods: {
-    fetchData () {
+    fetchData() {
       this.listLoading = true
-      this.api.list({params: this.query_params}).then(response => {
-        if (response.data.hasOwnProperty('results')) {
-          this.tabledata = response.data.results
-          this.pagination(response)
-        } else {
-          this.tabledata = response.data
-        }
+      this.api.list({ params: this.queryParams }).then(response => {
+        const { data } = response.data
+        this.tableData = data
+        this.pagination(response)
         this.listLoading = false
       }).catch(error => {
         return Promise.reject(error)
       })
     },
-    pagination (response) {
+    pagination(response) {
       // pagination 中实现
     },
-    handleSearch () {
+    handleSearch() {
       this.fetchData()
     },
-    handleCreate () {
+    handleCreate() {
       this.action = 'create'
     },
-    handleUpdate (row) {
-      this.updateIndex = this.tabledata.indexOf(row)
-      this.updateObj = Object.assign({}, row)
+    handleUpdate(row) {
+      this.updateIndex = this.tableData.indexOf(row)
+      this.propObj = Object.assign({}, row)
       this.action = 'update'
     },
-    handleDelete (row) {
+    handleDelete(row) {
       this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.api.delete(row).then(response => {
-          const index = this.tabledata.indexOf(row)
-          this.tabledata.splice(index, 1)
+          const index = this.tableData.indexOf(row)
+          this.tableData.splice(index, 1)
           this.$message({
             type: 'success',
             message: '删除成功!'
@@ -61,17 +59,17 @@ export default {
         })
       })
     },
-    handleDownload () {
+    handleDownload() {
       this.$message({
         showClose: true,
         message: '还未实现此功能'
       })
     },
-    createDone () {
-      this.tabledata.unshift(this.updateObj)
+    createDone() {
+      this.tableData.unshift(this.propObj)
     },
-    updateDone () {
-      this.tabledata.splice(this.update_index, 1, this.updateObj)
+    updateDone() {
+      this.tableData.splice(this.updateIndex, 1, this.propObj)
     }
   }
 }

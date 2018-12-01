@@ -145,7 +145,7 @@ export const asyncRouterMap = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/documentation/index'),
+        component: () => import('@/views/qcmethods/index'),
         name: 'test-methods',
         meta: { title: '检测方法', icon: 'table' }
       }
@@ -157,7 +157,7 @@ export const asyncRouterMap = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/documentation/index'),
+        component: () => import('@/views/qcways/index'),
         name: 'test-ways',
         meta: { title: '检测流程', icon: 'size' }
       }
@@ -169,7 +169,7 @@ export const asyncRouterMap = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/documentation/index'),
+        component: () => import('@/views/products/index'),
         name: 'products',
         meta: { title: '产品', icon: 'star' }
       }
@@ -193,7 +193,7 @@ export const asyncRouterMap = [
     children: [
       {
         path: 'customers',
-        component: () => import('@/views/documentation/index'),
+        component: () => import('@/views/customers/index'),
         name: 'customers',
         meta: { title: '客户', icon: 'tree' }
       }

@@ -44,13 +44,9 @@
       style="width: 100%">
 
       <el-table-column :sortable="true" prop="name" label="名称"/>
-      <el-table-column :sortable="true" prop="slug" label="型号"/>
-      <el-table-column prop="memo" label="备注"/>
-      <el-table-column label="创建时间">
-        <template slot-scope="scope">
-          {{ echoTime(scope.row.created_at.date) }}
-        </template>
-      </el-table-column>
+      <el-table-column :sortable="true" prop="address" label="地址"/>
+      <el-table-column prop="contacts" label="联系人"/>
+      <el-table-column prop="tel" label="电话"/>
 
       <el-table-column align="center" label="操作" width="100" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -69,6 +65,17 @@
 
     </el-table>
 
+    <div v-show="!listLoading" class="pagination-container">
+      <el-pagination
+        :total="total"
+        :current-page.sync="queryParams.page"
+        :page-sizes="pageSizes"
+        :page-size="queryParams.per_page"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"/>
+    </div>
+
     <form-dialog
       :action.sync="action"
       :prop-obj.sync="propObj"
@@ -79,7 +86,8 @@
 
 <script>
 import list from '@/mixins/list'
-import { categoryApi } from '@/api/basedata'
+import pagination from '@/mixins/pagination'
+import { customerApi } from '@/api/basedata'
 import FormDialog from './dialog'
 
 export default {
@@ -88,11 +96,11 @@ export default {
     FormDialog
   },
   mixins: [
-    list
+    list, pagination
   ],
   data() {
     return {
-      api: categoryApi
+      api: customerApi
     }
   },
   methods: {

@@ -25,7 +25,7 @@
 
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar" class="user-avatar">
+          <img :src="user.avatar" class="user-avatar">
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
@@ -73,8 +73,7 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'name',
-      'avatar',
+      'user',
       'device'
     ])
   },

@@ -11,11 +11,18 @@ class QCWayController extends Controller
 {
     public function index()
     {
-        $name_condition = queryCondition('name', \request('q'));
+        $query = TestWay::query();
 
-        $ways = TestWay::where($name_condition)->get(); // 直接获取所有
+        if (\request()->filled('q')) {
+            $name_condition = queryCondition('name', \request('q'));
+            $query=$query->where($name_condition);
+        }
 
-        return TestWayResource::collection($ways);
+        $perPage = $this->perPage();
+
+        $pagination = $query->paginate($perPage)->appends(request()->except('page'));
+
+        return TestWayResource::collection($pagination);
     }
 
 

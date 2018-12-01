@@ -12,11 +12,15 @@ class CustomerController extends Controller
     public function index()
     {
         $perPage = $this->perPage();
-        $name_condition = queryCondition('name', \request('q'));
 
-        $pagination = Customer::where($name_condition)
-            ->paginate($perPage)
-            ->appends(request()->except('page'));
+        $query = Customer::query();
+
+        if (\request()->filled('q')) {
+            $name_condition = queryCondition('name', \request('q'));
+            $query = $query->where($name_condition);
+        }
+
+        $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 
         return CustomerResource::collection($pagination);
     }

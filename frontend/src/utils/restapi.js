@@ -6,7 +6,7 @@ import request from './request'
  * @param {Array.<string>} methods
  * @return {Object}
  */
-export function restApi(baseuri, methods = ['list', 'add', 'update', 'delete', 'detail']) {
+export default function restApi(baseuri, methods = ['list', 'add', 'update', 'delete', 'detail']) {
   const api = {}
 
   if (methods.includes('list')) {

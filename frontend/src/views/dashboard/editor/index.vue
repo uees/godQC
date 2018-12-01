@@ -1,12 +1,12 @@
 <template>
   <div class="dashboard-editor-container">
     <div class=" clearfix">
-      <pan-thumb :image="avatar" style="float: left"> Your roles:
+      <pan-thumb :image="user.avatar" style="float: left"> Your roles:
         <span v-for="item in roles" :key="item.name" class="pan-info-roles">{{ item.display_name }}({{ item.name }})</span>
       </pan-thumb>
       <github-corner style="position: absolute; top: 0; border: 0; right: 0;"/>
       <div class="info-container">
-        <span class="display_name">{{ name }}</span>
+        <span class="display_name">{{ user.name }}</span>
         <span style="font-size:20px;padding-top:20px;display:inline-block;">Editor's Dashboard</span>
       </div>
     </div>
@@ -31,8 +31,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'name',
-      'avatar',
+      'user',
       'roles'
     ])
   }

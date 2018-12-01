@@ -13,12 +13,16 @@
           <el-input v-model="obj.name"/>
         </el-form-item>
 
-        <el-form-item label="型号" prop="slug">
-          <el-input v-model="obj.slug"/>
+        <el-form-item label="地址">
+          <el-input v-model="obj.address"/>
         </el-form-item>
 
-        <el-form-item label="备注">
-          <el-input v-model="obj.memo"/>
+        <el-form-item label="联系人">
+          <el-input v-model="obj.contacts"/>
+        </el-form-item>
+
+        <el-form-item label="电话">
+          <el-input v-model="obj.tel"/>
         </el-form-item>
       </el-form>
 
@@ -33,14 +37,17 @@
 
 <script>
 import dialog from '@/mixins/dialog'
-import { categoryApi } from '@/api/basedata'
+import { customerApi } from '@/api/basedata'
 
 export function newObj() {
   return {
     id: 0,
-    slug: '',
     name: '',
-    memo: '',
+    address: '',
+    contacts: '',
+    tel: '',
+    requirements: [],
+    products: [],
     created_at: {
       date: '',
       timezone_type: '',
@@ -61,10 +68,9 @@ export default {
   ],
   data() {
     return {
-      api: categoryApi,
+      api: customerApi,
       objRules: {
-        name: { required: true, message: '必填项', trigger: 'blur' },
-        slug: { required: true, message: '必填项', trigger: 'blur' }
+        name: { required: true, message: '必填项', trigger: 'blur' }
       }
     }
   },

@@ -6,19 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\QCMethodRequest;
 use App\Http\Resources\TestMethodResource;
 use App\TestMethod;
+use App\TestRecord;
 
 class QCMethodController extends Controller
 {
     public function index()
     {
         $perPage = $this->perPage();
-        $name_condition = queryCondition('name', \request('q'));
-        $content_condition = queryCondition('content', \request('q'));
 
-        $pagination = TestMethod::where($name_condition)
-            ->orWhere($content_condition)
-            ->paginate($perPage)
-            ->appends(request()->except('page'));
+        $query = TestRecord::query();
+
+        if (\request()->filled('q')) {
+            $name_condition = queryCondition('name', \request('q'));
+            $content_condition = queryCondition('content', \request('q'));
+
+            $query = $query->where($name_condition)->orWhere($content_condition);
+        }
+
+        $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 
         return TestMethodResource::collection($pagination);
     }

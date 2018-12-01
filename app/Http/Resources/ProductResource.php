@@ -16,6 +16,7 @@ class ProductResource extends Resource
     {
         return [
             'id' => (int)$this->id,
+            'category_id' => $this->category_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'internal_name' => $this->internal_name,
@@ -30,6 +31,7 @@ class ProductResource extends Resource
             'metas' => $this->metas,
             'customers' => CustomerResource::collection($this->whenLoaded('customers')),
             'testWays' => TestWayResource::collection($this->whenLoaded('testWays')),
+            'category' => CategoryResource::make($this->whenLoaded('category')),
         ];
     }
 }

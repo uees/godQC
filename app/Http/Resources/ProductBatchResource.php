@@ -20,6 +20,7 @@ class ProductBatchResource extends Resource
             'updated_at' => $this->updated_at,
             'product_name' => $this->product_name,
             'batch_number' => $this->batch_number,
+            'type' => $this->type,
             'amount' => $this->amount,
             'tests_num' => $this->tests_num,
             'memo' => $this->memo,

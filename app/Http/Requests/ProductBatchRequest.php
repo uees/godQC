@@ -26,6 +26,7 @@ class ProductBatchRequest extends FormRequest
         return [
             'product_name' => 'required',
             'batch_number' => 'required',
+            'type' => 'required',
         ];
     }
 }

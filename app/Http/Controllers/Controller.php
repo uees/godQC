@@ -35,10 +35,8 @@ class Controller extends BaseController
      */
     protected function parseFields(Builder $query)
     {
-        $fields = request('fields');
-
-        if (!is_null($fields)) {
-            $query = $query->addSelect(explode(',', $fields));
+        if (request()->filled('fields')) {
+            $query = $query->addSelect(explode(',', request('fields')));
         }
 
         return $query;

@@ -3,17 +3,36 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductBatchRequest;
 use App\Http\Resources\TestRecordResource;
+use App\Product;
+use App\ProductBatch;
 use App\TestRecord;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 
 class QCRecordController extends Controller
 {
+    // type, testing, conclusion, test_times
     public function index()
     {
         $perPage = $this->perPage();
+
         $query = TestRecord::query();
+
+        $query = $this->parseFields($query);
+        $query = $this->parseWhere($query, ['conclusion', 'test_times']);
+
+        if (\request()->filled('testing')) {
+            $query = $query->whereNull('said_package_at');
+        }
+
+        if (\request()->filled('type')) {
+            $type = \request('type');
+            $query = $query->whereHas('batch', function (Builder $query) use ($type) {
+                $query->where('type', $type);
+            });
+        }
 
         if (\request()->filled('q')) {
             $name_condition = queryCondition('product_name', \request('q'));
@@ -33,16 +52,50 @@ class QCRecordController extends Controller
     }
 
     // 取样
-    public function store(Request $request)
+    public function sample(ProductBatchRequest $request, $type)
     {
-        // todo step 1. 创建批次
+        $productName = $request->get('product_name');
+        $batchNumber = $request->get('batch_number');
 
-        // todo step 2. 创建空白检测表单
+        // step 1. 创建批次
+        $batch = ProductBatch::firstOrCreate([
+            'product_name' => $productName,
+            'batch_number' => $batchNumber,
+        ], ['type' => $type]);
+
+        // step 2. 创建空白检测表单
         $testRecord = new TestRecord();
+        $testRecord->fill([
+            'test_times' => $batch->testRecords()->count() + 1,
+        ]);
 
-        $testRecord->fill($request->all())->save();
+        $batch->testRecords()->save($testRecord);
 
-        return TestRecordResource::make($testRecord);
+        // step 3. 创建检测项目
+        // make 检测项目
+        $product = Product::where('internal_name', $productName)->firstOrFail();
+        $category = $product->category;
+
+        $test_way = [];
+        if ($category->testWays()->count()) {
+            $test_way = $category->testWays[0]->way;
+        }
+
+        if ($product->testWays()->count()) {
+            $test_way = array_merge($test_way, $product->testWays[0]->way);
+        }
+
+        $items = [];
+        foreach ($test_way as $item) {
+            array_push($items, [
+                'item' => $item['name'],
+                'spec' => $item['spec'],
+                'value' => '',
+            ]);
+        }
+        $testRecord->items()->create($items);
+
+        return TestRecordResource::make(TestRecord::with(['batch', 'items'])->find($testRecord->id));
     }
 
 
@@ -57,8 +110,6 @@ class QCRecordController extends Controller
     public function update(Request $request, TestRecord $testRecord)
     {
         $testRecord->fill($request->all())->save();
-
-        // todo update record_items
 
         return TestRecordResource::make($testRecord);
     }

@@ -16,6 +16,11 @@ class TestRecordItem extends Model
         'memo',
     ];
 
+
+    protected $casts = [
+        'spec' => 'array',
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

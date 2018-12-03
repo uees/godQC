@@ -18,10 +18,13 @@ class CreateProductBatchesTable extends Migration
             $table->bigIncrements('id');
             $table->string('product_name');
             $table->string('batch_number');
+            $table->enum('type', ['FQC', 'IQC']);
             $table->string('amount')->nullable();
             $table->unsignedInteger('tests_num')->default(0);
             $table->string('memo')->nullable();
             $table->timestamps();
+
+            $table->unique(['product_name', 'batch_number']);
         });
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Category;
+use App\TestWay;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Http\Resources\CategoryResource;
@@ -58,8 +59,16 @@ class CategoryController extends Controller
         return $this->failed('操作失败');
     }
 
-    public function selectTestWay()
+    public function selectTestWay(Category $category)
     {
-        // todo
+        $testWayId = request('test_way_id');
+
+        if (TestWay::where('id', $testWayId)->exists()) {
+            $category->testWays()->sync([$testWayId]);
+
+            return $this->noContent();
+        }
+
+        return $this->failed('操作失败');
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Http\Controllers\Controller;
 use App\Product;
+use App\TestWay;
 
 class ProductController extends Controller
 {
@@ -63,8 +64,16 @@ class ProductController extends Controller
         return $this->failed('操作失败');
     }
 
-    public function selectTestWay()
+    public function selectTestWay(Product $product)
     {
-        // todo
+        $testWayId = request('test_way_id');
+
+        if (TestWay::where('id', $testWayId)->exists()) {
+            $product->testWays()->sync([$testWayId]);
+
+            return $this->noContent();
+        }
+
+        return $this->failed('操作失败');
     }
 }

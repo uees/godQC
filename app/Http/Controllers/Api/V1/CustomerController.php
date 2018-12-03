@@ -64,8 +64,22 @@ class CustomerController extends Controller
         return $this->failed('操作失败');
     }
 
-    public function selectProducts()
+    public function selectProducts(Customer $customer)
     {
-        // todo
+        $product_ids = request('product_ids');
+        $product_ids = explode(',', $product_ids);
+
+        $customer->products()->sync($product_ids);
+
+        return $this->noContent();
+    }
+
+    public function selectProduct(Customer $customer)
+    {
+        $productId = request('product_id');
+
+        $customer->products()->attach($productId);
+
+        return $this->noContent();
     }
 }

@@ -15,16 +15,21 @@ class TestWay extends Model
         'way' => 'array',
     ];
 
-    // the way is about the steps array
-    public function newStep()
+    // item of the way array
+    public function newItem()
     {
         return [
             'name'=> '',
             'method' => '',
             'method_id' => '',
-            'spec' => '',
-            'value_type' => '',
-            'value' => ''
+            'spec' => [
+                'value_type' => '',  // range, info, number
+                'data' => [
+                    'min' => 0,
+                    'max' => 0,
+                    'value' => '',
+                ],
+            ],
         ];
     }
 }

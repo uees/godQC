@@ -1,7 +1,7 @@
 import restApi from '../utils/restapi'
 
 export const qcMethodApi = restApi('qc-methods')
-export const qcRecordApi = restApi('qc-methods')
-export const qcWayApi = restApi('qc-methods')
-export const productDisposeApi = restApi('qc-methods')
-export const productBatchApi = restApi('qc-methods')
+export const qcRecordApi = restApi('qc-records')
+export const qcWayApi = restApi('qc-ways')
+export const productDisposeApi = restApi('product-disposes')
+export const productBatchApi = restApi('product-batchs')

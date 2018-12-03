@@ -2,9 +2,9 @@ export const valueTypes = {
   data () {
     return {
       valueTypes: [
-        {code: 'STR', name: '字符串'},
-        {code: 'NUM', name: '数值'},
-        {code: 'RATIO', name: '百分比'}
+        {code: 'RANGE', name: '范围'},
+        {code: 'INFO', name: '信息'},
+        {code: 'VALUE', name: '具体值'}
       ]
     }
   }

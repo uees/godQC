@@ -21,9 +21,8 @@
     </div>
 
     <el-table
-      v-for="record in records"
-      :key="record.id"
-      :data="record"
+      v-loading.body="listLoading"
+      :data="records"
       border
       style="width: 100%"
     >

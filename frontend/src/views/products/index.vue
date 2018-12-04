@@ -56,18 +56,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="100" class-name="small-padding fixed-width">
+      <el-table-column align="center" label="操作" width="180" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            type="text"
-            size="small"
-            @click="handleUpdate(scope.row)">编辑
-          </el-button>
-          <el-button
-            type="text"
-            size="small"
-            @click="handleDelete(scope.row)">删除
-          </el-button>
+          <el-button type="text" size="small" @click="showSelectWay(scope.row)">检测流程</el-button>
+          <el-button type="text" size="small" @click="handleUpdate(scope.row)">编辑</el-button>
+          <el-button type="text" size="small" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
 
@@ -89,6 +82,8 @@
       :prop-obj.sync="propObj"
       @createDone="createDone"
       @updateDone="updateDone"/>
+
+    <select-way/>
   </div>
 </template>
 
@@ -97,11 +92,14 @@ import list from '@/mixins/list'
 import pagination from '@/mixins/pagination'
 import { productApi } from '@/api/basedata'
 import FormDialog from './dialog'
+import SelectWay from './SelectWay'
+import Bus from '@/store/bus'
 
 export default {
   name: 'Index',
   components: {
-    FormDialog
+    FormDialog,
+    SelectWay
   },
   mixins: [
     list,
@@ -109,7 +107,8 @@ export default {
   ],
   data() {
     return {
-      api: productApi
+      api: productApi,
+      propProductId: 0
     }
   },
   methods: {
@@ -117,6 +116,11 @@ export default {
       dtstr = dtstr.substring(0, 19)
       dtstr = dtstr.replace(/-/g, '/')
       return new Date(dtstr).toLocaleString()
+    },
+    showSelectWay(product) {
+      this.propProductId = product.id
+
+      Bus.$emit('product-select-way', product.id)
     }
   }
 }

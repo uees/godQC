@@ -51,6 +51,42 @@ class QCRecordController extends Controller
         return TestRecordResource::collection($pagination);
     }
 
+    public function store()
+    {
+        abort(404);
+    }
+
+
+    public function show($id)
+    {
+        $testRecord = TestRecord::with(['batch', 'items'])->find($id);
+
+        return TestRecordResource::make($testRecord);
+    }
+
+
+    public function update(Request $request, TestRecord $testRecord)
+    {
+        $testRecord->fill($request->all())->save();
+
+        return TestRecordResource::make($testRecord);
+    }
+
+
+    public function destroy($id)
+    {
+        $testRecord = TestRecord::find($id);
+
+        if (TestRecord::destroy($id)) {
+            $testRecord->items()->delete();
+
+            return $this->noContent();
+        }
+
+        return $this->failed('操作失败');
+    }
+
+
     // 取样
     public function sample(ProductBatchRequest $request, $type)
     {
@@ -96,35 +132,5 @@ class QCRecordController extends Controller
         $testRecord->items()->create($items);
 
         return TestRecordResource::make(TestRecord::with(['batch', 'items'])->find($testRecord->id));
-    }
-
-
-    public function show($id)
-    {
-        $testRecord = TestRecord::with(['batch', 'items'])->find($id);
-
-        return TestRecordResource::make($testRecord);
-    }
-
-
-    public function update(Request $request, TestRecord $testRecord)
-    {
-        $testRecord->fill($request->all())->save();
-
-        return TestRecordResource::make($testRecord);
-    }
-
-
-    public function destroy($id)
-    {
-        $testRecord = TestRecord::find($id);
-
-        if (TestRecord::destroy($id)) {
-            $testRecord->items()->delete();
-
-            return $this->noContent();
-        }
-
-        return $this->failed('操作失败');
     }
 }

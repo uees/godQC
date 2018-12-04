@@ -1,5 +1,5 @@
 <template>
-  <div class="category-dialog">
+  <div class="qc-method-dialog">
     <el-dialog :title="dialogTitleMap[action]" :visible.sync="dialogFormVisible" @close="close">
       <el-form
         ref="obj_form"

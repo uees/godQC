@@ -1,5 +1,5 @@
 <template>
-  <div class="category-dialog">
+  <div class="qc-way-dialog">
     <el-dialog :title="dialogTitleMap[action]" :fullscreen="true" :visible.sync="dialogFormVisible" @close="close">
       <el-form
         ref="obj_form"

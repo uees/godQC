@@ -52,8 +52,9 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="100" class-name="small-padding fixed-width">
+      <el-table-column align="center" label="操作" width="180" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button type="text" size="small" @click="showSelectWay(scope.row)">检测流程</el-button>
           <el-button
             type="text"
             size="small"
@@ -74,6 +75,8 @@
       :prop-obj.sync="propObj"
       @createDone="createDone"
       @updateDone="updateDone"/>
+
+    <select-way/>
   </div>
 </template>
 
@@ -81,18 +84,22 @@
 import list from '@/mixins/list'
 import { categoryApi } from '@/api/basedata'
 import FormDialog from './dialog'
+import SelectWay from './SelectWay'
+import Bus from '@/store/bus'
 
 export default {
   name: 'Index',
   components: {
-    FormDialog
+    FormDialog,
+    SelectWay
   },
   mixins: [
     list
   ],
   data() {
     return {
-      api: categoryApi
+      api: categoryApi,
+      propCategoryId: 0
     }
   },
   methods: {
@@ -100,6 +107,11 @@ export default {
       dtstr = dtstr.substring(0, 19)
       dtstr = dtstr.replace(/-/g, '/')
       return new Date(dtstr).toLocaleString()
+    },
+    showSelectWay(category) {
+      this.propCategoryId = category.id
+
+      Bus.$emit('category-select-way', category.id)
     }
   }
 }

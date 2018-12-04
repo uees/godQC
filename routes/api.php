@@ -34,4 +34,10 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
         'roles' => 'RoleController',
         'users' => 'UserController',
     ]);
+
+    Route::post('categories/{category}/qc-ways', 'CategoryController@selectTestWay');
+    Route::post('products/{product}/qc-ways', 'ProductController@selectTestWay');
+    Route::post('customers/{customer}/products', 'CustomerController@selectProducts');
+    Route::post('customers/{customer}/products/add', 'CustomerController@selectProduct');
+    Route::post('qc-records/sample', 'QCRecordController@sample');
 });

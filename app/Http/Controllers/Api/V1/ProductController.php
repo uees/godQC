@@ -40,8 +40,16 @@ class ProductController extends Controller
     }
 
 
-    public function show(Product $product)
+    public function show($id)
     {
+        $query = Product::query();
+
+        if (\request()->filled('with')) {
+            $query = $query->with(explode(',', request('with')));
+        }
+
+        $product = $query->findOrFail($id);
+
         return ProductResource::make($product);
     }
 

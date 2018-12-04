@@ -66,8 +66,8 @@ class CustomerController extends Controller
 
     public function selectProducts(Customer $customer)
     {
-        $product_ids = request('product_ids');
-        $product_ids = explode(',', $product_ids);
+        $product_ids = request('product_ids', []);
+        $product_ids = is_array($product_ids)? $product_ids : explode(',', $product_ids);
 
         $customer->products()->sync($product_ids);
 
@@ -76,9 +76,9 @@ class CustomerController extends Controller
 
     public function selectProduct(Customer $customer)
     {
-        $productId = request('product_id');
-
-        $customer->products()->attach($productId);
+        if (request()->filled('product_id')) {
+            $customer->products()->attach(request('product_id'));
+        }
 
         return $this->noContent();
     }

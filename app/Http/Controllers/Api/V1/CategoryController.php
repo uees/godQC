@@ -27,8 +27,16 @@ class CategoryController extends Controller
         return CategoryResource::collection($categories);
     }
 
-    public function show(Category $category)
+    public function show($id)
     {
+        $query = Category::query();
+
+        if (\request()->filled('with')) {
+            $query = $query->with(explode(',', request('with')));
+        }
+
+        $category = $query->findOrFail($id);
+
         return CategoryResource::make($category);
     }
 

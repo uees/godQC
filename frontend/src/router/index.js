@@ -118,7 +118,7 @@ export const asyncRouterMap = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/documentation/index'),
+        component: () => import('@/views/qcrecords/index'),
         name: 'test-fqc',
         meta: { title: '成品检测', icon: 'guide' }
       }

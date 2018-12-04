@@ -23,8 +23,16 @@ class QCRecordController extends Controller
         $query = $this->parseFields($query);
         $query = $this->parseWhere($query, ['conclusion', 'test_times']);
 
+        if (\request()->filled('with')) {
+            $query = $query->with(explode(',', request('with')));
+        }
+
         if (\request()->filled('testing')) {
             $query = $query->whereNull('said_package_at');
+        }
+
+        if (\request()->filled('tested')) {
+            $query = $query->whereNotNull('said_package_at');
         }
 
         if (\request()->filled('type')) {
@@ -57,9 +65,16 @@ class QCRecordController extends Controller
     }
 
 
+    // with=batch,items
     public function show($id)
     {
-        $testRecord = TestRecord::with(['batch', 'items'])->find($id);
+        $query = TestRecord::query();
+
+        if (\request()->filled('with')) {
+            $query = $query->with(explode(',', request('with')));
+        }
+
+        $testRecord = $query->findOrFail($id);
 
         return TestRecordResource::make($testRecord);
     }
@@ -131,6 +146,10 @@ class QCRecordController extends Controller
         }
         $testRecord->items()->create($items);
 
-        return TestRecordResource::make(TestRecord::with(['batch', 'items'])->find($testRecord->id));
+        // loading relationships
+        $testRecord->batch;
+        $testRecord->items;
+
+        return TestRecordResource::make($testRecord);
     }
 }

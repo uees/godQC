@@ -1,0 +1,208 @@
+<template>
+  <div class="app-container">
+    <!-- 查询模式，不可添加, 管理员可编辑 -->
+    <div class="filter-container">
+      <el-input
+        v-model="queryParams.q"
+        style="width: 250px;"
+        class="filter-item"
+        placeholder="搜索"
+        @keyup.enter.native="handleSearch"/>
+
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-search"
+        @click="handleSearch">搜索
+      </el-button>
+
+      <el-button class="filter-item" type="primary" icon="el-icon-document" @click="handleDownload">导出</el-button>
+    </div>
+
+    <el-table
+      v-for="record in records"
+      :key="record.id"
+      :data="record"
+      border
+      style="width: 100%"
+    >
+      <el-table-column label="取样时间">
+        <template slot-scope="scope">
+          {{ echoTime(scope.row.created_at.date) }}
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="batch.product_name" label="品名"/>
+
+      <el-table-column label="批号">
+        <template slot-scope="scope">
+          <el-tooltip :content="scope.row.memo" class="item" effect="dark" placement="top-start">
+            {{ scope.row.batch.batch_number }}
+          </el-tooltip>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="test_times" label="编号"/>
+      <el-table-column prop="conclusion" label="结论"/>
+      <el-table-column prop="testers" label="检测人"/>
+
+      <el-table-column label="完成时间">
+        <template slot-scope="scope">
+          {{ echoTime(scope.row.completed_at.date) }}
+        </template>
+      </el-table-column>
+
+      <el-table-column label="写装时间">
+        <template slot-scope="scope">
+          {{ echoTime(scope.row.said_package_at.date) }}
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="操作" width="180" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button v-if="scope.row.conclusion === 'NG'" type="text" size="small" @click="dispose(scope.row)">处理意见
+          </el-button>
+          <el-button type="text" size="small" @click="handleUpdate(scope.row)">编辑</el-button>
+          <el-button type="text" size="small" @click="handleDelete(scope.row)">删除</el-button>
+        </template>
+      </el-table-column>
+
+      <el-table-column type="expand">
+        <template slot-scope="scope">
+          <el-table
+            :data="scope.row.items"
+            stripe
+            style="width: 100%"
+          >
+            <el-table-column prop="item" label="项目"/>
+            <el-table-column label="要求">
+              <template slot-scope="scope">
+                {{ echoSpec(scope.row.spec) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="value" label="结果"/>
+            <el-table-column prop="conclusion" label="结论"/>
+            <el-table-column prop="tester" label="检测员"/>
+            <el-table-column prop="memo" label="备注"/>
+          </el-table>
+        </template>
+      </el-table-column>
+
+    </el-table>
+
+  </div>
+</template>
+
+<script>
+import { qcRecordApi } from '@/api/qc'
+import Bus from '@/store/bus'
+
+export default {
+  name: 'Index',
+  data() {
+    return {
+      records: [],
+      listLoading: false,
+      updateIndex: -1,
+      queryParams: {
+        with: 'batch,items',
+        page: 1,
+        per_page: 20,
+        q: ''
+      },
+      total: 0,
+      pageCount: 0,
+      pageSizes: [20, 40]
+    }
+  },
+  mounted() {
+    this.$nextTick(function () {
+      this.fetchData()
+    })
+    Bus.$on('record-updated', (obj) => {
+      this.records.splice(this.updateIndex, 1, obj)
+      this.updateIndex = -1 // 重置 updateIndex
+    })
+  },
+  methods: {
+    fetchData() {
+      this.listLoading = true
+      qcRecordApi.list({params: this.queryParams}).then(response => {
+        const {data} = response.data
+        this.records = data
+        this.pagination(response)
+        this.listLoading = false
+      }).catch(error => {
+        return Promise.reject(error)
+      })
+    },
+    pagination(response) {
+      const {meta} = response.data
+      this.total = +meta.total
+      this.pageCount = Math.ceil(this.total / this.queryParams.per_page)
+    },
+    handleSizeChange(val) {
+      this.queryParams.per_page = val
+      this.fetchData()
+    },
+    handleCurrentChange(val) {
+      this.queryParams.page = val
+      this.fetchData()
+    },
+    handleSearch() {
+      this.fetchData()
+    },
+    handleUpdate(row) {
+      this.updateIndex = this.records.indexOf(row)
+      Bus.$emit('show-update-record-form', row)
+    },
+    handleDelete(row) {
+      this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        qcRecordApi.delete(row.id).then(() => {
+          const index = this.records.indexOf(row)
+          this.records.splice(index, 1)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+      })
+    },
+    handleDownload() {
+      this.$message({
+        showClose: true,
+        message: '还未实现此功能'
+      })
+    },
+    echoTime(dtstr) {
+      dtstr = dtstr.substring(0, 19)
+      dtstr = dtstr.replace(/-/g, '/')
+      return new Date(dtstr).toLocaleString()
+    },
+    echoSpec(spec) {
+      if (spec.value_type === 'info' || spec.value_type === 'number') {
+        return spec.data.value
+      } else if (spec.value_type === 'range') {
+        let result = ''
+        if (spec.data.min) {
+          result += `>= ${spec.data.min}, `
+        }
+        if (spec.data.max) {
+          result += `<= ${spec.data.max}, `
+        }
+
+        return result
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

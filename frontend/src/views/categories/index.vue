@@ -38,9 +38,6 @@
     <el-table
       v-loading.body="listLoading"
       :data="tableData"
-      element-loading-text="给我一点时间"
-      element-loading-spinner="el-icon-loading"
-      element-loading-background="rgba(0, 0, 0, 0.8)"
       style="width: 100%">
 
       <el-table-column :sortable="true" prop="name" label="名称"/>

@@ -8,10 +8,15 @@ class TestRecord extends Model
 {
     protected $fillable = [
         'product_batch_id',
+        'show_reality',
         'test_times',
         'conclusion',
         'testers',
         'memo',
+    ];
+
+    protected $casts = [
+        'show_reality' => 'boolean',
     ];
 
     /**

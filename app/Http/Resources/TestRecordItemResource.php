@@ -22,6 +22,7 @@ class TestRecordItemResource extends Resource
             'item' => $this->item,
             'spec' => $this->spec,
             'value' => $this->value,
+            'fake_value' => $this->fake_value,
             'conclusion' => $this->conclusion,
             'tester' => $this->tester,
             'memo' => $this->memo,

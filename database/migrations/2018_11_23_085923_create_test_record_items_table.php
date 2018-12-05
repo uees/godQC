@@ -19,6 +19,7 @@ class CreateTestRecordItemsTable extends Migration
             $table->string('item');
             $table->string('spec')->nullable();
             $table->string('value')->nullable();
+            $table->string('fake_value')->nullable();
             $table->string('conclusion')->nullable();
             $table->string('tester')->nullable();
             $table->string('memo')->nullable();

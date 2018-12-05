@@ -74,19 +74,6 @@ export const constantRouterMap = [
         meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
       }
     ]
-  },
-  {
-    path: '/documentation',
-    component: Layout,
-    redirect: '/documentation/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'documentation', icon: 'documentation', noCache: true }
-      }
-    ]
   }
 ]
 
@@ -98,44 +85,66 @@ export default new Router({
 
 export const asyncRouterMap = [
   {
-    path: '/icon',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/svg-icons/index'),
-        name: 'Icons',
-        meta: { title: 'icons', icon: 'icon', noCache: true }
-      }
-    ]
-  },
-  {
     path: '/test/fqc',
     component: Layout,
+    redirect: 'noredirect',
+    name: 'FQC',
     meta: {
-      roles: ['admin', 'fqc']
+      roles: ['admin', 'fqc'],
+      title: '成品检测',
+      icon: 'chart'
     },
     children: [
       {
+        path: 'testing',
+        component: () => import('@/views/qcrecords/index'),
+        name: 'fqc-testing',
+        meta: { title: '在检产品', icon: 'example' }
+      },
+      {
         path: 'index',
         component: () => import('@/views/qcrecords/index'),
-        name: 'test-fqc',
-        meta: { title: '成品检测', icon: 'guide' }
+        name: 'fqc-list',
+        meta: { title: '产品检测记录', icon: 'guide', noCache: true }
+      },
+      {
+        path: 'real',
+        component: () => import('@/views/qcrecords/index'),
+        hidden: true,
+        name: 'fqc-list-real',
+        meta: { title: '产品检测记录', noCache: true }
       }
     ]
   },
   {
     path: '/test/iqc',
     component: Layout,
+    redirect: 'noredirect',
+    name: 'IQC',
     meta: {
-      roles: ['admin', 'iqc']
+      roles: ['admin', 'iqc'],
+      title: '来料检测',
+      icon: 'component'
     },
     children: [
       {
+        path: 'testing',
+        component: () => import('@/views/documentation/index'),
+        name: 'iqc-testing',
+        meta: { title: '在检材料', icon: 'example' }
+      },
+      {
         path: 'index',
         component: () => import('@/views/documentation/index'),
-        name: 'test-iqc',
-        meta: { title: '来料检测', icon: 'guide' }
+        name: 'iqc-list',
+        meta: { title: '来料检测记录', icon: 'guide', noCache: true }
+      },
+      {
+        path: 'real',
+        component: () => import('@/views/documentation/index'),
+        hidden: true,
+        name: 'iqc-list-real',
+        meta: { title: '来料检测记录', noCache: true }
       }
     ]
   },

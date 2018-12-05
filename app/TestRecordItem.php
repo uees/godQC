@@ -11,6 +11,7 @@ class TestRecordItem extends Model
         'item',
         'spec',
         'value',
+        'fake_value',
         'conclusion',
         'tester',
         'memo',

@@ -23,6 +23,7 @@ class CreateTestRecordsTable extends Migration
             $table->timestamp('completed_at')->nullable();
             $table->timestamp('said_package_at')->nullable();
             $table->string('memo')->nullable();
+            $table->boolean('show_reality')->default(true);
             $table->timestamps();
         });
     }

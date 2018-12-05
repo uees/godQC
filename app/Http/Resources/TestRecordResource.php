@@ -18,6 +18,7 @@ class TestRecordResource extends Resource
             'id' => (int)$this->id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'show_reality' => $this->show_reality,
             'product_batch_id' => (int) $this->product_batch_id,
             'test_times' => (int)$this->test_times,
             'conclusion' => $this->conclusion,

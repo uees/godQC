@@ -43,7 +43,13 @@
       </el-table-column>
 
       <el-table-column prop="test_times" label="编号"/>
-      <el-table-column prop="conclusion" label="结论"/>
+
+      <el-table-column label="结论">
+        <template slot-scope="scope">
+          {{ showReality(scope.row) ? scope.row.batch.conclusion : 'PASS' }}
+        </template>
+      </el-table-column>
+
       <el-table-column prop="testers" label="检测人"/>
 
       <el-table-column label="完成时间">
@@ -80,7 +86,10 @@
                 {{ echoSpec(scope.row.spec) }}
               </template>
             </el-table-column>
-            <el-table-column prop="value" label="结果"/>
+
+            <el-table-column v-if="showReality(scope.row)" prop="value" label="结果"/>
+            <el-table-column v-else prop="fake_value" label="结果"/>
+
             <el-table-column prop="conclusion" label="结论"/>
             <el-table-column prop="tester" label="检测员"/>
             <el-table-column prop="memo" label="备注"/>
@@ -101,6 +110,7 @@ export default {
   name: 'Index',
   data() {
     return {
+      real: false, // 强制真实开关
       records: [],
       listLoading: false,
       updateIndex: -1,
@@ -197,6 +207,13 @@ export default {
 
         return result
       }
+    },
+    showReality(record) {
+      if (this.real) {
+        return true
+      }
+
+      return record.show_reality
     }
   }
 }

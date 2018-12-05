@@ -28,6 +28,8 @@ class ProductDisposeController extends Controller
                 });
         }
 
+        $query = $query->orderBy($this->sortBy(), $this->order());
+
         $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 
         return ProductDisposeResource::collection($pagination);

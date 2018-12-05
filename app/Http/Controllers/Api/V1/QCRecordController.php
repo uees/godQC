@@ -52,6 +52,8 @@ class QCRecordController extends Controller
             });
         }
 
+        $query = $query->orderBy($this->sortBy(), $this->order());
+
         if (\request()->filled('all')) {
             $records = $query->get();
         } else {

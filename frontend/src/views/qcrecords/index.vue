@@ -23,6 +23,7 @@
       v-loading.body="listLoading"
       :data="records"
       border
+      stripe
       style="width: 100%"
     >
       <el-table-column label="取样时间">
@@ -201,6 +202,9 @@ export default {
       }
 
       return record.show_reality
+    },
+    dispose(row) {
+      // todo show dispose
     }
   }
 }

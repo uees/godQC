@@ -22,6 +22,8 @@ class ProductBatchController extends Controller
                 ->orWhere($batch_condition);
         }
 
+        $query = $query->orderBy($this->sortBy(), $this->order());
+
         $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 
         return ProductBatchResource::collection($pagination);

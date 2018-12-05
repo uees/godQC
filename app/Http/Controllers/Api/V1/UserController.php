@@ -22,6 +22,8 @@ class UserController extends Controller
                 ->orWhere($email_condition);
         }
 
+        $query = $query->orderBy($this->sortBy(), $this->order());
+
         $pagination = $query
             ->paginate($perPage)
             ->appends(request()->except('page'));

@@ -66,11 +66,6 @@ export default {
       dialogFormVisible: false
     }
   },
-  computed: {
-    productFullName() {
-      return `${this.record.batch.product_name} ${this.record.batch.product_name_suffix}`
-    }
-  },
   mounted() {
     Bus.$on('show-record-sample-form', (type) => {
       this.type = type

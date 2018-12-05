@@ -18,9 +18,12 @@
 
     <el-table
       v-loading.body="listLoading"
+      :row-class-name="rowClass"
       :data="records"
       border
-      style="width: 100%"
+      default-expand-all
+      row-key="id"
+      style="width: 100%;"
     >
       <el-table-column label="取样时间">
         <template slot-scope="scope">
@@ -30,7 +33,6 @@
 
       <el-table-column prop="batch.product_name" label="品名"/>
       <el-table-column prop="batch.batch_number" label="批号"/>
-      <el-table-column prop="test_times" label="测试次数"/>
 
       <el-table-column label="结论">  <!--PASS, NG -->
         <template slot-scope="scope">
@@ -60,7 +62,8 @@
           <el-table
             :data="scope.row.items"
             stripe
-            style="width: 100%"
+            header-cell-class-name="table-header-th"
+            style="width: 100%;"
           >
             <el-table-column prop="item" label="项目"/>
             <el-table-column label="要求">
@@ -105,7 +108,6 @@ export default {
     return {
       records: [],
       listLoading: false,
-      updateIndex: -1,
       queryParams: {
         with: 'batch,items',
         type: 'FQC', // FQC, IQC
@@ -120,8 +122,7 @@ export default {
       this.fetchData()
     })
     Bus.$on('record-sampled', (record) => {
-      this.records.splice(this.updateIndex, 1, record)
-      this.updateIndex = -1 // 重置 updateIndex
+      this.records.unshift(record)
     })
   },
   methods: {
@@ -166,11 +167,35 @@ export default {
     },
     makeDispose(record) {
 
+    },
+    rowClass({row, rowIndex}) {
+      if (rowIndex % 2 === 0) {
+        return 'light-row border-top'
+      }
+
+      return 'border-top'
     }
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss">
+  .el-table th.table-header-th {
+    background-color: #fcf8e3;
+  }
 
+  .el-table tr.border-top.expanded td {
+    border-top: #cccccc 3px solid;
+  }
+
+  .el-table tr.light-row.expanded {
+    background-color: #f7f7f7;
+  }
+
+  .el-table tr.light-row.expanded + tr {  // + 选择同级相邻元素
+    background-color: #f7f7f7;
+    .el-table__expanded-cell {
+      background-color: #f7f7f7;
+    }
+  }
 </style>

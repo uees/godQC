@@ -87,6 +87,7 @@ import list from '@/mixins/list'
 import pagination from '@/mixins/pagination'
 import { qcWayApi } from '@/api/qc'
 import FormDialog from './dialog'
+import echoTimeMethod from '@/mixins/echoTimeMethod'
 
 export default {
   name: 'Index',
@@ -95,7 +96,8 @@ export default {
   },
   mixins: [
     list,
-    pagination
+    pagination,
+    echoTimeMethod
   ],
   data() {
     return {
@@ -103,11 +105,7 @@ export default {
     }
   },
   methods: {
-    echoTime(dtstr) {
-      dtstr = dtstr.substring(0, 19)
-      dtstr = dtstr.replace(/-/g, '/')
-      return new Date(dtstr).toLocaleString()
-    }
+    //
   }
 }
 </script>

@@ -91,6 +91,7 @@ import { productApi } from '@/api/basedata'
 import FormDialog from './dialog'
 import SelectWay from './SelectWay'
 import Bus from '@/store/bus'
+import echoTimeMethod from '@/mixins/echoTimeMethod'
 
 export default {
   name: 'Index',
@@ -100,7 +101,8 @@ export default {
   },
   mixins: [
     list,
-    pagination
+    pagination,
+    echoTimeMethod
   ],
   data() {
     return {
@@ -109,11 +111,6 @@ export default {
     }
   },
   methods: {
-    echoTime(dtstr) {
-      dtstr = dtstr.substring(0, 19)
-      dtstr = dtstr.replace(/-/g, '/')
-      return new Date(dtstr).toLocaleString()
-    },
     showSelectWay(product) {
       this.propProductId = product.id
 

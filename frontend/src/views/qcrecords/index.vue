@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-    <!-- 查询模式，不可添加, 管理员可编辑 -->
     <div class="filter-container">
       <el-input
         v-model="queryParams.q"
@@ -46,7 +45,7 @@
 
       <el-table-column label="结论">
         <template slot-scope="scope">
-          {{ showReality(scope.row) ? scope.row.batch.conclusion : 'PASS' }}
+          {{ showReality(scope.row) ? scope.row.conclusion : 'PASS' }}
         </template>
       </el-table-column>
 
@@ -105,9 +104,15 @@
 <script>
 import { qcRecordApi } from '@/api/qc'
 import Bus from '@/store/bus'
+import echoSpecMethod from '@/mixins/echoSpecMethod'
+import echoTimeMethod from '@/mixins/echoTimeMethod'
 
 export default {
   name: 'Index',
+  mixins: [
+    echoSpecMethod,
+    echoTimeMethod
+  ],
   data() {
     return {
       real: false, // 强制真实开关
@@ -116,9 +121,11 @@ export default {
       updateIndex: -1,
       queryParams: {
         with: 'batch,items',
+        type: 'fqc',
+        tested: 1,
+        q: '',
         page: 1,
-        per_page: 20,
-        q: ''
+        per_page: 20
       },
       total: 0,
       pageCount: 0,
@@ -187,26 +194,6 @@ export default {
         showClose: true,
         message: '还未实现此功能'
       })
-    },
-    echoTime(dtstr) {
-      dtstr = dtstr.substring(0, 19)
-      dtstr = dtstr.replace(/-/g, '/')
-      return new Date(dtstr).toLocaleString()
-    },
-    echoSpec(spec) {
-      if (spec.value_type === 'info' || spec.value_type === 'number') {
-        return spec.data.value
-      } else if (spec.value_type === 'range') {
-        let result = ''
-        if (spec.data.min) {
-          result += `>= ${spec.data.min}, `
-        }
-        if (spec.data.max) {
-          result += `<= ${spec.data.max}, `
-        }
-
-        return result
-      }
     },
     showReality(record) {
       if (this.real) {

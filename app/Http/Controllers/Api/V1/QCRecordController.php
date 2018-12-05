@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 
 class QCRecordController extends Controller
 {
-    // type, testing, conclusion, test_times
+    // query params: type, testing, tested, conclusion, test_times, all
     public function index()
     {
         $perPage = $this->perPage();
@@ -54,9 +54,13 @@ class QCRecordController extends Controller
 
         $query = $this->parseWhere($query, ['created_at', 'conclusion']);
 
-        $pagination = $query->paginate($perPage)->appends(request()->except('page'));
+        if (\request()->filled('all')) {
+            $records = $query->get();
+        } else {
+            $records = $query->paginate($perPage)->appends(request()->except('page'));
+        }
 
-        return TestRecordResource::collection($pagination);
+        return TestRecordResource::collection($records);
     }
 
     public function store()

@@ -83,6 +83,7 @@ import { categoryApi } from '@/api/basedata'
 import FormDialog from './dialog'
 import SelectWay from './SelectWay'
 import Bus from '@/store/bus'
+import echoTimeMethod from '@/mixins/echoTimeMethod'
 
 export default {
   name: 'Index',
@@ -91,7 +92,8 @@ export default {
     SelectWay
   },
   mixins: [
-    list
+    list,
+    echoTimeMethod
   ],
   data() {
     return {
@@ -100,11 +102,6 @@ export default {
     }
   },
   methods: {
-    echoTime(dtstr) {
-      dtstr = dtstr.substring(0, 19)
-      dtstr = dtstr.replace(/-/g, '/')
-      return new Date(dtstr).toLocaleString()
-    },
     showSelectWay(category) {
       this.propCategoryId = category.id
 

@@ -61,7 +61,7 @@
         <template slot-scope="scope">
           <el-table
             :data="scope.row.items"
-            stripe
+            border
             header-cell-class-name="table-header-th"
             style="width: 100%;"
           >
@@ -170,10 +170,10 @@ export default {
     },
     rowClass({row, rowIndex}) {
       if (rowIndex % 2 === 0) {
-        return 'light-row border-top'
+        return 'light-row border'
       }
 
-      return 'border-top'
+      return 'border'
     }
   }
 }
@@ -184,18 +184,23 @@ export default {
     background-color: #fcf8e3;
   }
 
-  .el-table tr.border-top.expanded td {
-    border-top: #cccccc 3px solid;
+  .el-table tr.expanded.border td {
+    border-bottom: none;
   }
 
-  .el-table tr.light-row.expanded {
+  .el-table tr.expanded.light-row {
     background-color: #f7f7f7;
   }
 
-  .el-table tr.light-row.expanded + tr {  // + 选择同级相邻元素
+  .el-table tr.expanded.light-row + tr { // + 选择同级相邻元素
     background-color: #f7f7f7;
-    .el-table__expanded-cell {
+
+    td.el-table__expanded-cell {
       background-color: #f7f7f7;
+
+      .el-table {
+        background-color: #f7f7f7;
+      }
     }
   }
 </style>

@@ -17,6 +17,7 @@ class CreateProductBatchesTable extends Migration
         Schema::create('product_batches', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('product_name');
+            $table->string('product_name_suffix')->nullable();
             $table->string('batch_number');
             $table->enum('type', ['FQC', 'IQC']);
             $table->string('amount')->nullable();

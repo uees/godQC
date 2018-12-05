@@ -80,6 +80,8 @@
 
     </el-table>
 
+    <qc-sample/>
+
   </div>
 </template>
 
@@ -88,9 +90,13 @@ import { qcRecordApi } from '@/api/qc'
 import Bus from '@/store/bus'
 import echoSpecMethod from '@/mixins/echoSpecMethod'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
+import QcSample from './QcSample'
 
 export default {
   name: 'Testing',
+  components: {
+    QcSample
+  },
   mixins: [
     echoSpecMethod,
     echoTimeMethod
@@ -102,7 +108,7 @@ export default {
       updateIndex: -1,
       queryParams: {
         with: 'batch,items',
-        type: 'fqc',
+        type: 'FQC', // FQC, IQC
         testing: 1,
         q: '',
         all: 1
@@ -113,8 +119,8 @@ export default {
     this.$nextTick(function () {
       this.fetchData()
     })
-    Bus.$on('record-sampled', (obj) => {
-      this.records.splice(this.updateIndex, 1, obj)
+    Bus.$on('record-sampled', (record) => {
+      this.records.splice(this.updateIndex, 1, record)
       this.updateIndex = -1 // 重置 updateIndex
     })
   },
@@ -128,7 +134,7 @@ export default {
       })
     },
     handleSample() {
-      Bus.$emit('show-record-sample-form')
+      Bus.$emit('show-record-sample-form', this.queryParams.type)
     },
     handleUpdateRecord(record) {
 

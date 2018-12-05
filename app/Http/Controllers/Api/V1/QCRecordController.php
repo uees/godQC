@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Events\QCSampled;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductBatchRequest;
 use App\Http\Resources\TestRecordResource;
 use App\Product;
 use App\ProductBatch;
 use App\TestRecord;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class QCRecordController extends Controller
@@ -20,12 +21,12 @@ class QCRecordController extends Controller
 
         $query = TestRecord::query();
 
-        $query = $this->parseFields($query);
-        $query = $this->parseWhere($query, ['conclusion', 'test_times']);
-
         if (\request()->filled('with')) {
             $query = $query->with(explode(',', request('with')));
         }
+
+        $query = $this->parseFields($query);
+        $query = $this->parseWhere($query, ['conclusion', 'test_times', 'created_at']);
 
         if (\request()->filled('testing')) {
             $query = $query->whereNull('said_package_at');
@@ -36,23 +37,20 @@ class QCRecordController extends Controller
         }
 
         if (\request()->filled('type')) {
-            $type = \request('type');
-            $query = $query->whereHas('batch', function (Builder $query) use ($type) {
-                $query->where('type', $type);
+            $query = $query->whereHas('batch', function (Builder $query) {
+                $query->where('type', \request('type'));
             });
         }
 
         if (\request()->filled('q')) {
-            $name_condition = queryCondition('product_name', \request('q'));
-            $batch_condition = queryCondition('batch_number', \request('q'));
+            $query = $query->whereHas('batch', function (Builder $query) {
+                $name_condition = queryCondition('product_name', \request('q'));
+                $batch_condition = queryCondition('batch_number', \request('q'));
 
-            $query = $query->whereHas('batch', function (Builder $query) use ($name_condition, $batch_condition) {
                 $query->where($name_condition)
                     ->orWhere($batch_condition);
             });
         }
-
-        $query = $this->parseWhere($query, ['created_at', 'conclusion']);
 
         if (\request()->filled('all')) {
             $records = $query->get();
@@ -107,22 +105,27 @@ class QCRecordController extends Controller
 
 
     // 取样
-    public function sample(ProductBatchRequest $request, $type)
+    public function sample(ProductBatchRequest $request)
     {
         $productName = $request->get('product_name');
         $batchNumber = $request->get('batch_number');
+        $type = $request->get('type');
 
         // step 1. 创建批次
-        $batch = ProductBatch::firstOrCreate([
-            'product_name' => $productName,
-            'batch_number' => $batchNumber,
-        ], ['type' => $type]);
+        $batch = ProductBatch::where('product_name', $productName)
+            ->where('batch_number', $batchNumber)
+            ->first();
+
+        if (is_null($batch)) {
+            $batch = ProductBatch::create([
+                'product_name' => $productName,
+                'batch_number' => $batchNumber,
+                'type' => $type,
+            ]);
+        }
 
         // step 2. 创建空白检测表单
-        $testRecord = new TestRecord();
-        $testRecord->fill([
-            'test_times' => $batch->testRecords()->count() + 1,
-        ]);
+        $testRecord = (new TestRecord());
 
         $batch->testRecords()->save($testRecord);
 
@@ -148,11 +151,16 @@ class QCRecordController extends Controller
                 'value' => '',
             ]);
         }
-        $testRecord->items()->create($items);
+        if (!empty($items)) {
+            $testRecord->items()->create($items);
+        }
 
         // loading relationships
         $testRecord->batch;
         $testRecord->items;
+
+        // 触发事件
+        event(new QCSampled($batch, $testRecord));
 
         return TestRecordResource::make($testRecord);
     }

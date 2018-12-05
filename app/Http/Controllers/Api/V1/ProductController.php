@@ -10,6 +10,7 @@ use App\TestWay;
 
 class ProductController extends Controller
 {
+    // sort_by,order
     public function index()
     {
         $perPage = $this->perPage();
@@ -23,7 +24,9 @@ class ProductController extends Controller
                 ->orWhere($market_name_condition);
         }
 
-        $pagination = $query->paginate($perPage)->appends(request()->except('page'));
+        $pagination = $query->orderBy($this->sortBy(), $this->order())
+            ->paginate($perPage)
+            ->appends(request()->except('page'));
 
         return ProductResource::collection($pagination);
     }

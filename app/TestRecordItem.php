@@ -27,6 +27,6 @@ class TestRecordItem extends Model
      */
     public function testRecord()
     {
-        return $this->belongsTo(TestRecord::class);
+        return $this->belongsTo(TestRecord::class, 'test_record_id');
     }
 }

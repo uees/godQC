@@ -97,7 +97,7 @@ export const asyncRouterMap = [
     children: [
       {
         path: 'testing',
-        component: () => import('@/views/qcrecords/index'),
+        component: () => import('@/views/qcrecords/testing'),
         name: 'fqc-testing',
         meta: { title: '在检产品', icon: 'example' }
       },
@@ -129,19 +129,19 @@ export const asyncRouterMap = [
     children: [
       {
         path: 'testing',
-        component: () => import('@/views/documentation/index'),
+        component: () => import('@/views/qcrecords/testing'),
         name: 'iqc-testing',
         meta: { title: '在检材料', icon: 'example' }
       },
       {
         path: 'index',
-        component: () => import('@/views/documentation/index'),
+        component: () => import('@/views/qcrecords/index'),
         name: 'iqc-list',
         meta: { title: '来料检测记录', icon: 'guide', noCache: true }
       },
       {
         path: 'real',
-        component: () => import('@/views/documentation/index'),
+        component: () => import('@/views/qcrecords/index'),
         hidden: true,
         name: 'iqc-list-real',
         meta: { title: '来料检测记录', noCache: true }

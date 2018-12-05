@@ -19,6 +19,7 @@ class ProductBatchResource extends Resource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'product_name' => $this->product_name,
+            'product_name_suffix' => $this->product_name_suffix,
             'batch_number' => $this->batch_number,
             'type' => $this->type,
             'amount' => $this->amount,

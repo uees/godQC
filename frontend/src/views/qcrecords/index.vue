@@ -121,7 +121,7 @@ export default {
       updateIndex: -1,
       queryParams: {
         with: 'batch,items',
-        type: 'fqc',
+        type: 'FQC', // FQC, IQC
         tested: 1,
         q: '',
         page: 1,

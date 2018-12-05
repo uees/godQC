@@ -24,7 +24,7 @@ class TestRecord extends Model
      */
     public function batch()
     {
-        return $this->belongsTo(ProductBatch::class);
+        return $this->belongsTo(ProductBatch::class, 'product_batch_id');
     }
 
     /**
@@ -32,7 +32,7 @@ class TestRecord extends Model
      */
     public function items()
     {
-        return $this->hasMany(TestRecordItem::class);
+        return $this->hasMany(TestRecordItem::class, 'test_record_id');
     }
 
     /**

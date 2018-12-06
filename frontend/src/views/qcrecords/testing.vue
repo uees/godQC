@@ -1,6 +1,13 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <el-button
+        class="filter-item"
+        type="danger"
+        icon="el-icon-plus"
+        @click="handleSample">取样
+      </el-button>
+
       <el-input
         v-model="queryParams.q"
         style="width: 250px;"
@@ -10,9 +17,10 @@
 
       <el-button
         class="filter-item"
+        style="margin-left: 200px;"
         type="primary"
-        icon="el-icon-edit"
-        @click="handleSample">取样
+        icon="el-icon-refresh"
+        @click="fetchData">刷新
       </el-button>
     </div>
 
@@ -25,35 +33,45 @@
       row-key="id"
       style="width: 100%;"
     >
-      <el-table-column label="取样时间">
+      <el-table-column label="取样时间" align="center" width="180">
         <template slot-scope="scope">
           {{ echoTime(scope.row.created_at.date) }}
         </template>
       </el-table-column>
 
-      <el-table-column prop="batch.product_name" label="品名"/>
-      <el-table-column prop="batch.batch_number" label="批号"/>
+      <el-table-column prop="batch.product_name" label="品名" align="center"/>
+      <el-table-column prop="batch.batch_number" label="批号" align="center"/>
 
-      <el-table-column label="结论">  <!--PASS, NG -->
+      <el-table-column label="结论" align="center">  <!--PASS, NG -->
         <template slot-scope="scope">
-          <el-select v-model="scope.row.conclusion"/>
+          <el-select v-model="scope.row.conclusion">
+            <el-option
+              v-for="item in conclusions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+              @change="onRecordConclusionChanged(scope.row)"/>
+          </el-select>
         </template>
       </el-table-column>
 
-      <el-table-column prop="testers" label="检测人"/>
+      <el-table-column prop="testers" label="检测人" align="center"/>
 
-      <el-table-column label="备注" width="250">
+      <el-table-column label="备注" width="300" align="center">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.memo" placeholder="请输入内容"/>
+          <el-input
+            v-model="scope.row.memo"
+            placeholder="请输入内容"
+            @blur="onRecordMemoChanged(scope.row)"/>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="操作" width="180" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.conclusion === 'NG'" type="text" size="small" @click="makeDispose(scope.row)">处理意见
+          <el-button v-if="scope.row.conclusion === 'NG'" type="text" size="small" @click="handleMakeDispose(scope.row)">处理意见
           </el-button>
           <el-button type="text" size="small" @click="handleSayPackage(scope.row)">写装</el-button>
-          <el-button type="text" size="small" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="text" size="small" @click="handleDeleteRecord(scope.row)">删除</el-button>
         </template>
       </el-table-column>
 
@@ -67,16 +85,53 @@
           >
             <el-table-column prop="item" label="项目"/>
             <el-table-column label="要求">
-              <template slot-scope="scope">
-                {{ echoSpec(scope.row.spec) }}
+              <template slot-scope="props">
+                {{ echoSpec(props.row.spec) }}
               </template>
             </el-table-column>
 
-            <el-table-column prop="value" label="结果"/>
+            <el-table-column label="结果">
+              <template slot-scope="props">
+                <el-input
+                  v-model="props.row.value"
+                  @blur="onItemValueChanged(scope.row, props.row)"/>
+              </template>
+            </el-table-column>
 
-            <el-table-column prop="conclusion" label="结论"/>
-            <el-table-column prop="tester" label="检测员"/>
-            <el-table-column prop="memo" label="备注"/>
+            <el-table-column label="结论">
+              <template slot-scope="props">
+                <el-select
+                  v-model="props.row.conclusion"
+                  @change="onItemConclusionChanged(scope.row, props.row)"
+                >
+                  <el-option
+                    v-for="item in conclusions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"/>
+                </el-select>
+              </template>
+            </el-table-column>
+
+            <el-table-column label="检测员">
+              <template slot-scope="props">
+                <el-autocomplete
+                  v-model="props.row.tester"
+                  :fetch-suggestions="queryTesters"
+                  value-key="name"
+                  placeholder="检测员"
+                  @select="onItemUserSelected(scope.row, props.row)"/>
+              </template>
+            </el-table-column>
+
+            <el-table-column label="备注">
+              <template slot-scope="props">
+                <el-input
+                  v-model="props.row.memo"
+                  @blur="onItemMemoChanged(scope.row, props.row)"
+                />
+              </template>
+            </el-table-column>
           </el-table>
         </template>
       </el-table-column>
@@ -89,11 +144,12 @@
 </template>
 
 <script>
-import { qcRecordApi } from '@/api/qc'
+import { qcRecordApi, getTesters } from '@/api/qc'
 import Bus from '@/store/bus'
 import echoSpecMethod from '@/mixins/echoSpecMethod'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
 import QcSample from './QcSample'
+import testOperation from './mixin/testOperation'
 
 export default {
   name: 'Testing',
@@ -102,11 +158,13 @@ export default {
   },
   mixins: [
     echoSpecMethod,
-    echoTimeMethod
+    echoTimeMethod,
+    testOperation
   ],
   data() {
     return {
       records: [],
+      testers: [],
       listLoading: false,
       queryParams: {
         with: 'batch,items',
@@ -114,12 +172,22 @@ export default {
         testing: 1,
         q: '',
         all: 1
-      }
+      },
+      conclusions: [
+        {
+          value: 'PASS',
+          label: '合格'
+        }, {
+          value: 'NG',
+          label: '不合格'
+        }
+      ]
     }
   },
   mounted() {
     this.$nextTick(function () {
       this.fetchData()
+      this.fetchTesters()
     })
     Bus.$on('record-sampled', (record) => {
       this.records.unshift(record)
@@ -128,47 +196,27 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      qcRecordApi.list({params: this.queryParams}).then(response => {
-        const {data} = response.data
+      qcRecordApi.list({ params: this.queryParams }).then(response => {
+        const { data } = response.data
         this.records = data
         this.listLoading = false
       })
     },
-    handleSample() {
-      Bus.$emit('show-record-sample-form', this.queryParams.type)
-    },
-    handleUpdateRecord(record) {
-
-    },
-    handleUpdateRecordItem(record) {
-
-    },
-    handleDelete(row) {
-      this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        qcRecordApi.delete(row.id).then(() => {
-          const index = this.records.indexOf(row)
-          this.records.splice(index, 1)
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        })
+    fetchTesters() {
+      getTesters().then(response => {
+        const { data } = response.data
+        this.testers = data
       })
     },
     handleSearch() {
       this.fetchData()
     },
-    handleSayPackage(row) {
-
+    queryTesters(queryString, cb) {
+      const testers = this.testers
+      const results = queryString ? testers.filter(tester => tester.name.toLowerCase().indexOf(queryString.toLowerCase()) >= 0) : testers
+      cb(results)
     },
-    makeDispose(record) {
-
-    },
-    rowClass({row, rowIndex}) {
+    rowClass({ row, rowIndex }) {
       if (rowIndex % 2 === 0) {
         return 'light-row border'
       }
@@ -181,11 +229,12 @@ export default {
 
 <style lang="scss">
   .el-table th.table-header-th {
-    background-color: #fcf8e3;
+    color: blue;
   }
 
   .el-table tr.expanded.border td {
     border-bottom: none;
+    background-color: #fcf8e3;
   }
 
   .el-table tr.expanded.light-row {

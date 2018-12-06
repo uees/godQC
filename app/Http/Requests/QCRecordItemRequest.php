@@ -24,7 +24,7 @@ class QCRecordItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'conclusion' => 'required'
+            'item' => 'required'
         ];
     }
 }

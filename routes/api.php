@@ -20,6 +20,14 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
     Route::post('auth/logout-anywhere', 'AuthController@logoutAnywhere');
 
     Route::get('users/me', 'AuthController@me');
+    Route::get('users/testers', 'UserController@testers');
+    Route::post('categories/{category}/qc-ways', 'CategoryController@selectTestWay');
+    Route::post('products/{product}/qc-ways', 'ProductController@selectTestWay');
+    Route::post('customers/{customer}/products', 'CustomerController@selectProducts');
+    Route::post('customers/{customer}/products/add', 'CustomerController@selectProduct');
+    Route::post('qc-records/sample', 'QCRecordController@sample');
+    Route::patch('qc-records/{testRecord}/test-done', 'QCRecordController@testDone');
+    Route::patch('qc-records/{testRecord}/say-package', 'QCRecordController@sayPackage');
 
     Route::apiResources([
         'categories' => 'CategoryController',
@@ -30,14 +38,9 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
         'product-disposes' => 'ProductDisposeController',
         'qc-methods' => 'QCMethodController',
         'qc-records' => 'QCRecordController',
+        'qc-record-items' => 'QCRecordItemController',
         'qc-ways' => 'QCWayController',
         'roles' => 'RoleController',
         'users' => 'UserController',
     ]);
-
-    Route::post('categories/{category}/qc-ways', 'CategoryController@selectTestWay');
-    Route::post('products/{product}/qc-ways', 'ProductController@selectTestWay');
-    Route::post('customers/{customer}/products', 'CustomerController@selectProducts');
-    Route::post('customers/{customer}/products/add', 'CustomerController@selectProduct');
-    Route::post('qc-records/sample', 'QCRecordController@sample');
 });

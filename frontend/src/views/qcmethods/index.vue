@@ -41,7 +41,11 @@
       style="width: 100%">
 
       <el-table-column :sortable="true" prop="name" label="名称"/>
-      <el-table-column prop="file" label="文档"/>
+      <el-table-column label="文档">
+        <template slot-scope="scope">
+          <a :href="`http://god-qc.com/storage/methods/${scope.row.file}`" target="_blank">{{ scope.row.file }}</a>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间">
         <template slot-scope="scope">
           {{ echoTime(scope.row.created_at.date) }}
@@ -106,7 +110,9 @@ export default {
     }
   },
   methods: {
-    //
+    openWord(file) {
+      //
+    }
   }
 }
 </script>

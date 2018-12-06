@@ -3,6 +3,7 @@ import request from '../utils/request'
 
 export const qcMethodApi = restApi('qc-methods')
 export const qcRecordApi = restApi('qc-records')
+export const qcRecordItemsApi = restApi('qc-record-items')
 export const qcWayApi = restApi('qc-ways')
 export const productDisposeApi = restApi('product-disposes')
 export const productBatchApi = restApi('product-batchs')
@@ -25,4 +26,16 @@ export function customerAddProduct(customer_id, product_id) {
 
 export function qcSample(data) {
   return request.post('qc-records/sample', data)
+}
+
+export function getTesters() {
+  return request.get('users/testers')
+}
+
+export function testDone(record_id) {
+  return request.patch(`qc-records/${record_id}/test-done`)
+}
+
+export function sayPackage(record_id) {
+  return request.patch(`qc-records/${record_id}/say-package`)
 }

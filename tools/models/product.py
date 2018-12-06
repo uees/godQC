@@ -10,10 +10,13 @@ from .base import Base
 class Product(Base):
 
     __tablename__ = 'products'
+    __table_args__ = {
+        "mysql_charset": "utf8"
+    }
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     category_id = Column(Integer, ForeignKey('categories.id'))
-    internal_name = Column(String(256))
+    internal_name = Column(String(128), unique=True)
     market_name = Column(String(256))
     part_a = Column(String(256), nullable=True)
     part_b = Column(String(256), nullable=True)

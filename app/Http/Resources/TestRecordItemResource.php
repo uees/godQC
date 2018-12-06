@@ -9,7 +9,7 @@ class TestRecordItemResource extends Resource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return array
      */
     public function toArray($request)
@@ -18,7 +18,7 @@ class TestRecordItemResource extends Resource
             'id' => (int)$this->id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'test_record_id' => (int) $this->test_record_id,
+            'test_record_id' => (int)$this->test_record_id,
             'item' => $this->item,
             'spec' => $this->spec,
             'value' => $this->value,
@@ -26,7 +26,7 @@ class TestRecordItemResource extends Resource
             'conclusion' => $this->conclusion,
             'tester' => $this->tester,
             'memo' => $this->memo,
-            'testRecord' => TestRecordResource::make($this->whenLoaded('testRecord'))
+            'testRecord' => TestRecordResource::make($this->whenLoaded('testRecord')),
         ];
     }
 }

@@ -64,4 +64,39 @@ class UserController extends Controller
 
         return $this->failed('操作失败');
     }
+
+    public function testers()
+    {
+        return $this->respond([
+            'data' => [
+                [
+                    'name' => '周菊明',
+                ],
+                [
+                    'name' => '黄桂泉',
+                ],
+                [
+                    'name' => '袁秀英',
+                ],
+                [
+                    'name' => '谭姣姣',
+                ],
+                [
+                    'name' => '王孟娇',
+                ],
+                [
+                    'name' => '欧阳泽成',
+                ],
+                [
+                    'name' => '谢秀琴',
+                ],
+                [
+                    'name' => '周建兰',
+                ],
+                [
+                    'name' => '万重阳',
+                ],
+            ],
+        ]);
+    }
 }

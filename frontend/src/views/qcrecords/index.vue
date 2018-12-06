@@ -26,15 +26,16 @@
       stripe
       style="width: 100%"
     >
-      <el-table-column label="取样时间">
+      <el-table-column align="center" label="取样时间">
         <template slot-scope="scope">
           {{ echoTime(scope.row.created_at.date) }}
         </template>
       </el-table-column>
 
-      <el-table-column prop="batch.product_name" label="品名"/>
+      <el-table-column prop="test_times" align="center" label="检测次数"/>
+      <el-table-column prop="batch.product_name" align="center" label="品名"/>
 
-      <el-table-column label="批号">
+      <el-table-column align="center" label="批号">
         <template slot-scope="scope">
           <el-tooltip :content="scope.row.memo" class="item" effect="dark" placement="top-start">
             {{ scope.row.batch.batch_number }}
@@ -42,23 +43,21 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="test_times" label="编号"/>
-
-      <el-table-column label="结论">
+      <el-table-column align="center" label="结论">
         <template slot-scope="scope">
           {{ showReality(scope.row) ? scope.row.conclusion : 'PASS' }}
         </template>
       </el-table-column>
 
-      <el-table-column prop="testers" label="检测人"/>
+      <el-table-column prop="testers" align="center" label="检测人"/>
 
-      <el-table-column label="完成时间">
+      <el-table-column align="center" label="完成时间">
         <template slot-scope="scope">
           {{ echoTime(scope.row.completed_at.date) }}
         </template>
       </el-table-column>
 
-      <el-table-column label="写装时间">
+      <el-table-column align="center" label="写装时间">
         <template slot-scope="scope">
           {{ echoTime(scope.row.said_package_at.date) }}
         </template>

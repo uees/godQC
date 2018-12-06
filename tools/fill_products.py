@@ -39,7 +39,7 @@ def fill_product_sheet(file, sheet):
         kind = ws['B{}'.format(row_index)].value
         category = ws['F{}'.format(row_index)].value
 
-        if not category:
+        if kind and not category:
             if kind.startswith('a2000'):
                 ws['F{}'.format(row_index)] = "A-2000"
             elif kind.startswith('a2100'):
@@ -52,12 +52,12 @@ def fill_product_sheet(file, sheet):
                 ws['F{}'.format(row_index)] = "K-2500"
             elif market_name.startswith('SP'):
                 ws['F{}'.format(row_index)] = "SPXX"
+            elif kind.startswith('h9100b'):
+                ws['F{}'.format(row_index)] = "H-8100B/H-9100B"
             elif kind.startswith('h8100'):
                 ws['F{}'.format(row_index)] = "H-8100"
             elif kind.startswith('h9100'):
                 ws['F{}'.format(row_index)] = "H-9100"
-            elif kind.startswith('h9100b'):
-                ws['F{}'.format(row_index)] = "H-8100B/H-9100B"
             elif kind.startswith('ts3000'):
                 ws['F{}'.format(row_index)] = "TS-3000"
             elif kind.startswith('tm3100'):

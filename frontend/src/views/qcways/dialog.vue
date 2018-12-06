@@ -72,7 +72,7 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="close">取 消</el-button>
-        <el-button type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
+        <el-button type="primary" icon="el-icon-edit" @click="handleCreate">添加项目</el-button>
         <el-button v-if="action==='create'" type="primary" @click="create()">确 定</el-button>
         <el-button v-else type="primary" @click="update()">确 定</el-button>
       </div>
@@ -93,7 +93,7 @@ export function newWaysItem() {
     method: '',
     method_id: 0,
     spec: {
-      value_type: '', // range, info, value
+      value_type: '', // RANGE, INFO, VALUE
       data: {
         min: undefined,
         max: undefined,

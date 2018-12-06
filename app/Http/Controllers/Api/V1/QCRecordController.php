@@ -154,7 +154,7 @@ class QCRecordController extends Controller
             ]);
         }
         if (!empty($items)) {
-            $testRecord->items()->create($items);
+            $testRecord->items()->createMany($items);
         }
 
         // loading relationships
@@ -165,5 +165,25 @@ class QCRecordController extends Controller
         event(new QCSampled($batch, $testRecord));
 
         return TestRecordResource::make($testRecord);
+    }
+
+    public function sayPackage(TestRecord $testRecord) {
+        $testRecord->said_package_at = now();
+
+        if ($testRecord->save()) {
+            return $this->noContent();
+        }
+
+        return $this->failed('操作失败');
+    }
+
+    public function testDone(TestRecord $testRecord) {
+        $testRecord->completed_at = now();
+
+        if ($testRecord->save()) {
+            return $this->noContent();
+        }
+
+        return $this->failed('操作失败');
     }
 }

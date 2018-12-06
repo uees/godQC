@@ -102,13 +102,13 @@ export const asyncRouterMap = [
         meta: { title: '在检产品', icon: 'example' }
       },
       {
-        path: 'index',
+        path: 'list',
         component: () => import('@/views/qcrecords/index'),
         name: 'fqc-list',
         meta: { title: '产品检测记录', icon: 'guide', noCache: true }
       },
       {
-        path: 'real',
+        path: 'real-list',
         component: () => import('@/views/qcrecords/index'),
         hidden: true,
         name: 'fqc-list-real',
@@ -134,13 +134,13 @@ export const asyncRouterMap = [
         meta: { title: '在检材料', icon: 'example' }
       },
       {
-        path: 'index',
+        path: 'list',
         component: () => import('@/views/qcrecords/index'),
         name: 'iqc-list',
         meta: { title: '来料检测记录', icon: 'guide', noCache: true }
       },
       {
-        path: 'real',
+        path: 'real-list',
         component: () => import('@/views/qcrecords/index'),
         hidden: true,
         name: 'iqc-list-real',

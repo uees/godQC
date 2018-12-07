@@ -20,8 +20,9 @@ class CustomerRequirementController extends Controller
     }
 
 
-    public function update(CustomerRequirementRequest $request, CustomerRequirement $customerRequirement)
+    public function update(CustomerRequirementRequest $request, $id)
     {
+        $customerRequirement = CustomerRequirement::findOrFail($id);
         $customerRequirement->fill($request->all())
             ->save();
 

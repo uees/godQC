@@ -41,20 +41,7 @@
 
       <el-table-column prop="batch.product_name" label="品名" align="center"/>
       <el-table-column prop="batch.batch_number" label="批号" align="center"/>
-
-      <el-table-column label="结论" align="center">  <!--PASS, NG -->
-        <template slot-scope="scope">
-          <el-select v-model="scope.row.conclusion">
-            <el-option
-              v-for="item in conclusions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-              @change="onRecordConclusionChanged(scope.row)"/>
-          </el-select>
-        </template>
-      </el-table-column>
-
+      <el-table-column prop="conclusion" label="结论" align="center"/>  <!--PASS, NG -->
       <el-table-column prop="testers" label="检测人" align="center"/>
 
       <el-table-column label="备注" width="300" align="center">

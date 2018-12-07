@@ -26,6 +26,7 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
     Route::post('customers/{customer}/products', 'CustomerController@selectProducts');
     Route::post('customers/{customer}/products/add', 'CustomerController@selectProduct');
     Route::post('qc-records/sample', 'QCRecordController@sample');
+    Route::post('product-disposes/{productDispose}/sample', 'ProductDisposeController@sample');
     Route::patch('qc-records/{testRecord}/test-done', 'QCRecordController@testDone');
     Route::patch('qc-records/{testRecord}/say-package', 'QCRecordController@sayPackage');
 
@@ -38,9 +39,18 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
         'product-disposes' => 'ProductDisposeController',
         'qc-methods' => 'QCMethodController',
         'qc-records' => 'QCRecordController',
-        'qc-record-items' => 'QCRecordItemController',
         'qc-ways' => 'QCWayController',
         'roles' => 'RoleController',
         'users' => 'UserController',
     ]);
+
+    Route::prefix('qc-record-items')->name('record-items.')->group(function () {
+        Route::get('{testRecord}', 'QCRecordItemController@index')->name('index');
+        Route::post('{testRecord}', 'QCRecordItemController@index')->name('store');
+        Route::get('{testRecord}/{testRecordItem}', 'QCRecordItemController@show')->name('show');
+        Route::put('{testRecord}/{testRecordItem}', 'QCRecordItemController@update')->name('update');
+        Route::patch('{testRecord}/{testRecordItem}', 'QCRecordItemController@update')->name('update');
+        Route::delete('{testRecord}/{testRecordItem}', 'QCRecordItemController@destroy')->name('destroy');
+    });
+
 });

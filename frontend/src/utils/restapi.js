@@ -23,19 +23,19 @@ export default function restApi(baseuri, methods = ['list', 'add', 'update', 'de
 
   if (methods.includes('update')) {
     api.update = (id, obj, config) => {
-      return request.patch(baseuri + '/' + id, obj, config)
+      return request.patch(`${baseuri}/${id}`, obj, config)
     }
   }
 
   if (methods.includes('delete')) {
     api.delete = (id, config) => {
-      return request.delete(baseuri + '/' + id, config)
+      return request.delete(`${baseuri}/${id}`, config)
     }
   }
 
   if (methods.includes('detail')) {
     api.detail = (id, config) => {
-      return request.get(baseuri + '/' + id, config)
+      return request.get(`${baseuri}/${id}`, config)
     }
   }
 

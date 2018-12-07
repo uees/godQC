@@ -13,6 +13,11 @@ class ProductDispose extends Model
         'method',
         'author',
         'memo',
+        'is_done',
+    ];
+
+    protected $casts = [
+        'is_done' => 'boolean',
     ];
 
     /**

@@ -43,8 +43,9 @@ class QCWayController extends Controller
     }
 
 
-    public function update(QCWayRequest $request, TestWay $testWay)
+    public function update(QCWayRequest $request, $id)
     {
+        $testWay = TestWay::findOrFail($id);
         $testWay->fill($request->all())->save();
 
         return TestWayResource::make($testWay);

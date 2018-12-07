@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\QCSampled;
+use App\Events\RecordDeleted;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -21,15 +22,17 @@ class UpdateTestsNum implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param  QCSampled $event
+     * @param  QCSampled|RecordDeleted $event
      * @return void
      */
-    public function handle(QCSampled $event)
+    public function handle($event)
     {
-        $event->batch->tests_num++;
+        $count = $event->batch->testRecords()->count();
+
+        $event->batch->tests_num = $count;
         $event->batch->save();
 
-        $event->record->test_times = $event->batch->testRecords()->count();
+        $event->record->test_times = $count;
         $event->record->save();
     }
 }

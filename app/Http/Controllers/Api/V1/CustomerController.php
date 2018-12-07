@@ -49,8 +49,9 @@ class CustomerController extends Controller
     }
 
 
-    public function update(CustomerRequest $request, Customer $customer)
+    public function update(CustomerRequest $request, $id)
     {
+        $customer = Customer::findOrFail($id);
         $customer->fill($request->all())->save();
 
         return CustomerResource::make($customer);

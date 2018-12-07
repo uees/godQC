@@ -46,8 +46,9 @@ class QCMethodController extends Controller
     }
 
 
-    public function update(QCMethodRequest $request, TestMethod $testMethod)
+    public function update(QCMethodRequest $request, $id)
     {
+        $testMethod = TestMethod::findOrFail($id);
         $testMethod->fill($request->all())->save();
 
         return TestMethodResource::make($testMethod);

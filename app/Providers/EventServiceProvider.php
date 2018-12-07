@@ -16,6 +16,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\QCSampled' => [
             'App\Listeners\UpdateTestsNum',
         ],
+        'App\Events\RecordDeleted' => [
+            'App\Listeners\UpdateTestsNum',
+        ],
     ];
 
     /**

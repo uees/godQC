@@ -41,8 +41,9 @@ class RoleController extends Controller
     }
 
 
-    public function update(RoleRequest $request, Role $role)
+    public function update(RoleRequest $request, $id)
     {
+        $role = Role::findOrFail($id);
         $role->fill($request->all())->save();
 
         return RoleResource::make($role);

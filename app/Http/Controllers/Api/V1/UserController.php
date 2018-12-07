@@ -48,8 +48,9 @@ class UserController extends Controller
     }
 
 
-    public function update(UserRequest $request, User $user)
+    public function update(UserRequest $request, $id)
     {
+        $user = User::findOrFail($id);
         $user->fill($request->all())->save();
 
         return UserResource::make($user);

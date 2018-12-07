@@ -47,8 +47,9 @@ class ProductBatchController extends Controller
     }
 
 
-    public function update(ProductBatchRequest $request, ProductBatch $productBatch)
+    public function update(ProductBatchRequest $request, $id)
     {
+        $productBatch = ProductBatch::findOrFail($id);
         $productBatch->fill($request->all())
             ->save();
 

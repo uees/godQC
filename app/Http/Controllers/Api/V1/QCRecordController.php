@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Events\QCSampled;
+use App\Events\RecordDeleted;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductBatchRequest;
 use App\Http\Resources\TestRecordResource;
@@ -84,11 +85,15 @@ class QCRecordController extends Controller
     }
 
 
-    public function update(Request $request, TestRecord $testRecord)
+    public function update(Request $request, $id)
     {
-        $testRecord->fill($request->all())->save();
+        $testRecord = TestRecord::findOrFail($id);
 
-        return TestRecordResource::make($testRecord);
+        if ($testRecord->update($request->all())) {
+            return TestRecordResource::make($testRecord);
+        }
+
+        return $this->failed('操作失败');
     }
 
 
@@ -98,6 +103,8 @@ class QCRecordController extends Controller
 
         if (TestRecord::destroy($id)) {
             $testRecord->items()->delete();
+
+            event(new RecordDeleted($testRecord->batch, $testRecord));
 
             return $this->noContent();
         }
@@ -167,7 +174,16 @@ class QCRecordController extends Controller
         return TestRecordResource::make($testRecord);
     }
 
-    public function sayPackage(TestRecord $testRecord) {
+    public function sayPackage(TestRecord $testRecord)
+    {
+        if ($testRecord->conclusion == 'NG') {
+            if (is_null($testRecord->willDispose)) {
+                return $this->failed('此批次不合格，并且还未提交处理意见，写装失败');
+            }
+        } elseif (empty($testRecord->conclusion)) {
+            return $this->failed('检测完了才能写装');
+        }
+
         $testRecord->said_package_at = now();
 
         if ($testRecord->save()) {
@@ -177,8 +193,10 @@ class QCRecordController extends Controller
         return $this->failed('操作失败');
     }
 
-    public function testDone(TestRecord $testRecord) {
+    public function testDone(TestRecord $testRecord)
+    {
         $testRecord->completed_at = now();
+        $testRecord->conclusion = \request('conclusion');
 
         if ($testRecord->save()) {
             return $this->noContent();

@@ -50,8 +50,9 @@ class CategoryController extends Controller
         return CategoryResource::make($category);
     }
 
-    public function update(CategoryRequest $request, Category $category)
+    public function update(CategoryRequest $request, $id)
     {
+        $category = Category::findOrFail($id);
         $category->fill($request->only(['name', 'slug', 'memo']))
             ->save();
 

@@ -22,6 +22,7 @@ class CreateProductDisposesTable extends Migration
             $table->text('method')->nullable();
             $table->string('author')->nullable();
             $table->string('memo')->nullable();
+            $table->boolean('is_done')->default(false);
             $table->timestamps();
         });
     }

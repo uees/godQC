@@ -1,25 +1,21 @@
 <template>
   <el-table :data="list" style="width: 100%;padding-top: 15px;">
-    <el-table-column label="Order_No" min-width="200">
+    <el-table-column label="Order_No" min-width="150">
       <template slot-scope="scope">
-        {{ scope.row.order_no | orderNoFilter }}
+        {{ scope.row.name | orderNoFilter }}
       </template>
     </el-table-column>
     <el-table-column label="Price" width="195" align="center">
       <template slot-scope="scope">
-        ¥{{ scope.row.price | toThousandFilter }}
+        <el-tag type="success">¥{{ scope.row.slug | toThousandFilter }}</el-tag>
       </template>
     </el-table-column>
-    <el-table-column label="Status" width="100" align="center">
-      <template slot-scope="scope">
-        <el-tag :type="scope.row.status | statusFilter"> {{ scope.row.status }}</el-tag>
-      </template>
-    </el-table-column>
+    <el-table-column prop="memo" label="Status" width="200" align="center"/>
   </el-table>
 </template>
 
 <script>
-import { fetchList } from '@/api/transaction'
+import { categoryApi } from '@/api/basedata'
 
 export default {
   filters: {
@@ -44,8 +40,9 @@ export default {
   },
   methods: {
     fetchData() {
-      fetchList().then(response => {
-        this.list = response.data.items.slice(0, 8)
+      categoryApi.list().then(response => {
+        const {data} = response.data
+        this.list = data
       })
     }
   }

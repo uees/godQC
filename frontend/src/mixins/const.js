@@ -1,17 +1,17 @@
 export const valueTypes = {
-  data () {
+  data() {
     return {
       valueTypes: [
-        {code: 'RANGE', name: '范围'},
-        {code: 'INFO', name: '信息'},
-        {code: 'VALUE', name: '具体值'}
+        { code: 'RANGE', name: '范围' },
+        { code: 'INFO', name: '信息' },
+        { code: 'VALUE', name: '具体值' }
       ]
     }
   }
 }
 
 export const qcItems = {
-  data () {
+  data() {
     return {
       qcItems: [
         '细度',
@@ -71,6 +71,22 @@ export const qcItems = {
         '密封性', // 罐子
         '耐热性能', // 罐子
         '缝合密合度' // 过滤丝网
+      ]
+    }
+  }
+}
+
+export const disposeMethods = {
+  data() {
+    return {
+      disposeMethods: [
+        '特采',
+        '返磨',
+        '补加消泡剂',
+        '补色浆',
+        '补无色油',
+        '兑油',
+        '报废'
       ]
     }
   }

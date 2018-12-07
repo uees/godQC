@@ -21,9 +21,7 @@ class CustomerRequirementResource extends Resource
             'customer_id' => (int)$this->customer_id,
             'product_id' => $this->product_id,
             'item' => $this->item,
-            'requirement' => $this->requirement,
-            'value_type' => $this->value_type,
-            'value' => $this->value,
+            'spec' => $this->spec,
             'customer' => CustomerResource::make($this->whenLoaded('customer')),
             'product' => ProductResource::make($this->whenLoaded('product')),
         ];

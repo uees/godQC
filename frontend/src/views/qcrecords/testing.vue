@@ -41,7 +41,11 @@
 
       <el-table-column prop="batch.product_name" label="品名" align="center"/>
       <el-table-column prop="batch.batch_number" label="批号" align="center"/>
-      <el-table-column prop="conclusion" label="结论" align="center"/>  <!--PASS, NG -->
+      <el-table-column label="结论" align="center">  <!--PASS, NG -->
+        <template slot-scope="scope">
+          <span :style="scope.row.conclusion === 'NG' ? {color: 'red'} : undefined">{{ scope.row.conclusion }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="testers" label="检测人" align="center"/>
 
       <el-table-column label="备注" width="300" align="center">
@@ -55,7 +59,12 @@
 
       <el-table-column align="center" label="操作" width="180" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.conclusion === 'NG'" type="text" size="small" @click="handleMakeDispose(scope.row)">处理意见
+          <el-button
+            v-if="scope.row.conclusion === 'NG'"
+            type="text"
+            size="small"
+            style="color: red"
+            @click="handleMakeDispose(scope.row)">处理意见
           </el-button>
           <el-button type="text" size="small" @click="handleSayPackage(scope.row)">写装</el-button>
           <el-button type="text" size="small" @click="handleDeleteRecord(scope.row)">删除</el-button>
@@ -66,6 +75,7 @@
         <template slot-scope="scope">
           <el-table
             :data="scope.row.items"
+            :cell-class-name="conclusionClass"
             border
             header-cell-class-name="table-header-th"
             style="width: 100%;"
@@ -131,7 +141,8 @@
 </template>
 
 <script>
-import { qcRecordApi, getTesters } from '@/api/qc'
+import { qcRecordApi } from '@/api/qc'
+import { suggestApi } from '@/api/basedata'
 import Bus from '@/store/bus'
 import echoSpecMethod from '@/mixins/echoSpecMethod'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
@@ -171,10 +182,12 @@ export default {
       ]
     }
   },
+  created() {
+    this.fetchTesters()
+  },
   mounted() {
     this.$nextTick(function () {
       this.fetchData()
-      this.fetchTesters()
     })
     Bus.$on('record-sampled', (record) => {
       this.records.unshift(record)
@@ -190,9 +203,16 @@ export default {
       })
     },
     fetchTesters() {
-      getTesters().then(response => {
+      suggestApi.list({
+        params: {
+          parent_id: 0,
+          name: '检测员'
+        }
+      }).then(response => {
         const { data } = response.data
-        this.testers = data
+        if (data.length > 0) { // data is a list
+          this.testers = data[0].data
+        }
       })
     },
     handleSearch() {
@@ -209,6 +229,11 @@ export default {
       }
 
       return 'border'
+    },
+    conclusionClass({row, column}) {
+      if (row.conclusion === 'NG' && column.label === '结果') {
+        return 'ng'
+      }
     }
   }
 }
@@ -217,6 +242,10 @@ export default {
 <style lang="scss">
   .el-table th.table-header-th {
     color: blue;
+  }
+
+  .el-table td.ng, .el-table--enable-row-hover .el-table__body tr:hover > td.ng {
+    background-color: red;
   }
 
   .el-table tr.expanded.border td {

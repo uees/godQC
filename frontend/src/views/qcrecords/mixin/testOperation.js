@@ -14,6 +14,10 @@ export default {
       this.updateRecord(record)
     },
     onItemValueChanged(record, item) {
+      if (item.value.trim() === '') {
+        return
+      }
+
       let isPass
 
       if (item.spec.value_type === 'RANGE') {
@@ -46,6 +50,10 @@ export default {
       this.checkDone(record)
     },
     onItemUserSelected(record, item) {
+      if (item.tester.trim() === '') {
+        return
+      }
+
       const testers = record.testers ? record.testers.split(',') : []
 
       if (!testers.includes(item.tester)) {

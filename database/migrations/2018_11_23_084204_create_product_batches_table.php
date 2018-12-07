@@ -17,12 +17,12 @@ class CreateProductBatchesTable extends Migration
         Schema::create('product_batches', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('product_name', 128);
-            $table->string('product_name_suffix')->nullable();
+            $table->string('product_name_suffix', 64)->nullable();
             $table->string('batch_number', 32);
             $table->enum('type', ['FQC', 'IQC']);
-            $table->string('amount')->nullable();
+            $table->integer('amount')->nullable();
             $table->unsignedInteger('tests_num')->default(0);
-            $table->string('memo')->nullable();
+            $table->text('memo')->nullable();
             $table->timestamps();
 
             $table->unique(['product_name', 'batch_number']);

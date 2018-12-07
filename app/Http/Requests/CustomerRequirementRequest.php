@@ -27,9 +27,7 @@ class CustomerRequirementRequest extends FormRequest
             'customer_id' => 'required|integer',
             'product_id' => 'nullable|integer',
             'item' => 'required',
-            'requirement' => 'required',
-            'value_type' => 'nullable',
-            'value' => 'nullable',
+            'spec' => 'required',
         ];
     }
 }

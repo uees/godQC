@@ -16,14 +16,16 @@ class CreateTestRecordItemsTable extends Migration
         Schema::create('test_record_items', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('test_record_id');
-            $table->string('item');
-            $table->string('spec')->nullable();
+            $table->string('item', 64);
+            $table->text('spec')->nullable();
             $table->string('value')->nullable();
             $table->string('fake_value')->nullable();
-            $table->string('conclusion')->nullable();
-            $table->string('tester')->nullable();
-            $table->string('memo')->nullable();
+            $table->enum('conclusion', ['NG', 'PASS'])->nullable();
+            $table->string('tester', 64)->nullable();
+            $table->text('memo')->nullable();
             $table->timestamps();
+
+            $table->unique(['test_record_id', 'item']);
         });
     }
 

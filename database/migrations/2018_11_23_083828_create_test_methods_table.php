@@ -15,8 +15,8 @@ class CreateTestMethodsTable extends Migration
     {
         Schema::create('test_methods', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->string('file')->nullable();
+            $table->string('name', 64)->unique();
+            $table->string('file', 250)->nullable();
             $table->text('content')->nullable();
             $table->timestamps();
         });

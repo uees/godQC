@@ -31,10 +31,6 @@ export function disposeSample(dispose_id, data) {
   return request.post(`product-disposes/${dispose_id}/sample`, data)
 }
 
-export function getTesters() {
-  return request.get('users/testers')
-}
-
 export function testDone(record_id, data) {
   return request.patch(`qc-records/${record_id}/test-done`, data)
 }

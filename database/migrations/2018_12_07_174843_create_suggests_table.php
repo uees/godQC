@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCustomerRequirementsTable extends Migration
+class CreateSuggestsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,15 @@ class CreateCustomerRequirementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('customer_requirements', function (Blueprint $table) {
+        Schema::create('suggests', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('customer_id');
-            $table->unsignedInteger('product_id')->nullable();
-            $table->string('item', 64);
-            $table->text('spec');
+            $table->unsignedInteger('parent_id')->default(0);
+            $table->string('name', 64)->unique();
+            $table->text('data');
+            $table->text('memo')->nullable();
             $table->timestamps();
+
+            $table->unique(['name', 'parent_id']);
         });
     }
 
@@ -30,6 +32,6 @@ class CreateCustomerRequirementsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('customer_requirements');
+        Schema::dropIfExists('suggests');
     }
 }

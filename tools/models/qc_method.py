@@ -14,7 +14,7 @@ class QCMethod(Base):
     }
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(256))
+    name = Column(String(64), unique=True)
     file = Column(String(256), nullable=True)
     content = Column(Text, nullable=True)
     created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('CURRENT_TIMESTAMP'))

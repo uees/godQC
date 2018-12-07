@@ -16,7 +16,7 @@ class CreateTestablesTable extends Migration
         Schema::create('testables', function (Blueprint $table) {
             $table->unsignedInteger('test_way_id');
             $table->unsignedInteger('testable_id');
-            $table->string('testable_type', '64');
+            $table->string('testable_type', 64);
             $table->timestamps();
 
             $table->index(['testable_type', 'testable_id']);

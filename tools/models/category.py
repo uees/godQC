@@ -15,8 +15,8 @@ class Category(Base):
     }
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(128), unique=True)
-    slug = Column(String(256))
+    name = Column(String(64), unique=True)
+    slug = Column(String(64))
     memo = Column(Text, nullable=True)
     created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('CURRENT_TIMESTAMP'))
     updated_at = Column(TIMESTAMP(True), nullable=True)

@@ -16,7 +16,7 @@ class CreateTestWaysTable extends Migration
         // 检测流程
         Schema::create('test_ways', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('name', 64)->unique();
             $table->text('way');
             $table->timestamps();
         });

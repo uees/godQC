@@ -10,9 +10,11 @@ class CustomerRequirement extends Model
         'customer_id',
         'product_id',
         'item',
-        'requirement',
-        'value_type',
-        'value',
+        'spec',
+    ];
+
+    protected $casts = [
+        'spec' => 'array',
     ];
 
     /**

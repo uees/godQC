@@ -18,11 +18,11 @@ class CreateTestRecordsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('product_batch_id');
             $table->unsignedSmallInteger('test_times')->default(1);
-            $table->string('conclusion')->nullable();
+            $table->enum('conclusion', ['NG', 'PASS'])->nullable();
             $table->string('testers')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->timestamp('said_package_at')->nullable();
-            $table->string('memo')->nullable();
+            $table->text('memo')->nullable();
             $table->boolean('show_reality')->default(true);
             $table->timestamps();
         });

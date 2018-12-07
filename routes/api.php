@@ -20,7 +20,6 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
     Route::post('auth/logout-anywhere', 'AuthController@logoutAnywhere');
 
     Route::get('users/me', 'AuthController@me');
-    Route::get('users/testers', 'UserController@testers');
     Route::post('categories/{category}/qc-ways', 'CategoryController@selectTestWay');
     Route::post('products/{product}/qc-ways', 'ProductController@selectTestWay');
     Route::post('customers/{customer}/products', 'CustomerController@selectProducts');
@@ -42,6 +41,7 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
         'qc-ways' => 'QCWayController',
         'roles' => 'RoleController',
         'users' => 'UserController',
+        'suggests' => 'SuggestController',
     ]);
 
     Route::prefix('qc-record-items')->name('record-items.')->group(function () {

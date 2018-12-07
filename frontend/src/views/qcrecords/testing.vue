@@ -64,7 +64,7 @@
             type="text"
             size="small"
             style="color: red"
-            @click="handleMakeDispose(scope.row)">处理意见
+            @click="handleMakeDispose(scope.row)">处理意见  <!-- // todo 处理意见表单 -->
           </el-button>
           <el-button type="text" size="small" @click="handleSayPackage(scope.row)">写装</el-button>
           <el-button type="text" size="small" @click="handleDeleteRecord(scope.row)">删除</el-button>
@@ -88,6 +88,7 @@
             </el-table-column>
 
             <el-table-column label="结果">
+              <!-- // todo 根据 项目 产生提示值 -->
               <template slot-scope="props">
                 <el-input
                   v-model="props.row.value"
@@ -96,6 +97,7 @@
             </el-table-column>
 
             <el-table-column label="结论">
+              <!-- // todo 只有 INFO 才能结论选择 -->
               <template slot-scope="props">
                 <el-select
                   v-model="props.row.conclusion"
@@ -141,8 +143,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { qcRecordApi } from '@/api/qc'
-import { suggestApi } from '@/api/basedata'
 import Bus from '@/store/bus'
 import echoSpecMethod from '@/mixins/echoSpecMethod'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
@@ -162,6 +164,7 @@ export default {
   data() {
     return {
       records: [],
+      cacheRecords: [], // todo cache
       testers: [],
       listLoading: false,
       queryParams: {
@@ -182,12 +185,22 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapState('basedata', { // namespaced module
+      suggests: state => state.suggests
+    })
+  },
   created() {
-    this.fetchTesters()
+    if (this.suggests.length === 0) {
+      this.$store.dispatch('basedata/FetchSuggest').then(() => {
+        this.fetchTesters()
+      })
+    }
   },
   mounted() {
     this.$nextTick(function () {
       this.fetchData()
+      this.fetchTesters()
     })
     Bus.$on('record-sampled', (record) => {
       this.records.unshift(record)
@@ -203,17 +216,11 @@ export default {
       })
     },
     fetchTesters() {
-      suggestApi.list({
-        params: {
-          parent_id: 0,
-          name: '检测员'
-        }
-      }).then(response => {
-        const { data } = response.data
-        if (data.length > 0) { // data is a list
-          this.testers = data[0].data
-        }
+      const suggest = this.suggests.find(suggest => {
+        return suggest.parent_id === 0 && suggest.name === '检测员'
       })
+
+      this.testers = suggest.data
     },
     handleSearch() {
       this.fetchData()

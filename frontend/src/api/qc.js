@@ -31,8 +31,8 @@ export function disposeSample(dispose_id, data) {
   return request.post(`product-disposes/${dispose_id}/sample`, data)
 }
 
-export function testDone(record_id, data) {
-  return request.patch(`qc-records/${record_id}/test-done`, data)
+export function testDone(record_id) {
+  return request.patch(`qc-records/${record_id}/test-done`)
 }
 
 export function sayPackage(record_id) {

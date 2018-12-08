@@ -17,7 +17,12 @@
       <el-table :data="obj.way" border fit highlight-current-row style="width: 100%">
         <el-table-column align="center" label="检测项目" width="180">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.name" class="edit-input" size="small"/>
+            <el-autocomplete
+              v-model="scope.row.name"
+              :fetch-suggestions="querySearch"
+              :select-when-unmatched="true"
+              size="small"
+            />
           </template>
         </el-table-column>
 
@@ -81,6 +86,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import dialog from '@/mixins/dialog'
 import { valueTypes } from '@/mixins/const'
 import { qcWayApi, qcMethodApi } from '@/api/qc'
@@ -130,19 +136,58 @@ export default {
   data() {
     return {
       api: qcWayApi,
+      testItemSuggestions: [],
       selectTestMethods: [],
       objRules: {
         name: { required: true, message: '必填项', trigger: 'blur' }
       }
     }
   },
+  computed: {
+    ...mapState('basedata', { // namespaced module
+      suggests: state => state.suggests
+    })
+  },
+  created() {
+    if (this.suggests.length === 0) {
+      this.$store.dispatch('basedata/FetchSuggest').then(() => {
+        this.initSuggest()
+      })
+    }
+  },
+  mounted() {
+    this.$nextTick(function () {
+      this.initSuggest()
+    })
+  },
   methods: {
+    initSuggest() {
+      // 获取 parent
+      const parent = this.suggests.find(suggest => {
+        return suggest.parent_id === 0 && suggest.name === '检测项目'
+      })
+
+      // 获取 children
+      const testItems = this.suggests.filter(suggest => {
+        return suggest.parent_id === parent.id
+      })
+
+      this.testItemSuggestions = testItems.map(suggest => {
+        return {value: suggest.name, label: suggest.name}
+      })
+    },
     newObj() {
       return Object.assign({}, newObj())
     },
-    getTypeName(code) {
-      const typeObj = this.valueTypes.find(element => element.code === code)
-      return typeObj ? typeObj.name : ''
+    querySearch(queryString, cb) {
+      // el-autocomplete 需要传入对象数组
+      const values = this.testItemSuggestions
+
+      const results = queryString
+        ? values.filter(element => element.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0)
+        : values
+
+      cb(results)
     },
     create() {
       this.$refs['obj_form'].validate(valid => {

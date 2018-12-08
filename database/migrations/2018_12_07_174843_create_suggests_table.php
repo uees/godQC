@@ -17,7 +17,7 @@ class CreateSuggestsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('parent_id')->default(0);
             $table->string('name', 64)->unique();
-            $table->text('data');
+            $table->text('data')->nullable();
             $table->text('memo')->nullable();
             $table->timestamps();
 

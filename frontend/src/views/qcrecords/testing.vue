@@ -27,6 +27,7 @@
     <el-table
       v-loading.body="listLoading"
       :row-class-name="rowClass"
+      :cell-class-name="conclusionClass"
       :data="records"
       border
       default-expand-all
@@ -43,7 +44,7 @@
       <el-table-column prop="batch.batch_number" label="批号" align="center"/>
       <el-table-column label="结论" align="center">  <!--PASS, NG -->
         <template slot-scope="scope">
-          <span :style="scope.row.conclusion === 'NG' ? {color: 'red'} : undefined">{{ scope.row.conclusion }}</span>
+          <span>{{ echoConclusion(scope.row.conclusion) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="testers" label="检测人" align="center"/>
@@ -53,7 +54,7 @@
           <el-input
             v-model="scope.row.memo"
             placeholder="请输入内容"
-            @blur="onRecordMemoChanged(scope.row)"/>
+            @blur="onRecordMemoBlur(scope)"/>
         </template>
       </el-table-column>
 
@@ -88,20 +89,21 @@
             </el-table-column>
 
             <el-table-column label="结果">
-              <!-- // todo 根据 项目 产生提示值 -->
               <template slot-scope="props">
-                <el-input
+                <value-input
                   v-model="props.row.value"
-                  @blur="onItemValueChanged(scope.row, props.row)"/>
+                  :item="props.row.item"
+                  :key="props.row.id"
+                  @blur="onItemValueBlur(scope, props)"/>
               </template>
             </el-table-column>
 
             <el-table-column label="结论">
-              <!-- // todo 只有 INFO 才能结论选择 -->
               <template slot-scope="props">
                 <el-select
+                  v-if="props.row.spec.value_type === 'INFO'"
                   v-model="props.row.conclusion"
-                  @change="onItemConclusionChanged(scope.row, props.row)"
+                  @change="onItemConclusionChanged(scope, props)"
                 >
                   <el-option
                     v-for="item in conclusions"
@@ -109,6 +111,7 @@
                     :label="item.label"
                     :value="item.value"/>
                 </el-select>
+                <span v-else>{{ echoConclusion(props.row.conclusion) }}</span>
               </template>
             </el-table-column>
 
@@ -119,7 +122,7 @@
                   :fetch-suggestions="queryTesters"
                   value-key="name"
                   placeholder="检测员"
-                  @select="onItemUserSelected(scope.row, props.row)"/>
+                  @select="onItemUserBlur(scope, props)"/>
               </template>
             </el-table-column>
 
@@ -127,7 +130,7 @@
               <template slot-scope="props">
                 <el-input
                   v-model="props.row.memo"
-                  @blur="onItemMemoChanged(scope.row, props.row)"
+                  @blur="onItemMemoBlur(scope, props)"
                 />
               </template>
             </el-table-column>
@@ -150,11 +153,13 @@ import echoSpecMethod from '@/mixins/echoSpecMethod'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
 import QcSample from './QcSample'
 import testOperation from './mixin/testOperation'
+import ValueInput from './components/ValueInput'
 
 export default {
   name: 'Testing',
   components: {
-    QcSample
+    QcSample,
+    ValueInput
   },
   mixins: [
     echoSpecMethod,
@@ -164,7 +169,7 @@ export default {
   data() {
     return {
       records: [],
-      cacheRecords: [], // todo cache
+      cacheRecords: [],
       testers: [],
       listLoading: false,
       queryParams: {
@@ -204,6 +209,7 @@ export default {
     })
     Bus.$on('record-sampled', (record) => {
       this.records.unshift(record)
+      this.updateCache()
     })
   },
   methods: {
@@ -212,6 +218,7 @@ export default {
       qcRecordApi.list({ params: this.queryParams }).then(response => {
         const { data } = response.data
         this.records = data
+        this.updateCache()
         this.listLoading = false
       })
     },
@@ -220,7 +227,9 @@ export default {
         return suggest.parent_id === 0 && suggest.name === '检测员'
       })
 
-      this.testers = suggest.data
+      if (suggest) {
+        this.testers = suggest.data
+      }
     },
     handleSearch() {
       this.fetchData()
@@ -238,8 +247,20 @@ export default {
       return 'border'
     },
     conclusionClass({row, column}) {
-      if (row.conclusion === 'NG' && column.label === '结果') {
-        return 'ng'
+      if (row.conclusion === 'NG') {
+        if (column.label === '结果') {
+          return 'ng-value'
+        } else if (column.label === '结论') {
+          return 'ng-conclusion'
+        }
+      }
+    },
+    echoConclusion(conclusion) {
+      if (conclusion === 'PASS') {
+        return '合格'
+      }
+      if (conclusion === 'NG') {
+        return '不合格'
       }
     }
   }
@@ -251,8 +272,15 @@ export default {
     color: blue;
   }
 
-  .el-table td.ng, .el-table--enable-row-hover .el-table__body tr:hover > td.ng {
-    background-color: red;
+  .el-table td.ng-value input {
+    border-color: red;
+  }
+
+  .el-table td.ng-conclusion {
+    color: red;
+    input {
+      border-color: red;
+    }
   }
 
   .el-table tr.expanded.border td {

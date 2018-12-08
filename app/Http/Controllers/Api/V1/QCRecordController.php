@@ -196,10 +196,9 @@ class QCRecordController extends Controller
     public function testDone(TestRecord $testRecord)
     {
         $testRecord->completed_at = now();
-        $testRecord->conclusion = \request('conclusion');
 
         if ($testRecord->save()) {
-            return $this->noContent();
+            return TestRecordResource::make($testRecord);
         }
 
         return $this->failed('操作失败');

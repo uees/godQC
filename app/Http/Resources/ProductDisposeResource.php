@@ -24,7 +24,7 @@ class ProductDisposeResource extends Resource
             'method' => $this->method,
             'author' => $this->author,
             'memo' => $this->memo,
-            'productBatch' => ProductBatchResource::make($this->whenLoaded('productBatch')),
+            'batch' => ProductBatchResource::make($this->whenLoaded('batch')),
             'recordFrom' => TestRecordResource::make($this->whenLoaded('recordFrom')),
             'recordTo' => TestRecordResource::make($this->whenLoaded('recordTo')),
         ];

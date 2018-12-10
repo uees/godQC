@@ -92,9 +92,6 @@ export default {
 
       record.testers = testers.join(',')
 
-      console.log(cached_item.tester, item.tester)
-      console.log(cached_record.testers, record.testers)
-
       if (cached_item.tester !== item.tester) {
         this.updateRecordItem(record, item)
 

@@ -39,6 +39,17 @@ class QCRecordItemController extends Controller
     public function update(QCRecordItemRequest $request, TestRecord $testRecord, TestRecordItem $testRecordItem)
     {
         if ($testRecord->items->contains($testRecordItem)) {
+            // 创建 fake value
+            if ($testRecordItem->conclusion == 'NG') {
+                if ($testRecordItem->spec['value_type'] == 'INFO') {
+                    $testRecordItem->fake_value = 'PASS';
+                } elseif ($testRecordItem->spec['value_type'] == 'NUMBER') {
+                    $testRecordItem->fake_value = $testRecordItem->spec['data']['value'];
+                } elseif ($testRecordItem->spec['value_type'] == 'RANGE') {
+                    $testRecordItem->fake_value = $testRecordItem->spec['data']['min']
+                        ?: $testRecordItem->spec['data']['max'];
+                }
+            }
 
             $testRecordItem->fill($request->all())->save();
 

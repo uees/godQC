@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Events\QCSampled;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductBatchRequest;
 use App\Http\Requests\ProductDisposeRequest;
 use App\Http\Resources\ProductDisposeResource;
 use App\Http\Resources\TestRecordResource;
 use App\ProductDispose;
 use App\TestRecord;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductDisposeController extends Controller
 {
@@ -85,7 +86,28 @@ class ProductDisposeController extends Controller
         return $this->failed('操作失败');
     }
 
-    public function sample(ProductDispose $productDispose) {
+    // 查找指定批次的处理记录
+    public function batchDispose(ProductBatchRequest $request)
+    {
+        $dispose = ProductDispose::with('batch')
+            ->whereHas('batch', function (Builder $query) use ($request) {
+                $batchNumber = $request->get('batch_number');
+                $type = $request->get('type');
+
+                $query->where('batch_number', $batchNumber)
+                    ->where('type', $type)
+                    ->whereNull('to_record_id');
+            })->first();
+
+        if (!is_null($dispose)) {
+            return ProductDisposeResource::make($dispose);
+        }
+
+        return $this->failed('无未处理的记录');
+    }
+
+    public function sample(ProductDispose $productDispose)
+    {
         // step 1. 确定批次
         $batch = $productDispose->batch;
 
@@ -93,7 +115,11 @@ class ProductDisposeController extends Controller
         $testRecord = (new TestRecord());
         $batch->testRecords()->save($testRecord);
 
-        // step 3. 创建检测项目
+        // step 3. 与处理记录进行关联
+        $productDispose->recordTo()->associate($testRecord);
+        $productDispose->save();
+
+        // step 4. 创建检测项目
         $recordFrom = $productDispose->recordFrom;
 
         $items = [];

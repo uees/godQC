@@ -22,10 +22,11 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
     Route::get('users/me', 'AuthController@me');
     Route::post('categories/{category}/qc-ways', 'CategoryController@selectTestWay');
     Route::post('products/{product}/qc-ways', 'ProductController@selectTestWay');
+    Route::post('product-disposes/{productDispose}/sample', 'ProductDisposeController@sample');
+    Route::get('product-batches/disposes', 'ProductDisposeController@batchDispose');
     Route::post('customers/{customer}/products', 'CustomerController@selectProducts');
     Route::post('customers/{customer}/products/add', 'CustomerController@selectProduct');
     Route::post('qc-records/sample', 'QCRecordController@sample');
-    Route::post('product-disposes/{productDispose}/sample', 'ProductDisposeController@sample');
     Route::patch('qc-records/{testRecord}/test-done', 'QCRecordController@testDone');
     Route::patch('qc-records/{testRecord}/say-package', 'QCRecordController@sayPackage');
 
@@ -33,7 +34,7 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
         'categories' => 'CategoryController',
         'customers' => 'CustomerController',
         'customer-requirements' => 'CustomerRequirementController',
-        'product-batchs' => 'ProductBatchController',
+        'product-batches' => 'ProductBatchController',
         'products' => 'ProductController',
         'product-disposes' => 'ProductDisposeController',
         'qc-methods' => 'QCMethodController',

@@ -1,12 +1,12 @@
 <template>
   <div>
-    编辑表单、、 需要管理员权限
+    // <!-- todo -->
   </div>
 </template>
 
 <script>
 export default {
-  name: 'FormDialog'
+  name: 'DisposeForm'
 }
 </script>
 

@@ -151,7 +151,7 @@ import { qcRecordApi } from '@/api/qc'
 import Bus from '@/store/bus'
 import echoSpecMethod from '@/mixins/echoSpecMethod'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
-import QcSample from './QcSample'
+import QcSample from './components/QcSample'
 import testOperation from './mixin/testOperation'
 import ValueInput from './components/ValueInput'
 

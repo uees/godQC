@@ -47,7 +47,7 @@
 
 <script>
 import Bus from '@/store/bus'
-import { qcSample } from '@/api/qc'
+import { qcSample, disposeSample, getBatchDispose } from '@/api/qc'
 import { productApi } from '@/api/basedata'
 import { debounce } from '@/utils'
 
@@ -60,8 +60,8 @@ export default {
       loading: false,
       products: [],
       batchRules: {
-        product_name: {required: true, message: '必填项', trigger: 'blur'},
-        batch_number: {required: true, message: '必填项', trigger: 'blur'}
+        product_name: { required: true, message: '必填项', trigger: 'blur' },
+        batch_number: { required: true, message: '必填项', trigger: 'blur' }
       },
       dialogFormVisible: false
     }
@@ -97,9 +97,9 @@ export default {
     queryProducts(queryString) {
       const fetch = () => {
         this.loading = true
-        productApi.list({params: {q: queryString, sort_by: 'internal_name', order: 'asc'}}).then(response => {
+        productApi.list({ params: { q: queryString, sort_by: 'internal_name', order: 'asc' } }).then(response => {
           this.loading = false
-          const {data} = response.data
+          const { data } = response.data
           this.products = data
         })
       }
@@ -110,10 +110,39 @@ export default {
       //
     },
     create() {
-      const {product_name, product_name_suffix, batch_number} = this.record.batch
+      const { product_name, batch_number } = this.record.batch
       const type = this.type
-      qcSample({product_name, product_name_suffix, batch_number, type}).then(response => {
-        const {data} = response.data
+
+      getBatchDispose(product_name, batch_number, type).then(response => {
+        const { data } = response.data
+        const dispose = data
+
+        this.$confirm(`检测到此批号有返工处理记录:\n
+          ${dispose.batch.product_name} ${dispose.batch.batch_number},\n
+          ${dispose.method}\n
+          是否此批次?`, '提示', {
+          confirmButtonText: '是',
+          cancelButtonText: '否',
+          type: 'info'
+        }).then(() => {
+          this.disposeSample(dispose.id)
+        }).catch(() => {
+          this.qcSample()
+        })
+      }).catch(() => {
+        this.qcSample()
+      })
+    },
+    close() {
+      this.dialogFormVisible = false
+      this.record = this.newRecord()
+    },
+    qcSample() {
+      const { product_name, product_name_suffix, batch_number } = this.record.batch
+      const type = this.type
+
+      qcSample({ product_name, product_name_suffix, batch_number, type }).then(response => {
+        const { data } = response.data
         this.record = data
 
         Bus.$emit('record-sampled', this.record)
@@ -121,9 +150,15 @@ export default {
         this.close()
       })
     },
-    close() {
-      this.dialogFormVisible = false
-      this.record = this.newRecord()
+    disposeSample(dispose_id) {
+      disposeSample(dispose_id).then(response => {
+        const { data } = response.data
+        this.record = data
+
+        Bus.$emit('record-sampled', this.record)
+
+        this.close()
+      })
     }
   }
 }

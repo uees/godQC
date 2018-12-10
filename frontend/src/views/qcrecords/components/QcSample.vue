@@ -32,7 +32,7 @@
           <el-input v-model="record.batch.product_name_suffix"/>
         </el-form-item>
 
-        <el-form-item label="批号">
+        <el-form-item label="批号" prop="batch_number">
           <el-input v-model="record.batch.batch_number"/>
         </el-form-item>
       </el-form>
@@ -121,20 +121,22 @@ export default {
             const { data } = response.data
             const dispose = data
 
-            this.$confirm(`检测到此批号有返工处理记录:\n
-          ${dispose.batch.product_name} ${dispose.batch.batch_number},\n
-          ${dispose.method}\n
-          是否此批次?`, '提示', {
-              confirmButtonText: '是',
-              cancelButtonText: '否',
-              type: 'info'
-            }).then(() => {
-              this.disposeSample(dispose.id)
-            }).catch(() => {
+            if (dispose.id) {
+              this.$confirm(`检测到此批号有返工处理记录:\n
+                  ${dispose.batch.product_name} ${dispose.batch.batch_number},\n
+                  ${dispose.method}\n
+                  是否此批次?`, '提示', {
+                confirmButtonText: '是',
+                cancelButtonText: '否',
+                type: 'info'
+              }).then(() => {
+                this.disposeSample(dispose.id)
+              }).catch(() => {
+                this.qcSample()
+              })
+            } else {
               this.qcSample()
-            })
-          }).catch(() => {
-            this.qcSample()
+            }
           })
         } else {
           return false

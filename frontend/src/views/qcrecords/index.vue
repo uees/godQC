@@ -76,9 +76,12 @@
         <template slot-scope="scope">
           <el-table
             :data="scope.row.items"
+            :default-sort="{prop: 'id', order: 'Ascending'}"
             stripe
             style="width: 100%"
+            header-cell-class-name="table-header-th"
           >
+            <el-table-column :sortable="true" prop="id" label="ID" width="90"/>
             <el-table-column prop="item" label="项目"/>
             <el-table-column label="要求">
               <template slot-scope="scope">

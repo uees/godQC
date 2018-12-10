@@ -25,7 +25,7 @@ class ProductDispose extends Model
      */
     public function batch()
     {
-        return $this->belongsTo(ProductBatch::class);
+        return $this->belongsTo(ProductBatch::class, 'product_batch_id');
     }
 
     /**

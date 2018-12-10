@@ -109,7 +109,7 @@ class ProductDisposeController extends Controller
             return ProductDisposeResource::make($dispose);
         }
 
-        return $this->failed('无未处理的记录');
+        return $this->message('无处理记录');
     }
 
     public function sample(ProductDispose $productDispose)

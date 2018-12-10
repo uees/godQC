@@ -9,7 +9,3 @@ export default {
   name: 'RecordForm'
 }
 </script>
-
-<style scoped>
-
-</style>

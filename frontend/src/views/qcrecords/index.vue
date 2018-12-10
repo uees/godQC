@@ -28,7 +28,7 @@
     >
       <el-table-column align="center" label="取样时间">
         <template slot-scope="scope">
-          {{ echoTime(scope.row.created_at.date) }}
+          {{ echoTime(scope.row.created_at) }}
         </template>
       </el-table-column>
 
@@ -53,13 +53,13 @@
 
       <el-table-column align="center" label="完成时间">
         <template slot-scope="scope">
-          {{ echoTime(scope.row.completed_at.date) }}
+          {{ echoTime(scope.row.completed_at) }}
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="写装时间">
         <template slot-scope="scope">
-          {{ echoTime(scope.row.said_package_at.date) }}
+          {{ echoTime(scope.row.said_package_at) }}
         </template>
       </el-table-column>
 
@@ -132,6 +132,9 @@ export default {
       pageSizes: [20, 40]
     }
   },
+  created() {
+    this.initType()
+  },
   mounted() {
     this.$nextTick(function () {
       this.fetchData()
@@ -152,6 +155,9 @@ export default {
       }).catch(error => {
         return Promise.reject(error)
       })
+    },
+    initType() {
+      this.queryParams.type = this.$route.path.startsWith('/test/fqc') ? 'FQC' : 'IQC'
     },
     pagination(response) {
       const {meta} = response.data

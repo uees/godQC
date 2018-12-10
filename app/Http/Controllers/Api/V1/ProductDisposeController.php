@@ -55,8 +55,14 @@ class ProductDisposeController extends Controller
     public function store(ProductDisposeRequest $request)
     {
         $productDispose = new ProductDispose();
+        $productDispose->fill($request->all());
 
-        $productDispose->fill($request->all())->save();
+        if (empty($productDispose->product_batch_id)) {
+            $record = TestRecord::where('id', $request->get('from_record_id'))->firstOrFail();
+            $productDispose->product_batch_id = $record->product_batch_id;
+        }
+
+        $productDispose->save();
 
         return ProductDisposeResource::make($productDispose);
     }
@@ -96,7 +102,7 @@ class ProductDisposeController extends Controller
 
                 $query->where('batch_number', $batchNumber)
                     ->where('type', $type)
-                    ->whereNull('to_record_id');
+                    ->where('is_done', false);
             })->first();
 
         if (!is_null($dispose)) {
@@ -117,6 +123,7 @@ class ProductDisposeController extends Controller
 
         // step 3. 与处理记录进行关联
         $productDispose->recordTo()->associate($testRecord);
+        $productDispose->is_done = true;
         $productDispose->save();
 
         // step 4. 创建检测项目

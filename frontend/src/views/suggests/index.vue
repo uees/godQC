@@ -29,9 +29,10 @@
       </el-button>
       <el-button
         class="filter-item"
+        style="margin-left: 10px;"
         type="primary"
-        icon="el-icon-document"
-        @click="handleDownload">导出
+        icon="el-icon-refresh"
+        @click="refreshStore">重载Store
       </el-button>
     </div>
 
@@ -39,19 +40,17 @@
       v-loading.body="listLoading"
       :data="tableData"
       style="width: 100%">
-
+      <el-table-column prop="id" label="ID"/>
+      <el-table-column :sortable="true" prop="parent_id" label="Parent ID"/>
       <el-table-column :sortable="true" prop="name" label="名称"/>
-      <el-table-column :sortable="true" prop="slug" label="型号"/>
-      <el-table-column prop="memo" label="备注"/>
-      <el-table-column label="创建时间">
+      <el-table-column prop="data" label="数据" width="500">
         <template slot-scope="scope">
-          {{ echoTime(scope.row.created_at) }}
+          <json-editor :value="scope.row.data"/>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="操作" width="180" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="showSelectWay(scope.row)">检测流程</el-button>
           <el-button
             type="text"
             size="small"
@@ -67,45 +66,56 @@
 
     </el-table>
 
+    <div v-show="!listLoading" class="pagination-container">
+      <el-pagination
+        :total="total"
+        :current-page.sync="queryParams.page"
+        :page-sizes="pageSizes"
+        :page-size="queryParams.per_page"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"/>
+    </div>
+
     <form-dialog
       :action.sync="action"
       :prop-obj.sync="propObj"
       @createDone="createDone"
       @updateDone="updateDone"/>
-
-    <select-way/>
   </div>
 </template>
 
 <script>
 import list from '@/mixins/list'
-import { categoryApi } from '@/api/basedata'
+import { suggestApi } from '@/api/basedata'
+import pagination from '@/mixins/pagination'
+import JsonEditor from '@/components/JsonEditor'
 import FormDialog from './dialog'
-import SelectWay from './SelectWay'
-import Bus from '@/store/bus'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
 
 export default {
   name: 'Index',
   components: {
-    FormDialog,
-    SelectWay
+    JsonEditor,
+    FormDialog
   },
   mixins: [
     list,
+    pagination,
     echoTimeMethod
   ],
   data() {
     return {
-      api: categoryApi,
-      propCategoryId: 0
+      api: suggestApi
     }
   },
   methods: {
-    showSelectWay(category) {
-      this.propCategoryId = category.id
-
-      Bus.$emit('category-select-way', category.id)
+    refreshStore() {
+      this.$store.dispatch('basedata/FetchSuggest')
+    },
+    updateDone() {
+      // fixed JsonEditor bug
+      this.fetchData()
     }
   }
 }

@@ -9,7 +9,7 @@ use App\Suggest;
 
 class SuggestController extends Controller
 {
-    // parent_id, q, name
+    // parent_id, q, name, all
     public function index()
     {
         $query = Suggest::query();
@@ -24,15 +24,27 @@ class SuggestController extends Controller
 
         $query = $query->orderBy($this->sortBy(), $this->order());
 
-        $suggests = $query->get();
+        if (\request()->filled('all')) {
+            $suggests = $query->get();
+        } else {
+            $suggests = $query->paginate($this->perPage())->appends(request()->except('page'));
+        }
 
         return SuggestResource::collection($suggests);
     }
 
     public function store(SuggestRequest $request)
     {
+        $data = $request->get('data');
+        // 格式化数据
+        if (!is_null($data)) {
+            $data = is_array($data) ? $data : json_decode($data);
+        }
+
         $suggest = new Suggest();
-        $suggest->fill($request->all())->save();
+        $suggest->fill($request->only(['name', 'parent_id', 'memo']));
+        $suggest->data = $data;
+        $suggest->save();
 
         return SuggestResource::make($suggest);
     }
@@ -44,8 +56,16 @@ class SuggestController extends Controller
 
     public function update(SuggestRequest $request, $id)
     {
+        $data = $request->get('data');
+        // 格式化数据
+        if (!is_null($data)) {
+            $data = is_array($data) ? $data : json_decode($data);
+        }
+
         $suggest = Suggest::findOrFail($id);
-        $suggest->fill($request->all())->save();
+        $suggest->fill($request->only(['name', 'parent_id', 'memo']));
+        $suggest->data = $data;
+        $suggest->save();
 
         return SuggestResource::make($suggest);
     }

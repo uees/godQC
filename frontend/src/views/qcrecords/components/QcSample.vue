@@ -75,6 +75,7 @@ export default {
   methods: {
     newBatch() {
       return {
+        id: null,
         product_name: '',
         product_name_suffix: '',
         batch_number: '',
@@ -86,6 +87,7 @@ export default {
     },
     newRecord() {
       return {
+        id: null,
         batch: this.newBatch(),
         test_times: 1,
         conclusion: '',
@@ -110,27 +112,33 @@ export default {
       //
     },
     create() {
-      const { product_name, batch_number } = this.record.batch
-      const type = this.type
+      this.$refs['obj_form'].validate(valid => {
+        if (valid) {
+          const { product_name, batch_number } = this.record.batch
+          const type = this.type
 
-      getBatchDispose(product_name, batch_number, type).then(response => {
-        const { data } = response.data
-        const dispose = data
+          getBatchDispose(product_name, batch_number, type).then(response => {
+            const { data } = response.data
+            const dispose = data
 
-        this.$confirm(`检测到此批号有返工处理记录:\n
+            this.$confirm(`检测到此批号有返工处理记录:\n
           ${dispose.batch.product_name} ${dispose.batch.batch_number},\n
           ${dispose.method}\n
           是否此批次?`, '提示', {
-          confirmButtonText: '是',
-          cancelButtonText: '否',
-          type: 'info'
-        }).then(() => {
-          this.disposeSample(dispose.id)
-        }).catch(() => {
-          this.qcSample()
-        })
-      }).catch(() => {
-        this.qcSample()
+              confirmButtonText: '是',
+              cancelButtonText: '否',
+              type: 'info'
+            }).then(() => {
+              this.disposeSample(dispose.id)
+            }).catch(() => {
+              this.qcSample()
+            })
+          }).catch(() => {
+            this.qcSample()
+          })
+        } else {
+          return false
+        }
       })
     },
     close() {
@@ -163,7 +171,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

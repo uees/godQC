@@ -26,6 +26,8 @@ class ProductDisposeRequest extends FormRequest
         return [
             'method' => 'required',
             'author' => 'required',
+            'product_batch_id' => 'nullable',
+            'from_record_id' => 'required',
         ];
     }
 }

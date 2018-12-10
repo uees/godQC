@@ -112,7 +112,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/qcrecords/index'),
         hidden: true,
         name: 'fqc-list-real',
-        meta: { title: '产品检测记录', noCache: true }
+        meta: { title: '产品检测记录(Real)', noCache: true }
       }
     ]
   },
@@ -144,7 +144,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/qcrecords/index'),
         hidden: true,
         name: 'iqc-list-real',
-        meta: { title: '来料检测记录', noCache: true }
+        meta: { title: '来料检测记录(Real)', noCache: true }
       }
     ]
   },
@@ -189,7 +189,7 @@ export const asyncRouterMap = [
     component: Layout,
     children: [
       {
-        path: 'categories',
+        path: 'index',
         component: () => import('@/views/categories/index'),
         name: 'categories',
         meta: { title: '产品分类', icon: 'list' }
@@ -201,10 +201,25 @@ export const asyncRouterMap = [
     component: Layout,
     children: [
       {
-        path: 'customers',
+        path: 'index',
         component: () => import('@/views/customers/index'),
         name: 'customers',
         meta: { title: '客户', icon: 'tree' }
+      }
+    ]
+  },
+  {
+    path: '/suggests',
+    component: Layout,
+    meta: {
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/suggests/index'),
+        name: 'suggests',
+        meta: { title: '提示数据', icon: 'list' }
       }
     ]
   },

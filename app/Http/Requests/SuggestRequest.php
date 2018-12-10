@@ -25,6 +25,9 @@ class SuggestRequest extends FormRequest
     {
         return [
             'name' => 'required',
+            'data' => 'nullable',
+            'memo' => 'nullable',
+            'parent_id' => 'nullable',
         ];
     }
 }

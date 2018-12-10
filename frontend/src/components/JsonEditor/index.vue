@@ -27,7 +27,7 @@ export default {
     value(value) {
       const editor_value = this.jsonEditor.getValue()
       if (value !== editor_value) {
-        this.jsonEditor.setValue(JSON.stringify(this.value, null, 2))
+        this.jsonEditor.setValue(JSON.stringify(value, null, 2))
       }
     }
   },

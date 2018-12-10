@@ -48,7 +48,7 @@
       </el-table-column>
       <el-table-column label="创建时间">
         <template slot-scope="scope">
-          {{ echoTime(scope.row.created_at.date) }}
+          {{ echoTime(scope.row.created_at) }}
         </template>
       </el-table-column>
 

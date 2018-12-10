@@ -36,7 +36,7 @@
     >
       <el-table-column label="取样时间" align="center" width="180">
         <template slot-scope="scope">
-          {{ echoTime(scope.row.created_at.date) }}
+          {{ echoTime(scope.row.created_at) }}
         </template>
       </el-table-column>
 
@@ -65,7 +65,7 @@
             type="text"
             size="small"
             style="color: red"
-            @click="handleMakeDispose(scope.row)">处理意见  <!-- // todo 处理意见表单 -->
+            @click="handleMakeDispose(scope.row)">处理意见
           </el-button>
           <el-button type="text" size="small" @click="handleSayPackage(scope.row)">写装</el-button>
           <el-button type="text" size="small" @click="handleDeleteRecord(scope.row)">删除</el-button>
@@ -141,7 +141,7 @@
     </el-table>
 
     <qc-sample/>
-
+    <dispose-form/>
   </div>
 </template>
 
@@ -152,6 +152,7 @@ import Bus from '@/store/bus'
 import echoSpecMethod from '@/mixins/echoSpecMethod'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
 import QcSample from './components/QcSample'
+import DisposeForm from './components/DisposeForm'
 import testOperation from './mixin/testOperation'
 import ValueInput from './components/ValueInput'
 
@@ -159,7 +160,8 @@ export default {
   name: 'Testing',
   components: {
     QcSample,
-    ValueInput
+    ValueInput,
+    DisposeForm
   },
   mixins: [
     echoSpecMethod,
@@ -201,6 +203,8 @@ export default {
         this.fetchTesters()
       })
     }
+
+    this.initType()
   },
   mounted() {
     this.$nextTick(function () {
@@ -210,6 +214,9 @@ export default {
     Bus.$on('record-sampled', (record) => {
       this.records.unshift(record)
       this.updateCache()
+    })
+    Bus.$on('dispose-created', (dispose) => {
+      this.$message(`处理方法已创建：${dispose.author} ${dispose.method}`)
     })
   },
   methods: {
@@ -221,6 +228,9 @@ export default {
         this.updateCache()
         this.listLoading = false
       })
+    },
+    initType() {
+      this.queryParams.type = this.$route.path.startsWith('/test/fqc') ? 'FQC' : 'IQC'
     },
     fetchTesters() {
       const suggest = this.suggests.find(suggest => {
@@ -246,7 +256,7 @@ export default {
 
       return 'border'
     },
-    conclusionClass({row, column}) {
+    conclusionClass({ row, column }) {
       if (row.conclusion === 'NG') {
         if (column.label === '结果') {
           return 'ng-value'
@@ -278,6 +288,7 @@ export default {
 
   .el-table td.ng-conclusion {
     color: red;
+
     input {
       border-color: red;
     }

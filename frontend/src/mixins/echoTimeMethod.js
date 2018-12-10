@@ -1,9 +1,12 @@
 export default {
   methods: {
-    echoTime(dtstr) {
-      dtstr = dtstr.substring(0, 19)
-      dtstr = dtstr.replace(/-/g, '/')
-      return new Date(dtstr).toLocaleString()
+    echoTime(dateObj) {
+      if (dateObj.date) {
+        const date = dateObj.date.substring(0, 19).replace(/-/g, '/')
+        return new Date(date).toLocaleString()
+      }
+
+      return ''
     }
   }
 }

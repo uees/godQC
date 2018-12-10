@@ -343,7 +343,17 @@ class SuggestTableSeeder extends Seeder
                 '补色浆',
                 '补无色油',
                 '兑油',
-                '报废'
+                '报废',
+            ]
+        ]))->save();
+
+        (new Suggest([
+            'name' => '处理人',
+            'data' => [
+                '周费亮',
+                '工艺',
+                '万重阳',
+                '技术部',
             ]
         ]))->save();
     }

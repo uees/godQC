@@ -32,11 +32,11 @@ const basedata = {
   },
 
   actions: {
-    FetchCategory({commit, state}) {
+    FetchCategory({ commit, state }) {
       return new Promise((resolve, reject) => {
         categoryApi.list().then(response => {
           // 无分页，全部加载
-          const {data} = response.data // 无分页
+          const { data } = response.data // 无分页
           commit('SET_CATEGORIES', data)
           resolve(response)
         }).catch(error => {
@@ -44,11 +44,11 @@ const basedata = {
         })
       })
     },
-    FetchSuggest({commit, state}) {
+    FetchSuggest({ commit, state }) {
       return new Promise((resolve, reject) => {
         // 无分页，全部加载
-        suggestApi.list().then(response => {
-          const {data} = response.data
+        suggestApi.list({ params: { all: 1 } }).then(response => {
+          const { data } = response.data
           commit('SET_SUGGESTS', data)
           resolve(response)
         }).catch(error => {

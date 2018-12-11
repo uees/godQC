@@ -83,8 +83,7 @@ export default {
       itemIndex: -1,
       rules: {
         item: { required: true, message: '必填项', trigger: 'blur' },
-        'spec.value_type': { required: true, message: '必填项', trigger: 'blur' },
-        'spec.data.value': { required: true, message: '必填项', trigger: 'blur' }
+        'spec.value_type': { required: true, message: '必填项', trigger: 'blur' }
       },
       visible: false,
       titleMap: {

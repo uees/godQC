@@ -47,7 +47,7 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
 
     Route::prefix('qc-record-items')->name('record-items.')->group(function () {
         Route::get('{testRecord}', 'QCRecordItemController@index')->name('index');
-        Route::post('{testRecord}', 'QCRecordItemController@index')->name('store');
+        Route::post('{testRecord}', 'QCRecordItemController@store')->name('store');
         Route::get('{testRecord}/{testRecordItem}', 'QCRecordItemController@show')->name('show');
         Route::put('{testRecord}/{testRecordItem}', 'QCRecordItemController@update')->name('update');
         Route::patch('{testRecord}/{testRecordItem}', 'QCRecordItemController@update')->name('update');

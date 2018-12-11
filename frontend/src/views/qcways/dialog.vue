@@ -19,7 +19,7 @@
           <template slot-scope="scope">
             <el-autocomplete
               v-model="scope.row.name"
-              :fetch-suggestions="querySearch"
+              :fetch-suggestions="querySearchItems"
               :select-when-unmatched="true"
               size="small"
             />
@@ -30,7 +30,7 @@
           <template slot-scope="scope">
             <el-autocomplete
               v-model="scope.row.method"
-              :fetch-suggestions="queryMethods"
+              :fetch-suggestions="querySearchMethods"
               :debounce="300"
               value-key="name"
               suffix-icon="el-icon-edit"
@@ -95,11 +95,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import dialog from '@/mixins/dialog'
 import { valueTypes } from '@/mixins/const'
-import { qcWayApi, qcMethodApi } from '@/api/qc'
-// import { debounce } from '../../utils'
+import dialog from '@/mixins/dialog'
+import testItemSuggestions from '@/mixins/testItemSuggestions'
+import testMethodSuggestions from '@/mixins/testMethodSuggestions'
+import { qcWayApi } from '@/api/qc'
 
 export function newWaysItem() {
   return {
@@ -140,28 +140,17 @@ export default {
   name: 'Dialog',
   mixins: [
     valueTypes,
+    testItemSuggestions,
+    testMethodSuggestions,
     dialog
   ],
   data() {
     return {
       api: qcWayApi,
-      testItemSuggestions: [],
       selectTestMethods: [],
       objRules: {
         name: { required: true, message: '必填项', trigger: 'blur' }
       }
-    }
-  },
-  computed: {
-    ...mapState('basedata', { // namespaced module
-      suggests: state => state.suggests
-    })
-  },
-  created() {
-    if (this.suggests.length === 0) {
-      this.$store.dispatch('basedata/FetchSuggest').then(() => {
-        this.initSuggest()
-      })
     }
   },
   mounted() {
@@ -170,33 +159,8 @@ export default {
     })
   },
   methods: {
-    initSuggest() {
-      // 获取 parent
-      const parent = this.suggests.find(suggest => {
-        return suggest.parent_id === 0 && suggest.name === '检测项目'
-      })
-
-      // 获取 children
-      const testItems = this.suggests.filter(suggest => {
-        return suggest.parent_id === parent.id
-      })
-
-      this.testItemSuggestions = testItems.map(suggest => {
-        return {value: suggest.name, label: suggest.name}
-      })
-    },
     newObj() {
-      return Object.assign({}, newObj())
-    },
-    querySearch(queryString, cb) {
-      // el-autocomplete 需要传入对象数组
-      const values = this.testItemSuggestions
-
-      const results = queryString
-        ? values.filter(element => element.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0)
-        : values
-
-      cb(results)
+      return newObj()
     },
     create() {
       this.$refs['obj_form'].validate(valid => {
@@ -205,7 +169,7 @@ export default {
           this.updateWay()
           this.api.add(this.obj).then(response => {
             const { data } = response.data
-            this.obj = data // 灰常重要！！！
+            this.obj = data
             this.done()
           })
         } else {
@@ -220,7 +184,7 @@ export default {
           this.updateWay()
           this.api.update(this.obj.id, this.obj).then(response => {
             const { data } = response.data
-            this.obj = data // 灰常重要！！！
+            this.obj = data
             this.done()
           })
         } else {
@@ -230,18 +194,6 @@ export default {
     },
     handleCreate() {
       this.obj.way.push(newWaysItem())
-    },
-    queryMethods(queryString, cb) {
-      const fetch = () => {
-        qcMethodApi.list({ params: { q: queryString } }).then(response => {
-          const { data } = response.data
-          // 调用 callback 返回建议列表的数据
-          cb(data)
-        })
-      }
-
-      fetch()
-      // debounce(fetch(), 200, true) // element-ui 自带 debounce
     },
     handleSelect(item) {
       this.selectTestMethods.push(item)
@@ -258,7 +210,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

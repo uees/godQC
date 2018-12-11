@@ -5,19 +5,19 @@
         ref="obj_form"
         :model="item"
         :rules="rules"
-        class="small-space"
         label-position="right"
-        label-width="70px">
+        label-width="100px">
 
-        <el-form-item label="检测项目" prop="name">
-          <el-input v-model="item.name"/>
+        <el-form-item label="检测项目" prop="item">
+          <el-autocomplete
+            v-model="item.item"
+            :fetch-suggestions="querySearchItems"
+            :select-when-unmatched="true"
+            size="small"
+          />
         </el-form-item>
 
-        <el-form-item label="检测方法">
-          <el-input v-model="item.method"/>
-        </el-form-item>
-
-        <el-form-item label="值类型">
+        <el-form-item label="值类型" prop="spec.value_type">
           <el-select v-model="item.spec.value_type" placeholder="请选择">
             <el-option
               v-for="item in valueTypes"
@@ -30,7 +30,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="要求">
+        <el-form-item label="要求" prop="spec.data.value">
           <template v-if="item.spec.value_type === 'RANGE'">
             <el-row :gutter="20">
               <el-col :span="12">
@@ -65,21 +65,26 @@
 <script>
 import Bus from '@/store/bus'
 import { valueTypes } from '@/mixins/const'
+import testItemSuggestions from '@/mixins/testItemSuggestions'
 import { updateRecordItem, addRecordItem } from '@/api/qc'
 
 export default {
   name: 'ItemForm',
   mixins: [
-    valueTypes
+    valueTypes,
+    testItemSuggestions
   ],
   data() {
     return {
-      record: null,
       action: 'update',
+      record: null,
+      recordIndex: -1,
       item: this.newItem(),
-      updateIndex: -1,
+      itemIndex: -1,
       rules: {
-        name: { required: true, message: '必填项', trigger: 'blur' }
+        item: { required: true, message: '必填项', trigger: 'blur' },
+        'spec.value_type': { required: true, message: '必填项', trigger: 'blur' },
+        'spec.data.value': { required: true, message: '必填项', trigger: 'blur' }
       },
       visible: false,
       titleMap: {
@@ -89,18 +94,17 @@ export default {
     }
   },
   mounted() {
-    Bus.$on('show-item-form', (record, item, itemIndex) => {
+    Bus.$on('show-item-form', (scope, props) => {
       this.visible = true
-      this.record = record
-      if (item) {
+      this.record = Object.assign({}, scope.row)
+      this.recordIndex = scope.$index
+      this.action = 'create'
+      this.resetItem()
+
+      if (props) {
         this.action = 'update'
-        this.updateIndex = itemIndex >= 0
-          ? itemIndex
-          : this.record.items.indexOf(item)
-        this.item = item
-      } else {
-        this.action = 'create'
-        this.resetItem()
+        this.itemIndex = props.$index
+        this.item = Object.assign({}, props.row)
       }
     })
   },
@@ -135,7 +139,7 @@ export default {
           addRecordItem(this.record.id, this.item).then(response => {
             const { data } = response.data
             this.item = data
-            this.record.items.push(this.item) // 更新表格数据
+            this.$emit('item-created', this.record, this.recordIndex, this.item)
             this.done()
           })
         } else {
@@ -149,7 +153,7 @@ export default {
           updateRecordItem(this.record.id, this.item.id, this.item).then(response => {
             const { data } = response.data
             this.item = data
-            this.record.items.splice(this.updateIndex, 1, this.item) // 更新表格数据
+            this.$emit('item-updated', this.record, this.recordIndex, this.item, this.itemIndex)
             this.done()
           })
         } else {
@@ -158,17 +162,11 @@ export default {
       })
     },
     done() {
-      if (this.action === 'create') {
-        this.$emit('item-created', this.record, this.item)
-      } else if (this.action === 'update') {
-        this.$emit('item-updated', this.record, this.item, this.updateIndex)
-      }
       this.$notify({ title: '成功', message: '操作成功', type: 'success', duration: 2000 })
-      this.visible = false
+      this.close()
     },
     close() {
       this.visible = false
-      this.$emit('cancel')
     }
   }
 }

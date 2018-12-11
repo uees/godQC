@@ -40,7 +40,7 @@
 
 <script>
 import Bus from '@/store/bus'
-import { qcRecordApi, productBatchApi } from '@/api/qc'
+import { qcRecordApi } from '@/api/qc'
 
 export default {
   name: 'RecordForm',
@@ -56,10 +56,10 @@ export default {
     }
   },
   mounted() {
-    Bus.$on('show-update-record-form', (record, index) => {
+    Bus.$on('show-update-record-form', (scope) => {
       this.visible = true
-      this.record = record
-      this.index = index
+      this.record = Object.assign({}, scope.row)
+      this.index = scope.$index
     })
   },
   methods: {
@@ -87,18 +87,13 @@ export default {
     update() {
       this.$refs['obj_form'].validate(valid => {
         if (valid) {
-          productBatchApi.update(this.record.batch.id, this.record.batch).then(response => {
+          qcRecordApi.update(this.record.id, this.record).then((response) => {
             const { data } = response.data
-            this.record.batch = data
+            this.record = data
 
-            qcRecordApi.update(this.record.id, {
-              show_reality: this.record.show_reality,
-              memo: this.record.memo
-            }).then(() => {
-              this.$emit('record-updated', this.record, this.index)
-              this.$notify({ title: '成功', message: '操作成功', type: 'success', duration: 2000 })
-              this.visible = false
-            })
+            this.$emit('record-updated', this.record, this.index)
+            this.$notify({ title: '成功', message: '操作成功', type: 'success', duration: 2000 })
+            this.close()
           })
         } else {
           return false
@@ -107,7 +102,6 @@ export default {
     },
     close() {
       this.visible = false
-      this.$emit('cancel', this.index)
     }
   }
 }

@@ -87,7 +87,15 @@ class QCRecordController extends Controller
 
     public function update(Request $request, $id)
     {
-        $testRecord = TestRecord::findOrFail($id);
+        $testRecord = TestRecord::with('batch')
+            ->where('id', $id)
+            ->firstOrFail();
+
+        if ($request->filled('batch')) {
+            $batch = $request->get('batch');
+            $batch = is_array($batch) ? $batch : json_decode($batch);
+            $testRecord->batch->update($batch);
+        }
 
         if ($testRecord->update($request->all())) {
             return TestRecordResource::make($testRecord);

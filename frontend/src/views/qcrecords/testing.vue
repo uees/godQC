@@ -67,10 +67,10 @@
             style="color: red"
             @click="handleMakeDispose(scope.row)">处理意见
           </el-button>
-          <el-button type="text" size="small" @click="handleShowRecordEditForm(scope.row, scope.$index)">编辑</el-button>
-          <el-button type="text" size="small" @click="handleShowItemForm(scope.row)">添加项目</el-button>
-          <el-button type="text" size="small" @click="handleSayPackage(scope.row, scope.$index)">写装</el-button>
-          <el-button type="text" size="small" @click="handleDeleteRecord(scope.row, scope.$index)">删除</el-button>
+          <el-button type="text" size="small" @click="handleShowRecordEditForm(scope)">编辑</el-button>
+          <el-button type="text" size="small" @click="handleShowItemForm(scope)">添加项目</el-button>
+          <el-button type="text" size="small" @click="handleSayPackage(scope)">写装</el-button>
+          <el-button type="text" size="small" @click="handleDeleteRecord(scope)">删除</el-button>
         </template>
       </el-table-column>
 
@@ -141,8 +141,8 @@
 
             <el-table-column align="center" label="操作" width="100" class-name="small-padding fixed-width">
               <template slot-scope="props">
-                <el-button type="text" size="small" @click="handleShowItemForm(scope.row, props.row, props.$index)">编辑</el-button>
-                <el-button type="text" size="small" @click="handleDeleteRecordItem(scope.row, props.row, props.$index)">删除</el-button>
+                <el-button type="text" size="small" @click="handleShowItemForm(scope, props)">编辑</el-button>
+                <el-button type="text" size="small" @click="handleDeleteRecordItem(scope, props)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>

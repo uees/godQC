@@ -124,7 +124,10 @@ export default {
       // show dispose form
       Bus.$emit('show-dispose-form', record)
     },
-    handleSayPackage(record, index) {
+    handleSayPackage(scope) {
+      const record = scope.row
+      const index = scope.$index
+
       if (!record.conclusion) {
         return this.$alert('检测完了才能写装', '检测未完成', {
           confirmButtonText: '确定'
@@ -137,7 +140,6 @@ export default {
         type: 'info'
       }).then(() => {
         sayPackage(record.id).then(() => {
-          // const index = this.records.indexOf(record)
           this.records.splice(index, 1)
           this.updateCache()
           this.$message({
@@ -147,17 +149,19 @@ export default {
         })
       })
     },
-    handleShowRecordEditForm(record, index) {
-      Bus.$emit('show-update-record-form', record, index)
+    handleShowRecordEditForm(scope) {
+      Bus.$emit('show-update-record-form', scope)
     },
-    handleDeleteRecord(record, index) {
+    handleDeleteRecord(scope) {
       this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        const record = scope.row
+        const index = scope.$index
+
         qcRecordApi.delete(record.id).then(() => {
-          // const index = this.records.indexOf(record)
           this.records.splice(index, 1)
           this.updateCache()
           this.$message({
@@ -170,22 +174,35 @@ export default {
     handleSample() {
       Bus.$emit('show-record-sample-form', this.queryParams.type)
     },
-    handleDeleteRecordItem(record, item, itemIndex) {
-      deleteRecordItem(record.id, item.id).then(response => {
-        record.items.splice(itemIndex, 1)
-        this.updateCache()
+    handleDeleteRecordItem(scope, props) {
+      this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const record = scope.row
+        const item = props.row
+        const itemIndex = props.$index
+
+        deleteRecordItem(record.id, item.id).then(response => {
+          record.items.splice(itemIndex, 1)
+          this.updateCache()
+        })
       })
     },
-    handleShowItemForm(record, item, itemIndex) {
-      Bus.$emit('show-item-form', record, item, itemIndex)
+    handleShowItemForm(scope, props) {
+      Bus.$emit('show-item-form', scope, props)
     },
-    itemCreated(record, item) {
+    itemCreated(record, recordIndex, item) {
+      this.records[recordIndex].items.push(item)
       this.updateCache()
     },
-    itemUpdated(record, item, updateIndex) {
+    itemUpdated(record, recordIndex, item, itemIndex) {
+      this.records[recordIndex].items.splice(itemIndex, 1, this.item)
       this.updateCache()
     },
     recordUpdated(record, index) {
+      this.records.splice(index, 1, record)
       this.updateCache()
     },
     checkDone(scope) {

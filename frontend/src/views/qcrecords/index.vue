@@ -77,8 +77,8 @@
             @click="showDispose(scope.row)">处理意见
           </el-button>
           <template v-if="real">
-            <el-button type="text" size="small" @click="handleShowRecordEditForm(scope.row, scope.$index)">编辑</el-button>
-            <el-button type="text" size="small" @click="handleDeleteRecord(scope.row, scope.$index)">删除</el-button>
+            <el-button type="text" size="small" @click="handleShowRecordEditForm(scope)">编辑</el-button>
+            <el-button type="text" size="small" @click="handleDeleteRecord(scope)">删除</el-button>
           </template>
         </template>
       </el-table-column>
@@ -118,7 +118,7 @@
                 <el-button
                   type="text"
                   size="small"
-                  @click="handleShowItemForm(scope.row, props.row, props.$index)">编辑
+                  @click="handleShowItemForm(scope, props)">编辑
                 </el-button>
               </template>
             </el-table-column>

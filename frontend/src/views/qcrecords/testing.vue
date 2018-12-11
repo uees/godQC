@@ -26,9 +26,9 @@
 
     <el-table
       v-loading.body="listLoading"
+      :data="records"
       :row-class-name="rowClass"
       :cell-class-name="conclusionClass"
-      :data="records"
       border
       default-expand-all
       row-key="id"
@@ -58,7 +58,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="180" class-name="small-padding fixed-width">
+      <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             v-if="scope.row.conclusion === 'NG'"
@@ -67,8 +67,10 @@
             style="color: red"
             @click="handleMakeDispose(scope.row)">处理意见
           </el-button>
-          <el-button type="text" size="small" @click="handleSayPackage(scope.row)">写装</el-button>
-          <el-button type="text" size="small" @click="handleDeleteRecord(scope.row)">删除</el-button>
+          <el-button type="text" size="small" @click="handleShowRecordEditForm(scope.row, scope.$index)">编辑</el-button>
+          <el-button type="text" size="small" @click="handleShowItemForm(scope.row)">添加项目</el-button>
+          <el-button type="text" size="small" @click="handleSayPackage(scope.row, scope.$index)">写装</el-button>
+          <el-button type="text" size="small" @click="handleDeleteRecord(scope.row, scope.$index)">删除</el-button>
         </template>
       </el-table-column>
 
@@ -136,6 +138,13 @@
                 />
               </template>
             </el-table-column>
+
+            <el-table-column align="center" label="操作" width="100" class-name="small-padding fixed-width">
+              <template slot-scope="props">
+                <el-button type="text" size="small" @click="handleShowItemForm(scope.row, props.row, props.$index)">编辑</el-button>
+                <el-button type="text" size="small" @click="handleDeleteRecordItem(scope.row, props.row, props.$index)">删除</el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </template>
       </el-table-column>
@@ -144,6 +153,8 @@
 
     <qc-sample/>
     <dispose-form/>
+    <item-form @itemCreated="itemCreated" @itemUpdated="itemUpdated" @cancel="onCancel"/>
+    <record-form @itemUpdated="recordUpdated" @cancel="onCancel"/>
   </div>
 </template>
 
@@ -153,27 +164,32 @@ import { qcRecordApi } from '@/api/qc'
 import Bus from '@/store/bus'
 import echoSpecMethod from '@/mixins/echoSpecMethod'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
+import commonMethods from './mixin/commonMethods'
+import testOperation from './mixin/testOperation'
 import QcSample from './components/QcSample'
 import DisposeForm from './components/DisposeForm'
-import testOperation from './mixin/testOperation'
+import ItemForm from './components/ItemForm'
 import ValueInput from './components/ValueInput'
+import RecordForm from './components/RecordForm'
 
 export default {
   name: 'Testing',
   components: {
+    ItemForm,
     QcSample,
     ValueInput,
-    DisposeForm
+    DisposeForm,
+    RecordForm
   },
   mixins: [
     echoSpecMethod,
     echoTimeMethod,
-    testOperation
+    testOperation,
+    commonMethods
   ],
   data() {
     return {
       records: [],
-      cacheRecords: [],
       testers: [],
       listLoading: false,
       queryParams: {
@@ -231,9 +247,6 @@ export default {
         this.listLoading = false
       })
     },
-    initType() {
-      this.queryParams.type = this.$route.path.startsWith('/test/fqc') ? 'FQC' : 'IQC'
-    },
     fetchTesters() {
       const suggest = this.suggests.find(suggest => {
         return suggest.parent_id === 0 && suggest.name === '检测员'
@@ -243,37 +256,10 @@ export default {
         this.testers = suggest.data
       }
     },
-    handleSearch() {
-      this.fetchData()
-    },
     queryTesters(queryString, cb) {
       const testers = this.testers
       const results = queryString ? testers.filter(tester => tester.name.toLowerCase().indexOf(queryString.toLowerCase()) >= 0) : testers
       cb(results)
-    },
-    rowClass({ row, rowIndex }) {
-      if (rowIndex % 2 === 0) {
-        return 'light-row border'
-      }
-
-      return 'border'
-    },
-    conclusionClass({ row, column }) {
-      if (row.conclusion === 'NG') {
-        if (column.label === '结果') {
-          return 'ng-value'
-        } else if (column.label === '结论') {
-          return 'ng-conclusion'
-        }
-      }
-    },
-    echoConclusion(conclusion) {
-      if (conclusion === 'PASS') {
-        return '合格'
-      }
-      if (conclusion === 'NG') {
-        return '不合格'
-      }
     }
   }
 }

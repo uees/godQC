@@ -61,7 +61,7 @@ export default {
       products: [],
       batchRules: {
         product_name: { required: true, message: '必填项', trigger: 'blur' },
-        batch_number: { required: true, message: '必填项', trigger: 'blur' }
+        batch_number: { required: true, min: 5, message: '请填入完整的批号', trigger: 'blur' }
       },
       dialogFormVisible: false
     }

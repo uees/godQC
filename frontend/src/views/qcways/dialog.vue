@@ -39,7 +39,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column align="center" label="值类型">
+        <el-table-column align="center" label="检测值数据类型">
           <template slot-scope="scope">
             <el-select v-model="scope.row.spec.value_type" placeholder="请选择">
               <el-option
@@ -54,7 +54,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column align="center" label="值">
+        <el-table-column align="center" label="要求">
           <template slot-scope="scope">
             <template v-if="scope.row.spec.value_type === 'RANGE'">
               <el-row :gutter="20">
@@ -71,6 +71,15 @@
               </el-row>
             </template>
             <el-input v-else v-model="scope.row.spec.data.value" placeholder="要求值"/>
+          </template>
+        </el-table-column>
+
+        <el-table-column align="center" label="是否展示">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.spec.is_show"
+              active-text="是"
+              inactive-text="否"/>
           </template>
         </el-table-column>
       </el-table>
@@ -94,11 +103,11 @@ import { qcWayApi, qcMethodApi } from '@/api/qc'
 
 export function newWaysItem() {
   return {
-    is_edit: true,
     name: '',
     method: '',
     method_id: 0,
     spec: {
+      is_show: true,
       value_type: '', // RANGE, INFO, VALUE
       data: {
         min: undefined,
@@ -239,7 +248,6 @@ export default {
     },
     updateWay() {
       this.obj.way = this.obj.way.map(element => {
-        delete element.is_edit // 删除 is_edit 属性
         const method = this.selectTestMethods.find(method => method.name === element.method)
         if (method) {
           element.method_id = method.id

@@ -2,7 +2,6 @@ import {
   qcRecordApi,
   updateRecordItem,
   deleteRecordItem,
-  addRecordItem,
   testDone,
   sayPackage
 } from '@/api/qc'
@@ -10,6 +9,11 @@ import Bus from '@/store/bus'
 import { deepClone } from '@/utils'
 
 export default {
+  data() {
+    return {
+      cacheRecords: []
+    }
+  },
   methods: {
     updateCache() {
       // this.cacheRecords = this.records // 不是复制, 都是引用的同一数组
@@ -113,11 +117,14 @@ export default {
         this.updateCache()
       }
     },
+    handleSearch() {
+      this.fetchData()
+    },
     handleMakeDispose(record) {
       // show dispose form
       Bus.$emit('show-dispose-form', record)
     },
-    handleSayPackage(record) {
+    handleSayPackage(record, index) {
       if (!record.conclusion) {
         return this.$alert('检测完了才能写装', '检测未完成', {
           confirmButtonText: '确定'
@@ -130,7 +137,7 @@ export default {
         type: 'info'
       }).then(() => {
         sayPackage(record.id).then(() => {
-          const index = this.records.indexOf(record)
+          // const index = this.records.indexOf(record)
           this.records.splice(index, 1)
           this.updateCache()
           this.$message({
@@ -140,14 +147,17 @@ export default {
         })
       })
     },
-    handleDeleteRecord(record) {
+    handleShowRecordEditForm(record, index) {
+      Bus.$emit('show-update-record-form', record, index)
+    },
+    handleDeleteRecord(record, index) {
       this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         qcRecordApi.delete(record.id).then(() => {
-          const index = this.records.indexOf(record)
+          // const index = this.records.indexOf(record)
           this.records.splice(index, 1)
           this.updateCache()
           this.$message({
@@ -160,18 +170,23 @@ export default {
     handleSample() {
       Bus.$emit('show-record-sample-form', this.queryParams.type)
     },
-    handleDeleteRecordItem(record, item) {
+    handleDeleteRecordItem(record, item, itemIndex) {
       deleteRecordItem(record.id, item.id).then(response => {
-        // remove
+        record.items.splice(itemIndex, 1)
         this.updateCache()
       })
     },
-    handleAddRecordItem(record, data) {
-      addRecordItem(record.id, data).then(response => {
-        const { data } = response.data
-        record.items.push(data)
-        this.updateCache()
-      })
+    handleShowItemForm(record, item, itemIndex) {
+      Bus.$emit('show-item-form', record, item, itemIndex)
+    },
+    itemCreated(record, item) {
+      this.updateCache()
+    },
+    itemUpdated(record, item, updateIndex) {
+      this.updateCache()
+    },
+    recordUpdated(record, index) {
+      this.updateCache()
     },
     checkDone(scope) {
       const record = scope.row
@@ -212,6 +227,9 @@ export default {
         const { data } = response.data
         item = data
       })
+    },
+    onCancel(index) {
+      this.records = deepClone(this.cacheRecords)
     }
   }
 }

@@ -108,7 +108,7 @@ export const asyncRouterMap = [
         meta: { title: '产品检测记录', icon: 'guide', noCache: true }
       },
       {
-        path: 'real-list',
+        path: 'list-real',
         component: () => import('@/views/qcrecords/index'),
         hidden: true,
         name: 'fqc-list-real',
@@ -140,13 +140,25 @@ export const asyncRouterMap = [
         meta: { title: '来料检测记录', icon: 'guide', noCache: true }
       },
       {
-        path: 'real-list',
+        path: 'list-real',
         component: () => import('@/views/qcrecords/index'),
         hidden: true,
         name: 'iqc-list-real',
         meta: { title: '来料检测记录(Real)', noCache: true }
       }
     ]
+  },
+  {
+    path: '/disposes/:id',
+    component: () => import('@/views/qcrecords/dispose'),
+    hidden: true,
+    name: 'disposes.show'
+  },
+  {
+    path: '/records/:id',
+    component: () => import('@/views/qcrecords/show'),
+    hidden: true,
+    name: 'records.show'
   },
   {
     path: '/test/methods',

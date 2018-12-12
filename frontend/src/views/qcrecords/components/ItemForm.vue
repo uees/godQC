@@ -138,6 +138,7 @@ export default {
           addRecordItem(this.record.id, this.item).then(response => {
             const { data } = response.data
             this.item = data
+            this.record.push(this.item)
             this.$emit('item-created', this.record, this.recordIndex, this.item)
             this.done()
           })
@@ -152,6 +153,7 @@ export default {
           updateRecordItem(this.record.id, this.item.id, this.item).then(response => {
             const { data } = response.data
             this.item = data
+            this.record.splice(this.itemIndex, 1, this.item)
             this.$emit('item-updated', this.record, this.recordIndex, this.item, this.itemIndex)
             this.done()
           })

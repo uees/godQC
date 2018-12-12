@@ -194,11 +194,11 @@ export default {
       Bus.$emit('show-item-form', scope, props)
     },
     itemCreated(record, recordIndex, item) {
-      this.records[recordIndex].items.push(item)
+      this.records.splice(recordIndex, 1, record)
       this.updateCache()
     },
     itemUpdated(record, recordIndex, item, itemIndex) {
-      this.records[recordIndex].items.splice(itemIndex, 1, this.item)
+      this.records.splice(recordIndex, 1, record)
       this.updateCache()
     },
     recordUpdated(record, index) {
@@ -244,9 +244,6 @@ export default {
         const { data } = response.data
         item = data
       })
-    },
-    onCancel(index) {
-      this.records = deepClone(this.cacheRecords)
     }
   }
 }

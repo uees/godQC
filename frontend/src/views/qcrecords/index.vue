@@ -93,7 +93,7 @@
             header-cell-class-name="table-header-th"
             style="width: 100%"
           >
-            <el-table-column :sortable="true" prop="id" label="ID" width="90"/>
+            <el-table-column prop="id" label="ID" width="90"/>
             <el-table-column prop="item" label="项目"/>
             <el-table-column label="要求">
               <template slot-scope="props">
@@ -128,8 +128,8 @@
 
     </el-table>
 
-    <item-form @itemCreated="itemCreated" @itemUpdated="itemUpdated" @cancel="onCancel"/>
-    <record-form @itemUpdated="recordUpdated" @cancel="onCancel"/>
+    <item-form @itemCreated="itemCreated" @itemUpdated="itemUpdated"/>
+    <record-form @itemUpdated="recordUpdated"/>
   </div>
 </template>
 
@@ -197,7 +197,7 @@ export default {
       })
     },
     initReal() {
-      this.real = this.$route.path.endsWith('list-real')
+      this.real = this.$route.path.endsWith('/real')
     },
     pagination(response) {
       const {meta} = response.data

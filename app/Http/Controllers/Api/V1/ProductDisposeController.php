@@ -68,8 +68,10 @@ class ProductDisposeController extends Controller
     }
 
 
-    public function show(ProductDispose $productDispose)
+    public function show($id)
     {
+        $productDispose = ProductDispose::with('batch')->findOrFail($id);
+
         return ProductDisposeResource::make($productDispose);
     }
 

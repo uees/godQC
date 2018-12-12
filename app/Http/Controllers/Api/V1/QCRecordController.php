@@ -109,6 +109,8 @@ class QCRecordController extends Controller
     {
         $testRecord = TestRecord::find($id);
 
+        $this->authorize('delete', $testRecord);
+
         if (TestRecord::destroy($id)) {
             $testRecord->items()->delete();
 

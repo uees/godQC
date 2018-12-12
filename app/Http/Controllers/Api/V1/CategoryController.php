@@ -61,7 +61,11 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
-        if (Category::destroy($id)){
+        $object = Category::findOrFail($id);
+
+        $this->authorize('delete', $object);
+
+        if ($object->delete()){
             return $this->noContent();
         }
 

@@ -54,7 +54,11 @@ class QCWayController extends Controller
 
     public function destroy($id)
     {
-        if (TestWay::destroy($id)) {
+        $object = TestWay::findOrFail($id);
+
+        $this->authorize('delete', $object);
+
+        if ($object->delete()){
             return $this->noContent();
         }
 

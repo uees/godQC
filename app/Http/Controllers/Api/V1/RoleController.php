@@ -27,6 +27,8 @@ class RoleController extends Controller
 
     public function store(RoleRequest $request)
     {
+        $this->authorize('create');
+
         $role = new Role();
 
         $role->fill($request->all())->save();
@@ -44,6 +46,7 @@ class RoleController extends Controller
     public function update(RoleRequest $request, $id)
     {
         $role = Role::findOrFail($id);
+        $this->authorize('update', $role);
         $role->fill($request->all())->save();
 
         return RoleResource::make($role);
@@ -52,7 +55,11 @@ class RoleController extends Controller
 
     public function destroy($id)
     {
-        if (Role::destroy($id)) {
+        $object = Role::findOrFail($id);
+
+        $this->authorize('delete', $object);
+
+        if ($object->delete()){
             return $this->noContent();
         }
 

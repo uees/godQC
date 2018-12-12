@@ -60,7 +60,11 @@ class CustomerController extends Controller
 
     public function destroy($id)
     {
-        if(Customer::destroy($id)) {
+        $object = Customer::findOrFail($id);
+
+        $this->authorize('delete', $object);
+
+        if($object->delete()) {
             return $this->noContent();
         }
 

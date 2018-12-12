@@ -69,7 +69,11 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
-        if (Product::destroy($id)) {
+        $object = Product::findOrFail($id);
+
+        $this->authorize('delete', $object);
+
+        if ($object->delete()){
             return $this->noContent();
         }
 

@@ -63,6 +63,8 @@ class QCRecordItemController extends Controller
 
     public function destroy(TestRecord $testRecord, TestRecordItem $testRecordItem)
     {
+        $this->authorize('delete', $testRecordItem);
+
         if ($testRecord->items->contains($testRecordItem)) {
             if (TestRecordItem::destroy($testRecordItem->id)) {
                 return $this->noContent();

@@ -57,7 +57,11 @@ class QCMethodController extends Controller
 
     public function destroy($id)
     {
-        if (TestMethod::destroy($id)) {
+        $object = TestMethod::findOrFail($id);
+
+        $this->authorize('delete', $object);
+
+        if ($object->delete()){
             return $this->noContent();
         }
 

@@ -87,7 +87,11 @@ class ProductDisposeController extends Controller
 
     public function destroy($id)
     {
-        if (ProductDispose::destroy($id)) {
+        $object = ProductDispose::findOrFail($id);
+
+        $this->authorize('delete', $object);
+
+        if ($object->delete()){
             return $this->noContent();
         }
 

@@ -72,6 +72,27 @@ export const constantRouterMap = [
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
         meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
+      },
+      {
+        path: 'disposes/:id',
+        component: () => import('@/views/qcrecords/dispose'),
+        hidden: true,
+        props: true,
+        name: 'disposes.show'
+      },
+      {
+        path: 'records/:id',
+        component: () => import('@/views/qcrecords/show'),
+        hidden: true,
+        props: true,
+        name: 'records.show'
+      },
+      {
+        path: 'records/:id/real',
+        component: () => import('@/views/qcrecords/show'),
+        hidden: true,
+        props: true,
+        name: 'records.show-real'
       }
     ]
   }
@@ -147,27 +168,6 @@ export const asyncRouterMap = [
         meta: { title: '来料检测记录(Real)', noCache: true }
       }
     ]
-  },
-  {
-    path: '/disposes/:id',
-    component: () => import('@/views/qcrecords/dispose'),
-    hidden: true,
-    props: true,
-    name: 'disposes.show'
-  },
-  {
-    path: '/records/:id',
-    component: () => import('@/views/qcrecords/show'),
-    hidden: true,
-    props: true,
-    name: 'records.show'
-  },
-  {
-    path: '/records/:id/real',
-    component: () => import('@/views/qcrecords/show'),
-    hidden: true,
-    props: true,
-    name: 'records.show-real'
   },
   {
     path: '/test/methods',

@@ -18,12 +18,9 @@ class RecordDeleted
 
     public $batch;
 
-    public $record;
-
-    public function __construct(ProductBatch $batch, TestRecord $record)
+    public function __construct(ProductBatch $batch)
     {
         $this->batch = $batch;
-        $this->record = $record;
     }
 
     public function broadcastOn()

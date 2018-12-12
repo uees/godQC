@@ -107,14 +107,14 @@ class QCRecordController extends Controller
 
     public function destroy($id)
     {
-        $testRecord = TestRecord::find($id);
+        $testRecord = TestRecord::where('id', $id)->firstOrFail();
 
         $this->authorize('delete', $testRecord);
 
-        if (TestRecord::destroy($id)) {
+        if ($testRecord->delete()) {
             $testRecord->items()->delete();
 
-            event(new RecordDeleted($testRecord->batch, $testRecord));
+            event(new RecordDeleted($testRecord->batch));
 
             return $this->noContent();
         }

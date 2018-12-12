@@ -32,7 +32,9 @@ class UpdateTestsNum implements ShouldQueue
         $event->batch->tests_num = $count;
         $event->batch->save();
 
-        $event->record->test_times = $count;
-        $event->record->save();
+        if ($event instanceof QCSampled) {
+            $event->record->test_times = $count;
+            $event->record->save();
+        }
     }
 }

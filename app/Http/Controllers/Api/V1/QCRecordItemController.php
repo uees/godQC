@@ -53,7 +53,7 @@ class QCRecordItemController extends Controller
                 }
             }
 
-            $testRecordItem->fill($request->all())->save();
+            $testRecordItem->fill($request->except('fake_value'))->save();
 
             return TestRecordItemResource::make($testRecordItem);
         }

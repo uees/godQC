@@ -99,8 +99,12 @@
               </template>
             </el-table-column>
 
-            <el-table-column v-if="showReality(scope.row)" prop="value" label="结果"/>
-            <el-table-column v-else prop="fake_value" label="结果"/>
+            <el-table-column label="结果">
+              <template slot-scope="props">
+                <span v-if="showReality(props.row)">{{ props.row.value }}</span>
+                <span v-else>{{ props.row.fake_value }}</span>
+              </template>
+            </el-table-column>
 
             <el-table-column label="结论">
               <template slot-scope="props">
@@ -207,6 +211,10 @@ export default {
       })
     },
     showReality(record) {
+      if (record.conclusion === 'PASS') {
+        return true
+      }
+
       if (this.real) {
         return true
       }

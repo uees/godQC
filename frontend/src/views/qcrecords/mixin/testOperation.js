@@ -209,10 +209,16 @@ export default {
       const record = scope.row
       const cached_record = this.cacheRecords[scope.$index]
 
-      let done = false
-      done = !record.items.some(item => item.conclusion.trim() === '')
+      // 如果有结论为空的项目，则未完成
+      const notDone = record.items.some(item => {
+        if (typeof item.conclusion === 'string') {
+          item.conclusion = item.conclusion.trim()
+        }
 
-      if (done) {
+        return !item.conclusion
+      })
+
+      if (!notDone) {
         // 下结论
         const isNG = record.items.some(item => item.conclusion === 'NG')
 

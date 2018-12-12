@@ -31,7 +31,6 @@
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button @click="close">取 消</el-button>
         <el-button type="primary" @click="update">确 定</el-button>
       </div>
     </el-dialog>
@@ -40,6 +39,7 @@
 
 <script>
 import Bus from '@/store/bus'
+import { deepClone } from '@/utils'
 import { qcRecordApi } from '@/api/qc'
 
 export default {
@@ -47,6 +47,7 @@ export default {
   data() {
     return {
       record: this.newRecord(),
+      cachedItems: [],
       loading: false,
       index: -1,
       rules: {
@@ -58,7 +59,8 @@ export default {
   mounted() {
     Bus.$on('show-update-record-form', (scope) => {
       this.visible = true
-      this.record = Object.assign({}, scope.row)
+      this.record = deepClone(scope.row)
+      this.cachedItems = this.record.items
       this.index = scope.$index
     })
   },
@@ -74,6 +76,7 @@ export default {
         said_package_at: null,
         memo: '',
         show_reality: false,
+        items: [],
         batch: {
           id: 0,
           product_name: '',
@@ -90,6 +93,7 @@ export default {
           qcRecordApi.update(this.record.id, this.record).then((response) => {
             const { data } = response.data
             this.record = data
+            this.record.items = this.cachedItems // response 中无 items, 这里重新设置
 
             this.$emit('record-updated', this.record, this.index)
             this.$notify({ title: '成功', message: '操作成功', type: 'success', duration: 2000 })

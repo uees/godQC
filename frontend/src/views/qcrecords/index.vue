@@ -120,8 +120,8 @@
 
     </el-table>
 
-    <item-form @itemCreated="itemCreated" @itemUpdated="itemUpdated"/>
-    <record-form @itemUpdated="recordUpdated"/>
+    <item-form @item-created="itemCreated" @item-updated="itemUpdated"/>
+    <record-form @record-updated="recordUpdated"/>
   </div>
 </template>
 

@@ -54,7 +54,6 @@
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button @click="close">取 消</el-button>
         <el-button v-if="action==='create'" type="primary" @click="create">确 定</el-button>
         <el-button v-else type="primary" @click="update">确 定</el-button>
       </div>
@@ -64,6 +63,7 @@
 
 <script>
 import Bus from '@/store/bus'
+import { deepClone } from '@/utils'
 import { valueTypes } from '@/mixins/const'
 import testItemSuggestions from '@/mixins/testItemSuggestions'
 import { updateRecordItem, addRecordItem } from '@/api/qc'
@@ -95,7 +95,7 @@ export default {
   mounted() {
     Bus.$on('show-item-form', (scope, props) => {
       this.visible = true
-      this.record = Object.assign({}, scope.row)
+      this.record = deepClone(scope.row)
       this.recordIndex = scope.$index
       this.action = 'create'
       this.resetItem()
@@ -103,7 +103,7 @@ export default {
       if (props) {
         this.action = 'update'
         this.itemIndex = props.$index
-        this.item = Object.assign({}, props.row)
+        this.item = deepClone(props.row)
       }
     })
   },
@@ -138,7 +138,7 @@ export default {
           addRecordItem(this.record.id, this.item).then(response => {
             const { data } = response.data
             this.item = data
-            this.record.push(this.item)
+            this.record.items.push(this.item)
             this.$emit('item-created', this.record, this.recordIndex, this.item)
             this.done()
           })
@@ -153,7 +153,7 @@ export default {
           updateRecordItem(this.record.id, this.item.id, this.item).then(response => {
             const { data } = response.data
             this.item = data
-            this.record.splice(this.itemIndex, 1, this.item)
+            this.record.items.splice(this.itemIndex, 1, this.item)
             this.$emit('item-updated', this.record, this.recordIndex, this.item, this.itemIndex)
             this.done()
           })

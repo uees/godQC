@@ -40,8 +40,10 @@ class QCRecordItemController extends Controller
     {
         if ($testRecord->items->contains($testRecordItem)) {
             // 创建 fake value
-            if ($testRecordItem->conclusion == 'NG') {
-                if ($testRecordItem->spec['value_type'] == 'INFO') {
+            if ($request->get('conclusion') == 'NG') {
+                if (is_null($testRecordItem->spec)) {
+                    $testRecordItem->fake_value = 'PASS';
+                } elseif ($testRecordItem->spec['value_type'] == 'INFO') {
                     $testRecordItem->fake_value = 'PASS';
                 } elseif ($testRecordItem->spec['value_type'] == 'NUMBER') {
                     $testRecordItem->fake_value = $testRecordItem->spec['data']['value'];

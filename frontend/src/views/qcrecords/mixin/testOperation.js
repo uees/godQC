@@ -52,7 +52,7 @@ export default {
       }
 
       if (typeof isPass === 'undefined') {
-        item.conclusion = null
+        // pass
       } else if (isPass && item.conclusion !== 'PASS') {
         item.conclusion = 'PASS'
       } else if (!isPass && item.conclusion !== 'NG') {

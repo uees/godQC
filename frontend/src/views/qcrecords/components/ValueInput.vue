@@ -6,7 +6,6 @@
       :fetch-suggestions="querySearch"
       :select-when-unmatched="true"
       @blur="$emit('blur')"
-      @select="$emit('blur')"
     />
     <el-input
       v-else

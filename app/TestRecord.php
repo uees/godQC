@@ -32,7 +32,8 @@ class TestRecord extends Model
      */
     public function items()
     {
-        return $this->hasMany(TestRecordItem::class, 'test_record_id');
+        return $this->hasMany(TestRecordItem::class, 'test_record_id')
+            ->orderBy('id');  // 排序
     }
 
     /**

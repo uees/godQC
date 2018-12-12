@@ -88,12 +88,10 @@
           <el-table
             :data="filterItems(scope.row.items)"
             :cell-class-name="conclusionClass"
-            :default-sort="{prop: 'id', order: 'Ascending'}"
             border
             header-cell-class-name="table-header-th"
             style="width: 100%"
           >
-            <el-table-column prop="id" label="ID" width="90"/>
             <el-table-column prop="item" label="项目"/>
             <el-table-column label="要求">
               <template slot-scope="props">
@@ -112,16 +110,6 @@
 
             <el-table-column prop="tester" label="检测员"/>
             <el-table-column prop="memo" label="备注"/>
-
-            <el-table-column align="center" label="操作" width="60" class-name="small-padding fixed-width">
-              <template slot-scope="props">
-                <el-button
-                  type="text"
-                  size="small"
-                  @click="handleShowItemForm(scope, props)">编辑
-                </el-button>
-              </template>
-            </el-table-column>
           </el-table>
         </template>
       </el-table-column>
@@ -226,7 +214,11 @@ export default {
       return record.show_reality
     },
     showDispose(row) {
-      // todo show dispose
+      qcRecordApi.detail(row.id, { params: { with: 'willDispose' } }).then(response => {
+        const { data } = response.data // data is record
+
+        this.$router.push({ name: 'disposes.show', params: { id: data.willDispose.id }})
+      })
     },
     filterItems(items) {
       if (this.real) {

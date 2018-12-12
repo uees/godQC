@@ -79,12 +79,10 @@
           <el-table
             :data="scope.row.items"
             :cell-class-name="conclusionClass"
-            :default-sort="{prop: 'id', order: 'Ascending'}"
             border
             header-cell-class-name="table-header-th"
             style="width: 100%;"
           >
-            <el-table-column prop="id" label="ID" width="90"/>
             <el-table-column prop="item" label="项目"/>
             <el-table-column label="要求">
               <template slot-scope="props">

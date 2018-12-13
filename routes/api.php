@@ -40,6 +40,7 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
         'qc-methods' => 'QCMethodController',
         'qc-records' => 'QCRecordController',
         'qc-ways' => 'QCWayController',
+        'pattern-tests' => 'PatternTestController',
         'roles' => 'RoleController',
         'users' => 'UserController',
         'suggests' => 'SuggestController',

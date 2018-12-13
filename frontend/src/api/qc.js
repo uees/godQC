@@ -6,6 +6,7 @@ export const qcRecordApi = restApi('qc-records')
 export const qcWayApi = restApi('qc-ways')
 export const productDisposeApi = restApi('product-disposes')
 export const productBatchApi = restApi('product-batches')
+export const patternTestApi = restApi('pattern-tests')
 
 export function categorySelectTestWay(category_id, test_way_id) {
   return request.post(`categories/${category_id}/qc-ways`, { test_way_id })

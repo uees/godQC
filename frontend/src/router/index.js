@@ -170,6 +170,18 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/test/patterns',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/qcrecords/patternTest'),
+        name: 'pattern-tests',
+        meta: { title: '型式检验', icon: 'table' }
+      }
+    ]
+  },
+  {
     path: '/test/methods',
     component: Layout,
     children: [

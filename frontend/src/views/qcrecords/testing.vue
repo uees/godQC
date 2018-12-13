@@ -121,7 +121,7 @@
               <template slot-scope="props">
                 <el-autocomplete
                   v-model="props.row.tester"
-                  :fetch-suggestions="queryTesters"
+                  :fetch-suggestions="querySearchTesters"
                   value-key="name"
                   placeholder="检测员"
                   @select="onItemUserBlur(scope, props)"/>
@@ -157,11 +157,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { qcRecordApi } from '@/api/qc'
 import Bus from '@/store/bus'
 import echoSpecMethod from '@/mixins/echoSpecMethod'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
+import testersSuggestions from '@/mixins/testersSuggestions'
 import commonMethods from './mixin/commonMethods'
 import testOperation from './mixin/testOperation'
 import QcSample from './components/QcSample'
@@ -183,12 +183,12 @@ export default {
     echoSpecMethod,
     echoTimeMethod,
     testOperation,
-    commonMethods
+    commonMethods,
+    testersSuggestions
   ],
   data() {
     return {
       records: [],
-      testers: [],
       listLoading: false,
       queryParams: {
         with: 'batch,items',
@@ -208,24 +208,12 @@ export default {
       ]
     }
   },
-  computed: {
-    ...mapState('basedata', { // namespaced module
-      suggests: state => state.suggests
-    })
-  },
   created() {
-    if (this.suggests.length === 0) {
-      this.$store.dispatch('basedata/FetchSuggest').then(() => {
-        this.fetchTesters()
-      })
-    }
-
     this.initType()
   },
   mounted() {
     this.$nextTick(function () {
       this.fetchData()
-      this.fetchTesters()
     })
     Bus.$on('record-sampled', (record) => {
       this.records.unshift(record)
@@ -245,20 +233,6 @@ export default {
         this.updateCache()
         this.listLoading = false
       })
-    },
-    fetchTesters() {
-      const suggest = this.suggests.find(suggest => {
-        return suggest.parent_id === 0 && suggest.name === '检测员'
-      })
-
-      if (suggest) {
-        this.testers = suggest.data
-      }
-    },
-    queryTesters(queryString, cb) {
-      const testers = this.testers
-      const results = queryString ? testers.filter(tester => tester.name.toLowerCase().indexOf(queryString.toLowerCase()) >= 0) : testers
-      cb(results)
     }
   }
 }

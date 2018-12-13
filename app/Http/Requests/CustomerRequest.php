@@ -24,7 +24,7 @@ class CustomerRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'=> 'required|min:2|unique:customers',
+            'name'=> 'required|min:2',
         ];
     }
 }

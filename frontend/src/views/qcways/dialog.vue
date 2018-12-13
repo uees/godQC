@@ -82,6 +82,12 @@
               inactive-text="否"/>
           </template>
         </el-table-column>
+
+        <el-table-column align="center" label="操作" width="50" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button type="text" size="small" @click="handleDelete(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
 
       <div slot="footer" class="dialog-footer">
@@ -201,6 +207,16 @@ export default {
     },
     handleSelect(item) {
       this.selectTestMethods.push(item)
+    },
+    handleDelete(row) {
+      this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const index = this.obj.way.indexOf(row)
+        this.obj.way.splice(index, 1)
+      })
     },
     updateWay() {
       this.obj.way = this.obj.way.map(element => {

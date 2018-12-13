@@ -24,7 +24,7 @@ class QCMethodRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:test_methods',
+            'name' => 'required',
         ];
     }
 }

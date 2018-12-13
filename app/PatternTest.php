@@ -10,6 +10,8 @@ class PatternTest extends Model
         'product_name',
         'batch_number',
         'nai_han_xing',
+        'nai_rong_ji',
+        'nai_suan_jian',
         '12h_xian_ying',
         '24h_xian_ying',
         'ge_ye_xian_ying',

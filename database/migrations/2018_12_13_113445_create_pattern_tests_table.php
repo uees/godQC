@@ -18,6 +18,8 @@ class CreatePatternTestsTable extends Migration
             $table->string('product_name', 64)->nullable();
             $table->string('batch_number', 64)->nullable();
             $table->string('nai_han_xing', 64)->nullable();
+            $table->string('nai_rong_ji', 64)->nullable();
+            $table->string('nai_suan_jian', 64)->nullable();
             $table->string('h12_xian_ying', 64)->nullable();
             $table->string('h24_xian_ying', 64)->nullable();
             $table->string('ge_ye_xian_ying', 64)->nullable();

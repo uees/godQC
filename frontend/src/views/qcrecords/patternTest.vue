@@ -43,7 +43,7 @@
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
       <el-table-column align="center" label="创建时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.created_at ? (scope.row.created_at.date | parseTime('{y}-{m}-{d} {h}:{i}')) : '' }}</span>
+          <span v-if="scope.row.created_at">{{ echoTime(scope.row.created_at) }}</span>
         </template>
       </el-table-column>
 
@@ -63,18 +63,6 @@
       <el-table-column align="center" label="批号">
         <template slot-scope="scope">
           <el-input v-model="scope.row.batch_number" placeholder="批号"/>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="耐焊性">
-        <template slot-scope="scope">
-          <el-autocomplete
-            v-model="scope.row.nai_han_xing"
-            :fetch-suggestions="querySearchPassNG"
-            placeholder="耐焊性"
-            @select="save(scope)"
-            @blur="save(scope)"
-          />
         </template>
       </el-table-column>
 
@@ -150,6 +138,42 @@
         </template>
       </el-table-column>
 
+      <el-table-column align="center" label="耐焊性">
+        <template slot-scope="scope">
+          <el-autocomplete
+            v-model="scope.row.nai_han_xing"
+            :fetch-suggestions="querySearchPassNG"
+            placeholder="耐焊性"
+            @select="save(scope)"
+            @blur="save(scope)"
+          />
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="耐溶剂">
+        <template slot-scope="scope">
+          <el-autocomplete
+            v-model="scope.row.nai_rong_ji"
+            :fetch-suggestions="querySearchPassNG"
+            placeholder="耐溶剂"
+            @select="save(scope)"
+            @blur="save(scope)"
+          />
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="耐酸碱">
+        <template slot-scope="scope">
+          <el-autocomplete
+            v-model="scope.row.nai_suan_jian"
+            :fetch-suggestions="querySearchPassNG"
+            placeholder="耐酸碱"
+            @select="save(scope)"
+            @blur="save(scope)"
+          />
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="检测员">
         <template slot-scope="scope">
           <el-autocomplete
@@ -179,12 +203,14 @@ import { productApi } from '@/api/basedata'
 import { patternTestApi } from '@/api/qc'
 import testersSuggestions from '@/mixins/testersSuggestions'
 import pagination from '@/mixins/pagination'
+import echoTimeMethod from '@/mixins/echoTimeMethod'
 
 export default {
   name: 'PatternTest',
   mixins: [
     testersSuggestions,
-    pagination
+    pagination,
+    echoTimeMethod
   ],
   data() {
     return {
@@ -267,6 +293,8 @@ export default {
         product_name: '',
         batch_number: '',
         nai_han_xing: '',
+        nai_rong_ji: '',
+        nai_suan_jian: '',
         h12_xian_ying: '',
         h24_xian_ying: '',
         ge_ye_xian_ying: '',
@@ -322,7 +350,7 @@ export default {
         request.then(response => {
           const { data } = response.data
 
-          scope.row = data
+          this.list.splice(index, 1, data) // 更新视图
 
           this.updateCache()
         })

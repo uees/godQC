@@ -23,8 +23,8 @@ class TestWay extends Model
             'method' => '',
             'method_id' => '',
             'spec' => [
-                'is_show' => true,
-                'value_type' => '',  // RANGE, INFO, NUMBER
+                'is_show' => true,   // 是否展示
+                'value_type' => '',  // RANGE, INFO, NUMBER, ONLY_SHOW
                 'data' => [
                     'min' => 0,
                     'max' => 0,

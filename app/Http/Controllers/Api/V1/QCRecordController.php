@@ -164,11 +164,22 @@ class QCRecordController extends Controller
 
         $items = [];
         foreach ($test_way as $item) {
-            array_push($items, [
-                'item' => $item['name'],
-                'spec' => $item['spec'],
-                'value' => '',
-            ]);
+            if ($item['spec']['value_type'] == 'ONLY_SHOW') {
+                // 未测试，但要展示的项目
+                array_push($items, [
+                    'item' => $item['name'],
+                    'spec' => $item['spec'],
+                    'value' => $item['spec']['data']['value']
+                        ?? $item['spec']['data']['min']
+                        ?? $item['spec']['data']['max'],
+                    'conclusion' => 'PASS'
+                ]);
+            } else {
+                array_push($items, [
+                    'item' => $item['name'],
+                    'spec' => $item['spec'],
+                ]);
+            }
         }
         if (!empty($items)) {
             $testRecord->items()->createMany($items);

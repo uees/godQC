@@ -241,6 +241,7 @@ export default {
       qcRecordApi.list({ params: this.queryParams }).then(response => {
         const { data } = response.data
         this.records = data
+        this.excludeOnlyShow() // 仅展示的项目不做测试
         this.updateCache()
         this.listLoading = false
       })

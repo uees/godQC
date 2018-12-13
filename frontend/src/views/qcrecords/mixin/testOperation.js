@@ -15,6 +15,13 @@ export default {
     }
   },
   methods: {
+    excludeOnlyShow() {
+      this.records = this.records.map(record => {
+        record.items = record.items.filter(item => {
+          return item.spec.value_type !== 'ONLY_SHOW'
+        })
+      })
+    },
     updateCache() {
       // this.cacheRecords = this.records // 不是复制, 都是引用的同一数组
       // this.cacheRecords = [...this.records] // 实现数组复制

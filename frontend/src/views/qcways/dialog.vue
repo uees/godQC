@@ -95,7 +95,6 @@
 </template>
 
 <script>
-import { valueTypes } from '@/mixins/const'
 import dialog from '@/mixins/dialog'
 import testItemSuggestions from '@/mixins/testItemSuggestions'
 import testMethodSuggestions from '@/mixins/testMethodSuggestions'
@@ -139,7 +138,6 @@ export function newObj() {
 export default {
   name: 'Dialog',
   mixins: [
-    valueTypes,
     testItemSuggestions,
     testMethodSuggestions,
     dialog
@@ -150,7 +148,13 @@ export default {
       selectTestMethods: [],
       objRules: {
         name: { required: true, message: '必填项', trigger: 'blur' }
-      }
+      },
+      valueTypes: [
+        { code: 'RANGE', name: '范围' },
+        { code: 'INFO', name: '信息' },
+        { code: 'VALUE', name: '具体值' },
+        { code: 'ONLY_SHOW', name: '仅展示' }
+      ]
     }
   },
   mounted() {

@@ -183,6 +183,9 @@ export default {
       qcRecordApi.list({params: this.queryParams}).then(response => {
         const {data} = response.data
         this.records = data
+        if (this.real) {
+          this.excludeOnlyShow()
+        }
         this.updateCache()
         this.pagination(response)
         this.listLoading = false

@@ -15,16 +15,16 @@ class CreatePatternTestsTable extends Migration
     {
         Schema::create('pattern_tests', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('product_name', 64);
-            $table->string('batch_number', 64);
-            $table->string('nai_han_xing', 64);
-            $table->string('h12_xian_ying', 64);
-            $table->string('h24_xian_ying', 64);
-            $table->string('ge_ye_xian_ying', 64);
-            $table->string('ge_ye_bao_guang', 64);
-            $table->string('die_ban', 64);
-            $table->string('lao_hua', 64);
-            $table->string('tester', 64);
+            $table->string('product_name', 64)->nullable();
+            $table->string('batch_number', 64)->nullable();
+            $table->string('nai_han_xing', 64)->nullable();
+            $table->string('h12_xian_ying', 64)->nullable();
+            $table->string('h24_xian_ying', 64)->nullable();
+            $table->string('ge_ye_xian_ying', 64)->nullable();
+            $table->string('ge_ye_bao_guang', 64)->nullable();
+            $table->string('die_ban', 64)->nullable();
+            $table->string('lao_hua', 64)->nullable();
+            $table->string('tester', 64)->nullable();
             $table->timestamps();
         });
     }

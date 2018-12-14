@@ -211,7 +211,7 @@ export default {
     },
     handleInsert(row) {
       const index = this.obj.way.indexOf(row)
-      this.obj.way.splice(index, 0, this.newWaysItem())
+      this.obj.way.splice(index, 0, newWaysItem())
     },
     handleDelete(row) {
       this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {

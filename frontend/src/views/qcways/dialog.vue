@@ -83,8 +83,9 @@
           </template>
         </el-table-column>
 
-        <el-table-column align="center" label="操作" width="50" class-name="small-padding fixed-width">
+        <el-table-column align="center" label="操作" width="100" class-name="small-padding fixed-width">
           <template slot-scope="scope">
+            <el-button type="text" size="small" @click="handleInsert(scope.row)">插入</el-button>
             <el-button type="text" size="small" @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -202,11 +203,15 @@ export default {
         }
       })
     },
+    handleSelect(item) {
+      this.selectTestMethods.push(item)
+    },
     handleCreate() {
       this.obj.way.push(newWaysItem())
     },
-    handleSelect(item) {
-      this.selectTestMethods.push(item)
+    handleInsert(row) {
+      const index = this.obj.way.indexOf(row)
+      this.obj.way.splice(index, 0, this.newWaysItem())
     },
     handleDelete(row) {
       this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {

@@ -149,29 +149,26 @@ class QCRecordController extends Controller
         $batch->testRecords()->save($testRecord);
 
         // step 3. 创建检测项目
-        // make 检测项目
         $product = Product::where('internal_name', $productName)->firstOrFail();
-        $category = $product->category;
 
-        $test_way = [];
-        if ($category->testWays()->count()) {
-            $test_way = $category->testWays[0]->way;
-        }
-
-        if ($product->testWays()->count()) {
-            $test_way = array_merge($test_way, $product->testWays[0]->way);
-        }
+        $test_way = $this->makeTestWay($product);
 
         $items = [];
         foreach ($test_way as $item) {
             if ($item['spec']['value_type'] == 'ONLY_SHOW') {
+
+                $value = isset($item['spec']['data']['value']) && $item['spec']['data']['value']
+                    ? $item['spec']['data']['value']
+                    : isset($item['spec']['data']['min']) && $item['spec']['data']['min']
+                        ? $item['spec']['data']['min']
+                        : isset($item['spec']['data']['max']) && $item['spec']['data']['max']
+                            ? $item['spec']['data']['max'] : 'PASS';
+
                 // 未测试，但要展示的项目
                 array_push($items, [
                     'item' => $item['name'],
                     'spec' => $item['spec'],
-                    'value' => $item['spec']['data']['value']
-                        ?? $item['spec']['data']['min']
-                        ?? $item['spec']['data']['max'],
+                    'value' => $value,
                     'conclusion' => 'PASS'
                 ]);
             } else {
@@ -223,5 +220,68 @@ class QCRecordController extends Controller
         }
 
         return $this->failed('操作失败');
+    }
+
+    protected function makeTestWay(Product $product)
+    {
+        $test_way = [];
+
+        $category = $product->category;
+        if ($category->testWays()->count()) {
+            $test_way = $category->testWays[0]->way;
+        }
+
+        if ($product->testWays()->count()) {
+            $test_way = array_merge($test_way, $product->testWays[0]->way);
+        }
+
+        if ($category->slug == 'H-8100' || $category->slug == 'H-9100') {
+            if (!$this->hasItem($test_way, '固化剂')) {
+                $value = $product->part_b ? $product->part_b . '; ' . $product->ratio : 'HD2; 3:1';
+                array_unshift($test_way, [
+                    'name' => '固化剂',
+                    'method' => '',
+                    'method_id' => 0,
+                    'spec' => [
+                        'is_show' => true,
+                        'value_type' => 'INFO',
+                        'data' => [
+                            'value' => $value,
+                        ],
+                    ]
+                ]);
+            }
+        } elseif ($category->slug == 'H-8100B/H-9100B') {
+            if (!$this->hasItem($test_way, '主剂')) {
+                $value = $product->part_a ? $product->part_a . '; ' . $product->ratio : '8G; 3:1';
+                array_unshift($test_way, [
+                    'name' => '主剂',
+                    'method' => '',
+                    'method_id' => 0,
+                    'spec' => [
+                        'is_show' => true,
+                        'value_type' => 'INFO',
+                        'data' => [
+                            'value' => $value,
+                        ],
+                    ]
+                ]);
+            }
+        }
+
+        return $test_way;
+    }
+
+    protected function hasItem($way, $itemName)
+    {
+        $result = false;
+        foreach ($way as $item) {
+            if ($item['name'] == $itemName) {
+                $result = true;
+                break;
+            }
+        }
+
+        return $result;
     }
 }

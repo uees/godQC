@@ -40,7 +40,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="batch.product_name" label="品名" align="center"/>
+      <el-table-column label="品名" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.batch.product_name }} {{ scope.row.batch.product_name_suffix }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="batch.batch_number" label="批号" align="center"/>
       <el-table-column label="结论" align="center">  <!--PASS, NG -->
         <template slot-scope="scope">

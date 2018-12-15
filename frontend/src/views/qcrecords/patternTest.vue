@@ -114,18 +114,6 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="叠板">
-        <template slot-scope="scope">
-          <el-autocomplete
-            v-model="scope.row.die_ban"
-            :fetch-suggestions="querySearchPassNG"
-            placeholder="叠板"
-            @select="save(scope)"
-            @blur="save(scope)"
-          />
-        </template>
-      </el-table-column>
-
       <el-table-column align="center" label="老化">
         <template slot-scope="scope">
           <el-autocomplete

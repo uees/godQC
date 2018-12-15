@@ -116,6 +116,9 @@ export default {
     updateDone() {
       // fixed JsonEditor bug
       this.fetchData()
+    },
+    createDone() {
+      this.fetchData()
     }
   }
 }

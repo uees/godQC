@@ -156,13 +156,12 @@ class QCRecordController extends Controller
         $items = [];
         foreach ($test_way as $item) {
             if ($item['spec']['value_type'] == 'ONLY_SHOW') {
-
                 $value = isset($item['spec']['data']['value']) && $item['spec']['data']['value']
                     ? $item['spec']['data']['value']
-                    : isset($item['spec']['data']['min']) && $item['spec']['data']['min']
+                    : (isset($item['spec']['data']['min']) && $item['spec']['data']['min']
                         ? $item['spec']['data']['min']
-                        : isset($item['spec']['data']['max']) && $item['spec']['data']['max']
-                            ? $item['spec']['data']['max'] : 'PASS';
+                        : (isset($item['spec']['data']['max']) && $item['spec']['data']['max']
+                            ? $item['spec']['data']['max'] : 'PASS'));
 
                 // 未测试，但要展示的项目
                 array_push($items, [

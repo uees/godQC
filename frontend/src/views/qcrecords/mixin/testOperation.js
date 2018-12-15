@@ -20,6 +20,8 @@ export default {
         record.items = record.items.filter(item => {
           return item.spec.value_type !== 'ONLY_SHOW'
         })
+
+        return record
       })
     },
     updateCache() {

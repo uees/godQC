@@ -17,6 +17,19 @@
           <el-input v-model="obj.market_name"/>
         </el-form-item>
 
+        <el-form-item label="类别" prop="category_id">
+          <el-select v-model="obj.category_id" placeholder="请选择">
+            <el-option
+              v-for="category in categories"
+              :key="category.slug"
+              :label="category.name"
+              :value="category.id">
+              <span style="float: left">{{ category.name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ category.slug }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="规格">
           <el-input v-model="obj.spec"/>
         </el-form-item>
@@ -57,12 +70,13 @@
 
 <script>
 import dialog from '@/mixins/dialog'
+import queryCategory from '@/mixins/queryCategory'
 import { productApi } from '@/api/basedata'
 
 export function newObj() {
   return {
     id: 0,
-    category_id: 0,
+    category_id: 1, // 默认ID 1 是 `未分类`
     internal_name: '',
     market_name: '',
     spec: '',
@@ -92,14 +106,16 @@ export function newObj() {
 export default {
   name: 'Dialog',
   mixins: [
-    dialog
+    dialog,
+    queryCategory
   ],
   data() {
     return {
       api: productApi,
       objRules: {
         internal_name: { required: true, message: '必填项', trigger: 'blur' },
-        market_name: { required: true, message: '必填项', trigger: 'blur' }
+        market_name: { required: true, message: '必填项', trigger: 'blur' },
+        category_id: { required: true, message: '必填项', trigger: 'blur' }
       }
     }
   },

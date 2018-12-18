@@ -8,6 +8,8 @@ export default {
   },
 
   created () {
-    this.$store.dispatch('basedata/FetchCategory')
+    if (this.categories.length === 0) {
+      this.$store.dispatch('basedata/FetchCategory')
+    }
   }
 }

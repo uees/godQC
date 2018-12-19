@@ -184,9 +184,12 @@ class QCRecordController extends Controller
                 ]);
             }
         }
-        if (!empty($items)) {
-            $testRecord->items()->createMany($items);
-        }
+
+        // 更新粘度值
+        $this->appendNiandu($items);
+
+        $testRecord->items()->createMany($items);
+
 
         // loading relationships
         $testRecord->batch;
@@ -228,6 +231,20 @@ class QCRecordController extends Controller
         return $this->failed('操作失败');
     }
 
+    protected function appendNiandu(array &$items)
+    {
+        // 处理粘度
+        foreach ($items as $key => $item) {
+            if ($item['item'] == '粘度') {
+                $items[$key]['value'] = \request('niandu');
+            } elseif ($item['item'] =='6转粘度') {
+                $items[$key]['value'] = \request('niandu');
+            } elseif ($item['item'] =='60转粘度') {
+                $items[$key]['value'] = \request('niandu60');
+            }
+        }
+    }
+
     protected function makeTestWay(Product $product)
     {
         $test_way = [];
@@ -238,7 +255,7 @@ class QCRecordController extends Controller
         }
 
         if ($product->testWays()->count()) {
-            $test_way = array_merge($test_way, $product->testWays[0]->way);
+            $test_way = $this->mergeTestWay($test_way, $product->testWays[0]->way);
         }
 
         if ($category->slug == 'H-8100' || $category->slug == 'H-9100') {
@@ -300,7 +317,12 @@ class QCRecordController extends Controller
         return $test_way;
     }
 
-    protected function hasItem($way, $itemName)
+    /**
+     * @param array $way
+     * @param string $itemName
+     * @return bool
+     */
+    protected function hasItem(array $way, $itemName)
     {
         $result = false;
         foreach ($way as $item) {
@@ -311,5 +333,44 @@ class QCRecordController extends Controller
         }
 
         return $result;
+    }
+
+    /**
+     * @param array $way
+     * @param string $itemName
+     * @return mixed
+     */
+    protected function getItem(array $way, $itemName)
+    {
+        foreach ($way as $item) {
+            if ($item['name'] == $itemName) {
+                return $item;
+            }
+        }
+    }
+
+    /**
+     * @param array $origin
+     * @param array $newer
+     * @return array
+     */
+    protected function mergeTestWay(array &$origin, array $newer)
+    {
+        // 覆盖操作
+        foreach ($origin as $key => $origin_item) {
+            $inNewerItem = $this->getItem($newer, $origin_item['name']);
+            if (!is_null($inNewerItem)) {
+                $origin[$key] = $inNewerItem;
+            }
+        }
+
+        // 新增操作
+        foreach ($newer as $newer_item) {
+            if (!$this->hasItem($origin, $newer_item['name'])) {
+                array_push($origin, $newer_item);
+            }
+        }
+
+        return $origin;
     }
 }

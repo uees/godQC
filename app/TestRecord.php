@@ -15,6 +15,18 @@ class TestRecord extends Model
         'memo',
     ];
 
+    /**
+     * 应被转换为日期的属性。
+     *
+     * @var array
+     */
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'completed_at',
+        'said_package_at',
+    ];
+
     protected $casts = [
         'show_reality' => 'boolean',
     ];

@@ -156,12 +156,16 @@ class QCRecordController extends Controller
         $items = [];
         foreach ($test_way as $item) {
             if ($item['spec']['value_type'] == 'ONLY_SHOW') {
-                $value = isset($item['spec']['data']['value']) && $item['spec']['data']['value']
-                    ? $item['spec']['data']['value']
-                    : (isset($item['spec']['data']['min']) && $item['spec']['data']['min']
-                        ? $item['spec']['data']['min']
-                        : (isset($item['spec']['data']['max']) && $item['spec']['data']['max']
-                            ? $item['spec']['data']['max'] : 'PASS'));
+
+                if (isset($item['spec']['data']['value']) && $item['spec']['data']['value']) {
+                    $value = $item['spec']['data']['value'];
+                } elseif (isset($item['spec']['data']['min']) && $item['spec']['data']['min']) {
+                    $value = $item['spec']['data']['min'];
+                } elseif (isset($item['spec']['data']['max']) && $item['spec']['data']['max']) {
+                    $value = $item['spec']['data']['max'];
+                } else {
+                    $value = 'PASS';
+                }
 
                 // 未测试，但要展示的项目
                 array_push($items, [
@@ -235,8 +239,7 @@ class QCRecordController extends Controller
         }
 
         if ($category->slug == 'H-8100' || $category->slug == 'H-9100') {
-            if (!$this->hasItem($test_way, '固化剂')) {
-                $value = $product->part_b ? $product->part_b . '; ' . $product->ratio : 'HD2; 3:1';
+            if (!$this->hasItem($test_way, '固化剂') && !empty($product->part_b)) {
                 array_unshift($test_way, [
                     'name' => '固化剂',
                     'method' => '',
@@ -245,14 +248,13 @@ class QCRecordController extends Controller
                         'is_show' => true,
                         'value_type' => 'INFO',
                         'data' => [
-                            'value' => $value,
+                            'value' => $product->part_b . '; ' . $product->ratio,
                         ],
                     ]
                 ]);
             }
         } elseif ($category->slug == 'H-8100B/H-9100B') {
-            if (!$this->hasItem($test_way, '主剂')) {
-                $value = $product->part_a ? $product->part_a . '; ' . $product->ratio : '8G; 3:1';
+            if (!$this->hasItem($test_way, '主剂') && $product->part_a) {
                 array_unshift($test_way, [
                     'name' => '主剂',
                     'method' => '',
@@ -261,7 +263,7 @@ class QCRecordController extends Controller
                         'is_show' => true,
                         'value_type' => 'INFO',
                         'data' => [
-                            'value' => $value,
+                            'value' => $product->part_a . '; ' . $product->ratio,
                         ],
                     ]
                 ]);

@@ -50,11 +50,13 @@ class QCRecordItemController extends Controller
                         ? $testRecordItem->spec['data']['value']
                         : 'PASS';
                 } elseif ($testRecordItem->spec['value_type'] == 'RANGE') {
-                    $testRecordItem->fake_value = isset($testRecordItem->spec['data']['min']) && $testRecordItem->spec['data']['min']
-                        ? $testRecordItem->spec['data']['min']
-                        : (isset($testRecordItem->spec['data']['max']) && $testRecordItem->spec['data']['max']
-                            ? $testRecordItem->spec['data']['max']
-                            : 'PASS');
+                    if (isset($testRecordItem->spec['data']['min']) && $testRecordItem->spec['data']['min']) {
+                        $testRecordItem->fake_value = $testRecordItem->spec['data']['min'];
+                    } elseif (isset($testRecordItem->spec['data']['max']) && $testRecordItem->spec['data']['max']) {
+                        $testRecordItem->fake_value = $testRecordItem->spec['data']['max'];
+                    } else {
+                        $testRecordItem->fake_value = 'PASS';
+                    }
                 }
             }
 

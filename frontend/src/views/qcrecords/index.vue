@@ -47,7 +47,12 @@
 
       <el-table-column label="品名" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.batch.product_name }} {{ scope.row.batch.product_name_suffix }}</span>
+          <span>
+            {{ scope.row.batch.product_name }}
+            <i v-if="scope.row.batch.product_name_suffix">
+              『{{ scope.row.batch.product_name_suffix }}』
+            </i>
+          </span>
         </template>
       </el-table-column>
 

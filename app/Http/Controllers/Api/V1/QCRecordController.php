@@ -127,17 +127,20 @@ class QCRecordController extends Controller
     public function sample(ProductBatchRequest $request)
     {
         $productName = $request->get('product_name');
+        $productNameSuffix = $request->get('product_name_suffix');
         $batchNumber = $request->get('batch_number');
         $type = $request->get('type');
 
         // step 1. 创建批次
         $batch = ProductBatch::where('product_name', $productName)
+            ->where('product_name_suffix', $productNameSuffix)
             ->where('batch_number', $batchNumber)
             ->first();
 
         if (is_null($batch)) {
             $batch = ProductBatch::create([
                 'product_name' => $productName,
+                'product_name_suffix' => $productNameSuffix,
                 'batch_number' => $batchNumber,
                 'type' => $type,
             ]);

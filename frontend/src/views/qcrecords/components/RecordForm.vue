@@ -14,7 +14,10 @@
         </el-form-item>
 
         <el-form-item label="品名后缀">
-          <el-input v-model="record.batch.product_name_suffix"/>
+          <el-autocomplete
+            v-model="record.batch.product_name_suffix"
+            :fetch-suggestions="querySearchSuffix"
+            placeholder="品名后缀"/>
         </el-form-item>
 
         <el-form-item label="批号" prop="batch.batch_number">
@@ -40,10 +43,12 @@
 <script>
 import Bus from '@/store/bus'
 import { deepClone } from '@/utils'
+import suffixSuggests from '@/mixins/suffixSuggests'
 import { qcRecordApi } from '@/api/qc'
 
 export default {
   name: 'RecordForm',
+  mixins: [suffixSuggests],
   data() {
     return {
       record: this.newRecord(),

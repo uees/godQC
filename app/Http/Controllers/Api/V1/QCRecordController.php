@@ -242,7 +242,10 @@ class QCRecordController extends Controller
         }
 
         if ($category->slug == 'H-8100' || $category->slug == 'H-9100') {
-            if (!$this->hasItem($test_way, '固化剂') && !empty($product->part_b)) {
+            if (!$this->hasItem($test_way, '固化剂')) {
+                $value = $product->part_b
+                    ? $product->part_b . '; ' . $product->ratio
+                    : 'HD2; 3:1';
                 array_unshift($test_way, [
                     'name' => '固化剂',
                     'method' => '',
@@ -251,13 +254,16 @@ class QCRecordController extends Controller
                         'is_show' => true,
                         'value_type' => 'INFO',
                         'data' => [
-                            'value' => $product->part_b . '; ' . $product->ratio,
+                            'value' => $value,
                         ],
                     ]
                 ]);
             }
         } elseif ($category->slug == 'H-8100B/H-9100B') {
-            if (!$this->hasItem($test_way, '主剂') && $product->part_a) {
+            if (!$this->hasItem($test_way, '主剂')) {
+                $value = $product->part_a
+                    ? $product->part_a . '; ' . $product->ratio
+                    : '8G; 3:1';
                 array_unshift($test_way, [
                     'name' => '主剂',
                     'method' => '',
@@ -266,7 +272,25 @@ class QCRecordController extends Controller
                         'is_show' => true,
                         'value_type' => 'INFO',
                         'data' => [
-                            'value' => $product->part_a . '; ' . $product->ratio,
+                            'value' => $value,
+                        ],
+                    ]
+                ]);
+            }
+        } elseif ($category->slug == 'SPXX') {
+            if (!$this->hasItem($test_way, '固化剂')) {
+                $value = $product->part_b
+                    ? $product->part_b . '; ' . $product->ratio
+                    : 'HD12; 3:1';
+                array_unshift($test_way, [
+                    'name' => '固化剂',
+                    'method' => '',
+                    'method_id' => 0,
+                    'spec' => [
+                        'is_show' => true,
+                        'value_type' => 'INFO',
+                        'data' => [
+                            'value' => $value,
                         ],
                     ]
                 ]);

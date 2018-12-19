@@ -112,7 +112,9 @@ export default {
       }
     },
     queryAuthors(queryString, cb) {
-      const users = this.authors
+      const users = this.authors.map(name => {
+        return { name: name, label: name }
+      })
       const results = queryString
         ? users.filter(user => user.name.toLowerCase().indexOf(queryString.toLowerCase()) >= 0)
         : users
@@ -120,7 +122,7 @@ export default {
     },
     queryMethods(queryString, cb) {
       const methods = this.methods.map(method => {
-        return {value: method, label: method}
+        return { value: method, label: method }
       })
       const results = queryString
         ? methods.filter(method => method.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0)

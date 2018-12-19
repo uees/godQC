@@ -17,19 +17,19 @@ import Layout from '@/views/layout/Layout'
  **/
 
 /**
-* hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
-* alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
-*                                if not set alwaysShow, only more than one route under the children
-*                                it will becomes nested mode, otherwise not show the root menu
-* redirect: noredirect           if `redirect:noredirect` will no redirect in the breadcrumb
-* name:'router-name'             the name is used by <keep-alive> (must set!!!)
-* meta : {
+ * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
+ * alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
+ *                                if not set alwaysShow, only more than one route under the children
+ *                                it will becomes nested mode, otherwise not show the root menu
+ * redirect: noredirect           if `redirect:noredirect` will no redirect in the breadcrumb
+ * name:'router-name'             the name is used by <keep-alive> (must set!!!)
+ * meta : {
     roles: ['admin','editor']     will control the page roles (you can set multiple roles)
     title: 'title'               the name show in submenu and breadcrumb (recommend set)
     icon: 'svg-name'             the icon show in the sidebar,
     noCache: true                if true ,the page will no be cached(default is false)
   }
-**/
+ **/
 export const constantRouterMap = [
   {
     path: '/redirect',
@@ -78,21 +78,24 @@ export const constantRouterMap = [
         component: () => import('@/views/qcrecords/dispose'),
         hidden: true,
         props: true,
-        name: 'disposes.show'
+        name: 'disposes.show',
+        meta: { title: '处理意见' }
       },
       {
         path: 'records/:id',
         component: () => import('@/views/qcrecords/show'),
         hidden: true,
         props: true,
-        name: 'records.show'
+        name: 'records.show',
+        meta: { title: '检测记录' }
       },
       {
         path: 'records/:id/real',
         component: () => import('@/views/qcrecords/show'),
         hidden: true,
         props: true,
-        name: 'records.show-real'
+        name: 'records.show-real',
+        meta: { title: '检测记录(real)' }
       }
     ]
   }

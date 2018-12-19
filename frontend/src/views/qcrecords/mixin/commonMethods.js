@@ -11,6 +11,10 @@ export default {
       return 'border'
     },
     conclusionClass({ row, column }) {
+      if (this.real === false) {
+        return
+      }
+
       if (row.conclusion === 'NG') {
         if (column.label === '结果') {
           return 'ng-value'

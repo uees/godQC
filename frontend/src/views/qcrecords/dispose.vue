@@ -4,7 +4,7 @@
       <div class="author"><span>处理人：</span> {{ dispose.author }}</div>
       <div class="time"><span>创建时间：</span> {{ echoTime(dispose.created_at) }}</div>
       <div class="batch">
-        <span>品名：</span> {{ dispose.batch.product_name + dispose.batch.product_name_suffix }},
+        <span>品名：</span> {{ dispose.batch.product_name }} {{ dispose.batch.product_name_suffix }},
         <span>批号：</span> {{ dispose.batch.batch_number }},
       </div>
       <div class="method">

@@ -81,7 +81,7 @@
       <el-table-column :width="real ? 180 : 80" align="center" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
-            v-if="scope.row.conclusion === 'NG'"
+            v-if="showReality(scope.row) && scope.row.conclusion === 'NG'"
             type="text"
             size="small"
             @click="showDispose(scope.row)">处理意见
@@ -237,7 +237,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

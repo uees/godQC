@@ -17,11 +17,27 @@
 
       <el-button
         class="filter-item"
-        style="margin-left: 200px;"
+        style="margin-left: 10px;"
         type="primary"
         icon="el-icon-refresh"
         @click="fetchData">刷新
       </el-button>
+
+      <el-select
+        v-model="listShowItems"
+        :multiple-limit="3"
+        multiple
+        filterable
+        clearable
+        default-first-option
+        style="margin-left: 10px;"
+        placeholder="请选择要列表展示的项目">
+        <el-option
+          v-for="item in testItemSuggestions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"/>
+      </el-select>
     </div>
 
     <el-table
@@ -51,7 +67,14 @@
       </el-table-column>
 
       <el-table-column prop="batch.batch_number" label="批号" align="center"/>
-      <el-table-column label="结论" align="center">  <!--PASS, NG -->
+
+      <el-table-column v-for="name in listShowItems" :key="name" :label="name" align="center">
+        <template slot-scope="scope">
+          <span>{{ echoItem(scope.row, name) }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="结论" align="center">
         <template slot-scope="scope">
           <span>{{ echoConclusion(scope.row.conclusion) }}</span>
         </template>
@@ -171,6 +194,7 @@ import Bus from '@/store/bus'
 import echoSpecMethod from '@/mixins/echoSpecMethod'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
 import testersSuggestions from '@/mixins/testersSuggestions'
+import testItemSuggestions from '@/mixins/testItemSuggestions'
 import commonMethods from './mixin/commonMethods'
 import testOperation from './mixin/testOperation'
 import QcSample from './components/QcSample'
@@ -193,6 +217,7 @@ export default {
     echoTimeMethod,
     testOperation,
     commonMethods,
+    testItemSuggestions,
     testersSuggestions
   ],
   data() {

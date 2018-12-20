@@ -13,18 +13,31 @@
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-search"
-        @click="handleSearch">搜索
+        @click="fetchData">刷新
       </el-button>
 
       <el-button
         class="filter-item"
-        style="margin-left: 10px;"
         type="primary"
-        icon="el-icon-refresh"
-        @click="fetchData">刷新
+        icon="el-icon-document"
+        @click="handleDownload">导出
       </el-button>
 
-      <el-button class="filter-item" type="primary" icon="el-icon-document" @click="handleDownload">导出</el-button>
+      <el-select
+        v-model="listShowItems"
+        :multiple-limit="3"
+        multiple
+        filterable
+        clearable
+        default-first-option
+        style="margin-left: 10px;"
+        placeholder="请选择要列表展示的项目">
+        <el-option
+          v-for="item in testItemSuggestions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"/>
+      </el-select>
     </div>
 
     <el-table
@@ -43,8 +56,6 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="test_times" align="center" label="检测次数"/>
-
       <el-table-column label="品名" align="center">
         <template slot-scope="scope">
           <span>
@@ -57,6 +68,12 @@
       </el-table-column>
 
       <el-table-column prop="batch.batch_number" align="center" label="批号"/>
+
+      <el-table-column v-for="name in listShowItems" :key="name" :label="name" align="center">
+        <template slot-scope="scope">
+          <span>{{ echoItem(scope.row, name) }}</span>
+        </template>
+      </el-table-column>
 
       <el-table-column align="center" label="结论">
         <template slot-scope="scope">
@@ -111,7 +128,7 @@
 
             <el-table-column label="结果">
               <template slot-scope="props">
-                <span v-if="showReality(props.row)">{{ props.row.value }}</span>
+                <span v-if="showReality(scope.row)">{{ props.row.value }}</span>
                 <span v-else>{{ props.row.fake_value }}</span>
               </template>
             </el-table-column>
@@ -130,6 +147,17 @@
 
     </el-table>
 
+    <div v-show="!listLoading" class="pagination-container">
+      <el-pagination
+        :total="total"
+        :current-page.sync="queryParams.page"
+        :page-sizes="pageSizes"
+        :page-size="queryParams.per_page"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"/>
+    </div>
+
     <item-form @item-created="itemCreated" @item-updated="itemUpdated"/>
     <record-form @record-updated="recordUpdated"/>
   </div>
@@ -140,6 +168,7 @@ import { qcRecordApi } from '@/api/qc'
 import Bus from '@/store/bus'
 import echoSpecMethod from '@/mixins/echoSpecMethod'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
+import testItemSuggestions from '@/mixins/testItemSuggestions'
 import pagination from '@/mixins/pagination'
 import commonMethods from './mixin/commonMethods'
 import testOperation from './mixin/testOperation'
@@ -154,6 +183,7 @@ export default {
   mixins: [
     echoSpecMethod,
     echoTimeMethod,
+    testItemSuggestions,
     commonMethods,
     testOperation,
     pagination

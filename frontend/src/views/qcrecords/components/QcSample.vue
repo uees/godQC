@@ -17,6 +17,7 @@
             remote
             filterable
             clearable
+            default-first-option
             value-key="internal_name"
             suffix-icon="el-icon-edit"
             @change="handleSelect">
@@ -163,6 +164,7 @@ export default {
     close() {
       this.dialogFormVisible = false
       this.record = this.newRecord()
+      this.postData = { niandu: '', niandu60: '' }
     },
     qcSample() {
       const { product_name, product_name_suffix, batch_number } = this.record.batch

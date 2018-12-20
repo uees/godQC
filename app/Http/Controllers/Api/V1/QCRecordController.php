@@ -208,8 +208,13 @@ class QCRecordController extends Controller
                 return $this->failed('此批次不合格，并且还未提交处理意见，写装失败');
             }
         } elseif (empty($testRecord->conclusion)) {
-            return $this->failed('检测完了才能写装');
+            $testRecord->conclusion = 'PASS';
         }
+
+        // 留空就表示合格, 这里帮忙填入PASS
+        $testRecord->items()
+            ->whereNull('conclusion')
+            ->update(['conclusion'=>'PASS']);
 
         $testRecord->said_package_at = now();
 

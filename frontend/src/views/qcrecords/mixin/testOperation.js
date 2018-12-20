@@ -11,10 +11,26 @@ import { deepClone } from '@/utils'
 export default {
   data() {
     return {
+      listShowItems: ['粘度'],
       cacheRecords: []
     }
   },
   methods: {
+    echoItem(record, name) {
+      const item = record.items.find(item => {
+        if (name === '粘度') {
+          return item.item === '粘度' || item.item === '6转粘度'
+        }
+        return item.item === name
+      })
+
+      if (item) {
+        if (this.real === false && item.conclusion === 'NG') {
+          return item.fake_value
+        }
+        return item.value
+      }
+    },
     excludeOnlyShow() {
       this.records = this.records.map(record => {
         record.items = record.items.filter(item => {
@@ -37,12 +53,11 @@ export default {
       const cached_memo = this.cacheRecords[scope.$index].memo
 
       if (memo !== cached_memo) {
-        this.updateRecord(scope.row)
+        this.updateRecord(scope)
         this.updateCache()
       }
     },
     onItemValueBlur(scope, props) {
-      const record = scope.row
       const item = props.row
 
       let isPass
@@ -58,8 +73,8 @@ export default {
         }
       } else if (item.spec.value_type === 'VALUE') {
         isPass = item.value == item.spec.data.value
-      } else {
-        if (item.value.toString().toUpperCase() === 'PASS') {
+      } else if (item.spec.value_type === 'INFO') {
+        if (item.value && item.value.toUpperCase() === 'PASS') {
           isPass = true
         }
       }
@@ -74,17 +89,16 @@ export default {
 
       const cached_item = this.cacheRecords[scope.$index].items[props.$index]
       if (cached_item.value !== item.value || cached_item.conclusion !== item.conclusion) {
-        this.updateRecordItem(record, item)
+        this.updateRecordItem(scope, props)
         this.checkDone(scope)
         this.updateCache()
       }
     },
     onItemConclusionChanged(scope, props) {
-      const record = scope.row
       const item = props.row
       const cached_item = this.cacheRecords[scope.$index].items[props.$index]
       if (cached_item.conclusion !== item.conclusion) {
-        this.updateRecordItem(record, item)
+        this.updateRecordItem(scope, props)
         this.checkDone(scope)
         this.updateCache()
       }
@@ -110,23 +124,22 @@ export default {
       record.testers = testers.join(',')
 
       if (cached_item.tester !== item.tester) {
-        this.updateRecordItem(record, item)
+        this.updateRecordItem(scope, props)
 
         if (cached_record.testers !== record.testers) {
-          this.updateRecord(record)
+          this.updateRecord(scope)
         }
 
         this.updateCache()
       }
     },
     onItemMemoBlur(scope, props) {
-      const record = scope.row
       const item = props.row
       const cached_record = this.cacheRecords[scope.$index]
       const cached_item = cached_record.items[props.$index]
 
       if (item.memo !== cached_item.memo) {
-        this.updateRecordItem(record, item)
+        this.updateRecordItem(scope, props)
         this.updateCache()
       }
     },
@@ -141,9 +154,11 @@ export default {
       const record = scope.row
       const index = scope.$index
 
-      if (!record.conclusion) {
-        return this.$alert('检测完了才能写装', '检测未完成', {
-          confirmButtonText: '确定'
+      if (!record.completed_at) {
+        return this.$message({
+          message: '检测未完成, 检测完了才能写装',
+          type: 'error',
+          duration: 3 * 1000
         })
       }
 
@@ -220,48 +235,54 @@ export default {
     },
     checkDone(scope) {
       const record = scope.row
-      const cached_record = this.cacheRecords[scope.$index]
+      const isNG = record.items.some(item => item.conclusion === 'NG')
 
-      // 如果有结论为空的项目，则未完成
+      // 如果有检测值和检测结论都为空的项目，则表示检测未完成
       const notDone = record.items.some(item => {
-        if (typeof item.conclusion === 'string') {
-          item.conclusion = item.conclusion.trim()
-        }
-
-        return !item.conclusion
+        return !item.conclusion && !item.value
       })
 
+      // 下结论
+      if (isNG) {
+        record.conclusion = 'NG'
+      }
+
       if (!notDone) {
-        // 下结论
-        const isNG = record.items.some(item => item.conclusion === 'NG')
-
-        record.conclusion = isNG ? 'NG' : 'PASS'
-
-        if (record.conclusion !== cached_record.conclusion) {
-          this.updateRecord(record)
+        if (!isNG) { // 检测完了才下合格结论
+          record.conclusion = 'PASS'
         }
 
         if (!record.completed_at) {
-          this.testDone(record)
+          this.testDone(scope)
         }
       }
+
+      const cached_record = this.cacheRecords[scope.$index]
+
+      if (record.conclusion !== cached_record.conclusion) {
+        this.updateRecord(scope)
+      }
     },
-    testDone(record) {
-      testDone(record.id).then(response => {
+    testDone(scope) {
+      testDone(scope.row.id).then(response => {
         const { data } = response.data
-        record = data
+        data.items = scope.row.items
+        data.batch = scope.row.batch
+        this.records.splice(scope.$index, 1, data)
       })
     },
-    updateRecord(record) {
-      qcRecordApi.update(record.id, record).then(response => {
+    updateRecord(scope) {
+      qcRecordApi.update(scope.row.id, scope.row).then(response => {
         const { data } = response.data
-        record = data
+        data.items = scope.row.items
+        this.records.splice(scope.$index, 1, data)
       })
     },
-    updateRecordItem(record, item) {
-      updateRecordItem(record.id, item.id, item).then(response => {
+    updateRecordItem(scope, props) {
+      updateRecordItem(scope.row.id, props.row.id, props.row).then(response => {
         const { data } = response.data
-        item = data
+        scope.row.items.splice(props.$index, 1, data)
+        this.records.splice(scope.$index, 1, scope.row)
       })
     }
   }

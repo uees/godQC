@@ -47,22 +47,22 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="180" align="center" label="品名">
+      <el-table-column width="150" align="center" label="品名">
         <template slot-scope="scope">
           <el-autocomplete
             v-model="scope.row.product_name"
             :fetch-suggestions="querySearchProducts"
             value-key="internal_name"
+            select-when-unmatched
             placeholder="品名"
             @select="save(scope)"
-            @blur="save(scope)"
           />
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="批号">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.batch_number" placeholder="批号"/>
+          <el-input v-model="scope.row.batch_number" placeholder="批号" @blur="save(scope)"/>
         </template>
       </el-table-column>
 
@@ -71,9 +71,9 @@
           <el-autocomplete
             v-model="scope.row.h12_xian_ying"
             :fetch-suggestions="querySearchXianYing"
+            select-when-unmatched
             placeholder="放置12小时显影"
             @select="save(scope)"
-            @blur="save(scope)"
           />
         </template>
       </el-table-column>
@@ -83,9 +83,9 @@
           <el-autocomplete
             v-model="scope.row.h24_xian_ying"
             :fetch-suggestions="querySearchXianYing"
+            select-when-unmatched
             placeholder="放置24小时显影"
             @select="save(scope)"
-            @blur="save(scope)"
           />
         </template>
       </el-table-column>
@@ -95,9 +95,9 @@
           <el-autocomplete
             v-model="scope.row.ge_ye_xian_ying"
             :fetch-suggestions="querySearchXianYing"
+            select-when-unmatched
             placeholder="隔夜显影"
             @select="save(scope)"
-            @blur="save(scope)"
           />
         </template>
       </el-table-column>
@@ -107,9 +107,9 @@
           <el-autocomplete
             v-model="scope.row.ge_ye_bao_guang"
             :fetch-suggestions="querySearchLevel"
+            select-when-unmatched
             placeholder="隔夜曝光"
             @select="save(scope)"
-            @blur="save(scope)"
           />
         </template>
       </el-table-column>
@@ -119,9 +119,9 @@
           <el-autocomplete
             v-model="scope.row.lao_hua"
             :fetch-suggestions="querySearchPassNG"
+            select-when-unmatched
             placeholder="老化"
             @select="save(scope)"
-            @blur="save(scope)"
           />
         </template>
       </el-table-column>
@@ -131,9 +131,9 @@
           <el-autocomplete
             v-model="scope.row.nai_han_xing"
             :fetch-suggestions="querySearchPassNG"
+            select-when-unmatched
             placeholder="耐焊性"
             @select="save(scope)"
-            @blur="save(scope)"
           />
         </template>
       </el-table-column>
@@ -143,9 +143,9 @@
           <el-autocomplete
             v-model="scope.row.nai_rong_ji"
             :fetch-suggestions="querySearchPassNG"
+            select-when-unmatched
             placeholder="耐溶剂"
             @select="save(scope)"
-            @blur="save(scope)"
           />
         </template>
       </el-table-column>
@@ -155,9 +155,9 @@
           <el-autocomplete
             v-model="scope.row.nai_suan_jian"
             :fetch-suggestions="querySearchPassNG"
+            select-when-unmatched
             placeholder="耐酸碱"
             @select="save(scope)"
-            @blur="save(scope)"
           />
         </template>
       </el-table-column>
@@ -167,10 +167,10 @@
           <el-autocomplete
             v-model="scope.row.tester"
             :fetch-suggestions="querySearchTesters"
+            select-when-unmatched
             value-key="name"
             placeholder="检测员"
             @select="save(scope)"
-            @blur="save(scope)"
           />
         </template>
       </el-table-column>

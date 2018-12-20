@@ -25,7 +25,7 @@ class CreateProductBatchesTable extends Migration
             $table->text('memo')->nullable();
             $table->timestamps();
 
-            $table->unique(['product_name', 'batch_number']);
+            $table->unique(['product_name', 'product_name_suffix', 'batch_number']);
         });
     }
 

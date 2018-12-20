@@ -18,6 +18,12 @@
             placeholder="检测流程"
             @select="handleSelect"
           />
+          <el-button
+            v-show="!way.name"
+            type="primary"
+            icon="el-icon-edit"
+            @click="handleCreateWay">添加
+          </el-button>
         </el-form-item>
       </el-form>
 
@@ -26,6 +32,8 @@
         <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
+
+    <way-form :action.sync="WayFormAction" :prop-obj.sync="WayFormObj"/>
   </div>
 </template>
 
@@ -33,15 +41,21 @@
 import { qcWayApi, productSelectTestWay } from '@/api/qc'
 import { productApi } from '@/api/basedata'
 import Bus from '@/store/bus'
+import WayForm from '../qcways/dialog'
 
 export default {
   name: 'SelectWay',
+  components: {
+    WayForm
+  },
   data() {
     return {
       productId: 0,
       way: this.newWay(),
       ways: [],
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      WayFormAction: '',
+      WayFormObj: undefined
     }
   },
   mounted() {
@@ -93,6 +107,9 @@ export default {
     handleSelect(way) {
       this.way = way
     },
+    handleCreateWay() {
+      this.WayFormAction = 'create'
+    },
     submit() {
       this.$refs['obj_form'].validate(valid => {
         if (valid) {
@@ -120,7 +137,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

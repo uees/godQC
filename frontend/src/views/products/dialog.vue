@@ -99,7 +99,8 @@ export function newObj() {
       date: '',
       timezone_type: '',
       timezone: ''
-    }
+    },
+    with: 'category,testWays' // 加载关系
   }
 }
 

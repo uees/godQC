@@ -58,7 +58,7 @@ export default {
         }
       } else if (item.spec.value_type === 'VALUE') {
         isPass = item.value == item.spec.data.value
-      } else if (item.spec.value_type === 'INFO') {
+      } else {
         if (item.value.toString().toUpperCase() === 'PASS') {
           isPass = true
         }

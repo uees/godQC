@@ -40,12 +40,18 @@
       :data="tableData"
       style="width: 100%">
 
-      <el-table-column :sortable="true" prop="internal_name" label="内部名"/>
-      <el-table-column :sortable="true" prop="market_name" label="销售名"/>
+      <el-table-column prop="category.name" label="类别"/>
+      <el-table-column prop="internal_name" label="名称"/>
       <el-table-column prop="color" label="颜色"/>
       <el-table-column prop="part_a" label="A组分"/>
       <el-table-column prop="part_b" label="B组分"/>
       <el-table-column prop="ab_ratio" label="比例(A:B)"/>
+
+      <el-table-column label="检测流程">
+        <template slot-scope="scope">
+          <span v-if="scope.row.testWays.length > 0">{{ scope.row.testWays[0].name }}</span>
+        </template>
+      </el-table-column>
 
       <el-table-column label="创建时间">
         <template slot-scope="scope">
@@ -107,7 +113,10 @@ export default {
   data() {
     return {
       api: productApi,
-      propProductId: 0
+      propProductId: 0,
+      queryParams: {
+        with: 'category,testWays'
+      }
     }
   },
   methods: {

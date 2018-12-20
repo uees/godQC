@@ -10,18 +10,19 @@ use App\TestWay;
 
 class ProductController extends Controller
 {
-    // sort_by,order
+    // sort_by,order,with,q
     public function index()
     {
         $perPage = $this->perPage();
         $query = Product::query();
 
+        if (\request()->filled('with')) {
+            $query = $query->with(explode(',', request('with')));
+        }
+
         if (\request()->filled('q')) {
             $internal_name_condition = queryCondition('internal_name', \request('q'));
-            $market_name_condition = queryCondition('market_name', \request('q'));
-
-            $query = $query->where($internal_name_condition)
-                ->orWhere($market_name_condition);
+            $query = $query->where($internal_name_condition);
         }
 
         $pagination = $query->orderBy($this->sortBy(), $this->order())
@@ -38,6 +39,13 @@ class ProductController extends Controller
 
         $product->fill($request->all())
             ->save();
+
+        // 加载关系
+        if ($request->filled('with')) {
+            foreach (explode(',', $request->get('with')) as $ref) {
+                $product->{$ref};
+            }
+        }
 
         return ProductResource::make($product);
     }
@@ -62,6 +70,13 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         $product->fill($request->all())
             ->save();
+
+        // 加载关系
+        if ($request->filled('with')) {
+            foreach (explode(',', $request->get('with')) as $ref) {
+                $product->{$ref};
+            }
+        }
 
         return ProductResource::make($product);
     }

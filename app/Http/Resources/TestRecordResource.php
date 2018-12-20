@@ -9,7 +9,7 @@ class TestRecordResource extends Resource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return array
      */
     public function toArray($request)
@@ -18,8 +18,8 @@ class TestRecordResource extends Resource
             'id' => (int)$this->id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'show_reality' => $this->show_reality,
-            'product_batch_id' => (int) $this->product_batch_id,
+            'show_reality' => (boolean)$this->show_reality,
+            'product_batch_id' => (int)$this->product_batch_id,
             'test_times' => (int)$this->test_times,
             'conclusion' => $this->conclusion,
             'testers' => $this->testers,

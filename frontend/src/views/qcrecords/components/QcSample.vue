@@ -38,6 +38,14 @@
         <el-form-item label="批号" prop="batch_number">
           <el-input v-model="record.batch.batch_number"/>
         </el-form-item>
+
+        <el-form-item label="粘度">
+          <el-input v-model="postData.niandu"/>
+        </el-form-item>
+
+        <el-form-item label="60转粘度">
+          <el-input v-model="postData.niandu60"/>
+        </el-form-item>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
@@ -61,6 +69,10 @@ export default {
   data() {
     return {
       type: '',
+      postData: {
+        niandu: '',
+        niandu60: ''
+      },
       record: this.newRecord(),
       loading: false,
       products: [],
@@ -155,8 +167,16 @@ export default {
     qcSample() {
       const { product_name, product_name_suffix, batch_number } = this.record.batch
       const type = this.type
+      const { niandu, niandu60 } = this.postData
 
-      qcSample({ product_name, product_name_suffix, batch_number, type }).then(response => {
+      qcSample({
+        product_name,
+        product_name_suffix,
+        batch_number,
+        niandu,
+        niandu60,
+        type
+      }).then(response => {
         const { data } = response.data
         this.record = data
 

@@ -6,7 +6,7 @@
       :fetch-suggestions="querySearch"
       :select-when-unmatched="true"
       @blur="$emit('blur')"
-      @select="$emit('blur')"
+      @select="handleSelect"
     />
     <el-input
       v-else
@@ -105,6 +105,12 @@ export default {
         : values
 
       cb(results)
+    },
+    handleSelect(item) {
+      // 延迟1s执行
+      setTimeout(() => {
+        this.$emit('blur')
+      }, 1000)
     }
   }
 }

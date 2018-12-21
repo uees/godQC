@@ -30,8 +30,8 @@
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button @click="close">取 消</el-button>
-        <el-button type="primary" @click="create">确 定</el-button>
+        <el-button v-if="action==='create'" type="primary" @click="create">确 定</el-button>
+        <el-button v-else type="primary" @click="update">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -46,6 +46,7 @@ export default {
   name: 'DisposeForm',
   data() {
     return {
+      action: 'create',
       dispose: this.newDispose(),
       loading: false,
       authors: [],
@@ -75,9 +76,20 @@ export default {
   },
   mounted() {
     Bus.$on('show-dispose-form', (record) => {
-      this.dispose.from_record_id = record.id
-      this.dispose.product_batch_id = record.batch ? record.batch.id : null
-      this.dialogFormVisible = true
+      productDisposeApi.list({params: {from_record_id: record.id, all: 1}}).then(response => {
+        const { data } = response.data
+        this.dialogFormVisible = true
+        if (data.length && data.length > 0) {
+          this.action = 'update'
+          this.dispose = data[0]
+        } else {
+          this.action = 'create'
+          this.dispose.from_record_id = record.id
+          this.dispose.product_batch_id = record.batch ? record.batch.id : null
+        }
+      }).catch(() => {
+        this.close()
+      })
     })
   },
   methods: {
@@ -132,6 +144,12 @@ export default {
     create() {
       productDisposeApi.add(this.dispose).then(response => {
         Bus.$emit('dispose-created', this.dispose)
+        this.close()
+      })
+    },
+    update() {
+      productDisposeApi.update(this.dispose.id, this.dispose).then(response => {
+        Bus.$emit('dispose-updated', this.dispose)
         this.close()
       })
     },

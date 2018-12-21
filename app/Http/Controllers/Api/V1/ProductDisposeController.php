@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ProductDisposeController extends Controller
 {
-    // q, with, done, author, created_at
+    // q, all, with, done, author, created_at, from_record_id, to_record_id, product_batch_id
     public function index()
     {
         $perPage = $this->perPage();
@@ -25,7 +25,7 @@ class ProductDisposeController extends Controller
             $query = $query->with(explode(',', request('with')));
         }
 
-        $query = $this->parseWhere($query, ['author', 'created_at']);
+        $query = $this->parseWhere($query, ['author', 'created_at', 'from_record_id', 'to_record_id', 'product_batch_id']);
 
         if (\request()->filled('done')) {
             $query = $query->where('is_done', 1);
@@ -45,9 +45,13 @@ class ProductDisposeController extends Controller
 
         $query = $query->orderBy($this->sortBy(), $this->order());
 
-        $pagination = $query->paginate($perPage)->appends(request()->except('page'));
+        if (\request()->filled('all')) {
+            $results = $query->get();
+        } else {
+            $results = $query->paginate($perPage)->appends(request()->except('page'));
+        }
 
-        return ProductDisposeResource::collection($pagination);
+        return ProductDisposeResource::collection($results);
     }
 
 
@@ -70,7 +74,13 @@ class ProductDisposeController extends Controller
 
     public function show($id)
     {
-        $productDispose = ProductDispose::with('batch')->findOrFail($id);
+        $query = ProductDispose::query();
+
+        if (\request()->filled('with')) {
+            $query = $query->with(explode(',', request('with')));
+        }
+
+        $productDispose = $query->findOrFail($id);
 
         return ProductDisposeResource::make($productDispose);
     }

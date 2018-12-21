@@ -37,11 +37,15 @@ export function disposeSample(dispose_id) {
 }
 
 export function testDone(record_id) {
-  return request.patch(`qc-records/${record_id}/test-done`)
+  return request.get(`qc-records/${record_id}/test-done`)
 }
 
 export function sayPackage(record_id) {
-  return request.patch(`qc-records/${record_id}/say-package`)
+  return request.get(`qc-records/${record_id}/say-package`)
+}
+
+export function cancelSayPackage(record_id) {
+  return request.get(`qc-records/${record_id}/say-package/cancel`)
 }
 
 export function updateRecordItem(record_id, item_id, data) {

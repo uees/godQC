@@ -27,8 +27,9 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
     Route::post('customers/{customer}/products', 'CustomerController@selectProducts');
     Route::post('customers/{customer}/products/add', 'CustomerController@selectProduct');
     Route::post('qc-records/sample', 'QCRecordController@sample');
-    Route::patch('qc-records/{testRecord}/test-done', 'QCRecordController@testDone');
-    Route::patch('qc-records/{testRecord}/say-package', 'QCRecordController@sayPackage');
+    Route::get('qc-records/{testRecord}/test-done', 'QCRecordController@testDone');
+    Route::get('qc-records/{testRecord}/say-package', 'QCRecordController@sayPackage');
+    Route::get('qc-records/{testRecord}/say-package/cancel', 'QCRecordController@cancelSayPackage');
 
     Route::apiResources([
         'categories' => 'CategoryController',

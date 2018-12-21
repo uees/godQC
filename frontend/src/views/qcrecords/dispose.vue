@@ -11,7 +11,7 @@
         <span>处理办法：</span> {{ dispose.method }}
       </div>
 
-      <div v-if="dispose.to_record_id">
+      <div v-if="dispose.to_record_id" class="link">
         <router-link :to="{name: 'records.show', params: { id: dispose.to_record_id }}">
           经处理后的检测结果
         </router-link>
@@ -41,7 +41,7 @@ export default {
     }
   },
   mounted() {
-    productDisposeApi.detail(this.id).then(response => {
+    productDisposeApi.detail(this.id, {params: {with: 'batch'}}).then(response => {
       const { data } = response.data
       this.dispose = data
 
@@ -81,3 +81,35 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .main-context {
+    padding: 20px 15px;
+  }
+  .author {
+    font-size: 18px;
+    color: #666;
+    padding: 10px;
+  }
+  .time {
+    font-size: 12px;
+    color: #999;
+    padding: 10px;
+  }
+  .batch {
+    color: #666;
+    padding: 10px;
+  }
+  .method {
+    font-size: 20px;
+    margin-top: 10px;
+    color: #b3450e;
+    width: 100%;
+    background-color: #f7f7f7;
+    padding: 20px 10px;
+  }
+  .link {
+    text-decoration: underline;
+    color: blue;
+  }
+</style>

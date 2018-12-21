@@ -1,25 +1,40 @@
 <template>
   <div>
     <div class="main-context">
-      <h2 v-if="record.disposed">
+      <div v-if="record.disposed" class="link-div">
         被
-        <router-link :to="{name: 'disposes.show', params: {id: record.disposed.id }}">
+        <router-link :to="{name: 'disposes.show', params: {id: record.disposed.id }}" class="link">
           处理
         </router-link>
         后的检测记录
-      </h2>
-      <div class="product-name"><span>品名：</span> {{ record.batch.product_name }} {{ record.batch.product_name_suffix }}</div>
-      <div class="batch-number"><span>批号：</span> {{ record.batch.batch_number }}</div>
-      <div>第 {{ record.test_times }} 次检测</div>
-      <div><span>检测员：</span> {{ record.testers }}</div>
-      <div><span>结论：</span> {{ record.conclusion }}</div>
+      </div>
+
+      <table class="record-table">
+        <thead>
+          <tr>
+            <th>品名</th>
+            <th>批号</th>
+            <th v-if="record.test_times">第几次检测</th>
+            <th>检测员</th>
+            <th>结论</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ record.batch.product_name }} {{ record.batch.product_name_suffix }}</td>
+            <td>{{ record.batch.batch_number }}</td>
+            <td v-if="record.test_times">{{ record.test_times }}</td>
+            <td>{{ record.testers }}</td>
+            <td>{{ echoConclusion(record.conclusion) }}</td>
+          </tr>
+        </tbody>
+      </table>
+
       <el-table
         :data="filterItems(record.items)"
-        :default-sort="{prop: 'id', order: 'Ascending'}"
         border
         style="width: 100%"
       >
-        <el-table-column prop="id" label="ID" width="90"/>
         <el-table-column prop="item" label="项目"/>
         <el-table-column label="要求">
           <template slot-scope="props">
@@ -27,12 +42,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column v-if="showReality(scope.row)" prop="value" label="结果"/>
+        <el-table-column v-if="showReality(record)" prop="value" label="结果"/>
         <el-table-column v-else prop="fake_value" label="结果"/>
 
         <el-table-column label="结论">
           <template slot-scope="props">
-            {{ echoConclusion(showReality(scope.row) ? props.row.conclusion : 'PASS') }}
+            {{ echoConclusion(showReality(record) ? props.row.conclusion : 'PASS') }}
           </template>
         </el-table-column>
 
@@ -40,8 +55,10 @@
         <el-table-column prop="memo" label="备注"/>
       </el-table>
 
-      <div v-if="record.willDispose">
-        <router-link :to="{name: 'disposes.show', params: {id: record.willDispose.id }}">处理办法</router-link>
+      <div v-if="record.willDispose" class="link-div">
+        <router-link :to="{name: 'disposes.show', params: {id: record.willDispose.id }}" class="link">
+          处理办法
+        </router-link>
       </div>
     </div>
   </div>
@@ -152,3 +169,37 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .record-table {
+    width: 100%;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+    background: #fcf8e3;
+
+    thead, tbody {
+      width: 100%;
+    }
+
+    td, th {
+      border: 1px solid #eee;
+      padding: 10px;
+      text-align: center;
+      color: #666;
+    }
+  }
+  .main-context {
+    padding: 20px 15px;
+  }
+
+  .link-div {
+    color: #666;
+    padding: 10px;
+    margin: 20px 0;
+  }
+
+  .link {
+    text-decoration: underline;
+    color: blue;
+  }
+</style>

@@ -101,7 +101,9 @@
           </el-button>
           <el-button type="text" size="small" @click="handleShowRecordEditForm(scope)">编辑</el-button>
           <el-button type="text" size="small" @click="handleShowItemForm(scope)">添加项目</el-button>
-          <el-button type="text" size="small" @click="handleSayPackage(scope)">写装</el-button>
+          <el-button type="text" size="small" @click="handleSayPackage(scope)">
+            {{ scope.row.conclusion === 'PASS' ? '写装' : '归档' }}
+          </el-button>
           <el-button type="text" size="small" @click="handleDeleteRecord(scope)">删除</el-button>
         </template>
       </el-table-column>
@@ -259,6 +261,9 @@ export default {
     })
     Bus.$on('dispose-created', (dispose) => {
       this.$message(`处理方法已创建：${dispose.author} ${dispose.method}`)
+    })
+    Bus.$on('dispose-updated', (dispose) => {
+      this.$message(`处理方法已更新：${dispose.author} ${dispose.method}`)
     })
   },
   methods: {

@@ -203,20 +203,48 @@ class QCRecordController extends Controller
 
     public function sayPackage(TestRecord $testRecord)
     {
-        if ($testRecord->conclusion == 'NG') {
-            if (is_null($testRecord->willDispose)) {
-                return $this->failed('此批次不合格，并且还未提交处理意见，写装失败');
-            }
-        } elseif (empty($testRecord->conclusion)) {
+        $notDone = $testRecord->items()
+            ->where(function ($query) {
+                $query->whereNull('value')->orWhere('value', '');
+            })
+            ->where(function ($query) {
+                $query->whereNull('conclusion')->orWhere('conclusion', '');
+            })
+            ->exists();
+
+        if ($notDone) {
+            return $this->failed('检测未完成');
+        }
+
+        if (empty($testRecord->testers)) {
+            return $this->failed('请输入检测员');
+        }
+
+        if ($testRecord->conclusion == 'NG' && is_null($testRecord->willDispose)) {
+            return $this->failed('此批次不合格，并且还未提交处理意见，写装/归档失败');
+        }
+
+        if (empty($testRecord->conclusion)) {
             $testRecord->conclusion = 'PASS';
         }
 
         // 留空就表示合格, 这里帮忙填入PASS
         $testRecord->items()
             ->whereNull('conclusion')
-            ->update(['conclusion'=>'PASS']);
+            ->update(['conclusion' => 'PASS']);
 
         $testRecord->said_package_at = now();
+
+        if ($testRecord->save()) {
+            return $this->noContent();
+        }
+
+        return $this->failed('操作失败');
+    }
+
+    public function cancelSayPackage(TestRecord $testRecord)
+    {
+        $testRecord->said_package_at = null;
 
         if ($testRecord->save()) {
             return $this->noContent();
@@ -242,9 +270,9 @@ class QCRecordController extends Controller
         foreach ($items as $key => $item) {
             if ($item['item'] == '粘度') {
                 $items[$key]['value'] = \request('niandu');
-            } elseif ($item['item'] =='6转粘度') {
+            } elseif ($item['item'] == '6转粘度') {
                 $items[$key]['value'] = \request('niandu');
-            } elseif ($item['item'] =='60转粘度') {
+            } elseif ($item['item'] == '60转粘度') {
                 $items[$key]['value'] = \request('niandu60');
             }
         }

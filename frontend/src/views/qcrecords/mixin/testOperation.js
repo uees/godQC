@@ -3,7 +3,8 @@ import {
   updateRecordItem,
   deleteRecordItem,
   testDone,
-  sayPackage
+  sayPackage,
+  cancelSayPackage
 } from '@/api/qc'
 import Bus from '@/store/bus'
 import { deepClone } from '@/utils'
@@ -172,7 +173,26 @@ export default {
           this.updateCache()
           this.$message({
             type: 'success',
-            message: '写装成功!'
+            message: '归档成功，请到已检列表查看'
+          })
+        })
+      })
+    },
+    handleCancelSayPackage(scope) {
+      const record = scope.row
+      const index = scope.$index
+
+      this.$confirm('取消后，记录将回到在检列表', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info'
+      }).then(() => {
+        cancelSayPackage(record.id).then(() => {
+          this.records.splice(index, 1)
+          this.updateCache()
+          this.$message({
+            type: 'success',
+            message: '已取消归档，请到在检列表查看'
           })
         })
       })

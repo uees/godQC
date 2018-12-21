@@ -95,15 +95,16 @@
         </template>
       </el-table-column>
 
-      <el-table-column :width="real ? 180 : 80" align="center" label="操作" class-name="small-padding fixed-width">
+      <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             v-if="showReality(scope.row) && scope.row.conclusion === 'NG'"
             type="text"
             size="small"
-            @click="showDispose(scope.row)">处理意见
+            @click="showDispose(scope.row)">处理办法
           </el-button>
           <template v-if="real">
+            <el-button type="text" size="small" @click="handleCancelSayPackage(scope)">取消归档</el-button>
             <el-button type="text" size="small" @click="handleShowRecordEditForm(scope)">编辑</el-button>
             <el-button type="text" size="small" @click="handleDeleteRecord(scope)">删除</el-button>
           </template>
@@ -252,7 +253,11 @@ export default {
       qcRecordApi.detail(row.id, { params: { with: 'willDispose' } }).then(response => {
         const { data } = response.data // data is record
 
-        this.$router.push({ name: 'disposes.show', params: { id: data.willDispose.id }})
+        if (data.willDispose) {
+          this.$router.push({ name: 'disposes.show', params: { id: data.willDispose.id }})
+        } else {
+          this.$message('无处理记录')
+        }
       })
     },
     filterItems(items) {

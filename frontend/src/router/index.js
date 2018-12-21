@@ -123,20 +123,20 @@ export const asyncRouterMap = [
         path: 'testing',
         component: () => import('@/views/qcrecords/testing'),
         name: 'fqc-testing',
-        meta: { title: '在检产品', icon: 'example' }
+        meta: { title: '在检产品', icon: 'example', name: 'Testings' }
       },
       {
         path: 'list',
         component: () => import('@/views/qcrecords/index'),
         name: 'fqc-list',
-        meta: { title: '产品检测记录', icon: 'guide', noCache: true }
+        meta: { title: '产品检测记录', icon: 'guide', name: 'TestRecords' }
       },
       {
         path: 'list/real',
         component: () => import('@/views/qcrecords/index'),
         hidden: true,
         name: 'fqc-list-real',
-        meta: { title: '产品检测记录(Real)', noCache: true }
+        meta: { title: '产品检测记录(Real)', name: 'TestRecords' }
       }
     ]
   },
@@ -155,20 +155,20 @@ export const asyncRouterMap = [
         path: 'testing',
         component: () => import('@/views/qcrecords/testing'),
         name: 'iqc-testing',
-        meta: { title: '在检材料', icon: 'example' }
+        meta: { title: '在检材料', icon: 'example', name: 'Testings' }
       },
       {
         path: 'list',
         component: () => import('@/views/qcrecords/index'),
         name: 'iqc-list',
-        meta: { title: '来料检测记录', icon: 'guide', noCache: true }
+        meta: { title: '来料检测记录', icon: 'guide', name: 'TestRecords' }
       },
       {
         path: 'list/real',
         component: () => import('@/views/qcrecords/index'),
         hidden: true,
         name: 'iqc-list-real',
-        meta: { title: '来料检测记录(Real)', noCache: true }
+        meta: { title: '来料检测记录(Real)', name: 'TestRecords' }
       }
     ]
   },
@@ -179,7 +179,7 @@ export const asyncRouterMap = [
       {
         path: 'index',
         component: () => import('@/views/qcrecords/patternTest'),
-        name: 'pattern-tests',
+        name: 'PatternTest',
         meta: { title: '型式检验', icon: 'table' }
       }
     ]
@@ -191,7 +191,7 @@ export const asyncRouterMap = [
       {
         path: 'index',
         component: () => import('@/views/qcmethods/index'),
-        name: 'test-methods',
+        name: 'TestMethods',
         meta: { title: '检测方法', icon: 'table' }
       }
     ]
@@ -203,7 +203,7 @@ export const asyncRouterMap = [
       {
         path: 'index',
         component: () => import('@/views/qcways/index'),
-        name: 'test-ways',
+        name: 'TestWays',
         meta: { title: '检测流程', icon: 'size' }
       }
     ]
@@ -215,7 +215,7 @@ export const asyncRouterMap = [
       {
         path: 'index',
         component: () => import('@/views/products/index'),
-        name: 'products',
+        name: 'Products',
         meta: { title: '产品', icon: 'star' }
       }
     ]
@@ -227,7 +227,7 @@ export const asyncRouterMap = [
       {
         path: 'index',
         component: () => import('@/views/categories/index'),
-        name: 'categories',
+        name: 'Categories',
         meta: { title: '产品分类', icon: 'list' }
       }
     ]
@@ -239,7 +239,7 @@ export const asyncRouterMap = [
       {
         path: 'index',
         component: () => import('@/views/customers/index'),
-        name: 'customers',
+        name: 'Customers',
         meta: { title: '客户', icon: 'tree' }
       }
     ]
@@ -254,7 +254,7 @@ export const asyncRouterMap = [
       {
         path: 'index',
         component: () => import('@/views/suggests/index'),
-        name: 'suggests',
+        name: 'Suggests',
         meta: { title: '提示数据', icon: 'list' }
       }
     ]

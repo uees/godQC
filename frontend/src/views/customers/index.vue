@@ -88,7 +88,7 @@ import { customerApi } from '@/api/basedata'
 import FormDialog from './dialog'
 
 export default {
-  name: 'Index',
+  name: 'Customers',
   components: {
     FormDialog
   },

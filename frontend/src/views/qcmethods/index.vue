@@ -95,7 +95,7 @@ import FormDialog from './dialog'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
 
 export default {
-  name: 'Index',
+  name: 'TestMethods',
   components: {
     FormDialog
   },

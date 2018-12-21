@@ -49,7 +49,9 @@
 
       <el-table-column label="检测流程">
         <template slot-scope="scope">
-          <span v-if="scope.row.testWays.length > 0">{{ scope.row.testWays[0].name }}</span>
+          <span v-if="scope.row.testWays && scope.row.testWays.length > 0">
+            {{ scope.row.testWays[0].name }}
+          </span>
         </template>
       </el-table-column>
 
@@ -100,7 +102,7 @@ import Bus from '@/store/bus'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
 
 export default {
-  name: 'Index',
+  name: 'Products',
   components: {
     FormDialog,
     SelectWay
@@ -124,11 +126,12 @@ export default {
       this.propProductId = product.id
 
       Bus.$emit('product-select-way', product.id)
+    },
+    handleUpdate(row) {
+      this.updateIndex = this.tableData.indexOf(row)
+      this.propObj = Object.assign({}, row, this.queryParams) // 加载关系
+      this.action = 'update'
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

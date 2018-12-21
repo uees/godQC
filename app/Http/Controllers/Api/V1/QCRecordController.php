@@ -131,6 +131,9 @@ class QCRecordController extends Controller
         $batchNumber = $request->get('batch_number');
         $type = $request->get('type');
 
+        // 校验
+        $product = Product::where('internal_name', $productName)->firstOrFail();
+
         // step 1. 创建批次
         $batch = ProductBatch::where('product_name', $productName)
             ->where('product_name_suffix', $productNameSuffix)
@@ -152,8 +155,6 @@ class QCRecordController extends Controller
         $batch->testRecords()->save($testRecord);
 
         // step 3. 创建检测项目
-        $product = Product::where('internal_name', $productName)->firstOrFail();
-
         $test_way = $this->makeTestWay($product);
 
         $items = [];

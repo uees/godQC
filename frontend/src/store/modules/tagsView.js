@@ -1,3 +1,8 @@
+const getRouteComponentName = function (route) {
+  // 这个名称应该与组件的名称相同, 否则无法缓存
+  return route.meta.name ? route.meta.name : route.name
+}
+
 const tagsView = {
   state: {
     visitedViews: [],
@@ -13,24 +18,35 @@ const tagsView = {
       )
     },
     ADD_CACHED_VIEW: (state, view) => {
-      if (state.cachedViews.includes(view.name)) return
+      // view is vue $route
+      // if (state.cachedViews.includes(view.name)) return
+      // if (!view.meta.noCache) {
+      //   state.cachedViews.push(view.name)
+      // }
+
+      // 获取组件的名称才是王道
+      const name = getRouteComponentName(view)
+
+      if (state.cachedViews.includes(name)) return
+
       if (!view.meta.noCache) {
-        state.cachedViews.push(view.name)
+        state.cachedViews.push(name)
       }
     },
 
     DEL_VISITED_VIEW: (state, view) => {
-      for (const [i, v] of state.visitedViews.entries()) {
+      for (const [index, v] of state.visitedViews.entries()) {
         if (v.path === view.path) {
-          state.visitedViews.splice(i, 1)
+          state.visitedViews.splice(index, 1)
           break
         }
       }
     },
     DEL_CACHED_VIEW: (state, view) => {
-      for (const i of state.cachedViews) {
-        if (i === view.name) {
-          const index = state.cachedViews.indexOf(i)
+      const name = getRouteComponentName(view)
+      for (const item of state.cachedViews) {
+        if (item === name) {
+          const index = state.cachedViews.indexOf(item)
           state.cachedViews.splice(index, 1)
           break
         }
@@ -38,21 +54,24 @@ const tagsView = {
     },
 
     DEL_OTHERS_VISITED_VIEWS: (state, view) => {
+      /**
       for (const [i, v] of state.visitedViews.entries()) {
         if (v.path === view.path) {
           state.visitedViews = state.visitedViews.slice(i, i + 1)
           break
         }
       }
+      */
+      // 算法?
+      state.visitedViews = [Object.assign({}, view, {
+        title: view.meta.title || 'no-name'
+      })]
     },
     DEL_OTHERS_CACHED_VIEWS: (state, view) => {
-      for (const i of state.cachedViews) {
-        if (i === view.name) {
-          const index = state.cachedViews.indexOf(i)
-          state.cachedViews = state.cachedViews.slice(index, index + 1)
-          break
-        }
-      }
+      const name = getRouteComponentName(view)
+      state.cachedViews = state.cachedViews.filter(item => {
+        return item === name
+      })
     },
 
     DEL_ALL_VISITED_VIEWS: state => {

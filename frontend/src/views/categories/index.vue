@@ -86,7 +86,7 @@ import Bus from '@/store/bus'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
 
 export default {
-  name: 'Index',
+  name: 'Categories',
   components: {
     FormDialog,
     SelectWay

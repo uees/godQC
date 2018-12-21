@@ -202,7 +202,7 @@ import ItemForm from './components/ItemForm'
 import RecordForm from './components/RecordForm'
 
 export default {
-  name: 'Index',
+  name: 'TestRecords',
   components: {
     ItemForm, RecordForm
   },

@@ -206,7 +206,7 @@ import ValueInput from './components/ValueInput'
 import RecordForm from './components/RecordForm'
 
 export default {
-  name: 'Testing',
+  name: 'Testings',
   components: {
     ItemForm,
     QcSample,

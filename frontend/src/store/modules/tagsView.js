@@ -18,13 +18,6 @@ const tagsView = {
       )
     },
     ADD_CACHED_VIEW: (state, view) => {
-      // view is vue $route
-      // if (state.cachedViews.includes(view.name)) return
-      // if (!view.meta.noCache) {
-      //   state.cachedViews.push(view.name)
-      // }
-
-      // 获取组件的名称才是王道
       const name = getRouteComponentName(view)
 
       if (state.cachedViews.includes(name)) return
@@ -44,24 +37,13 @@ const tagsView = {
     },
     DEL_CACHED_VIEW: (state, view) => {
       const name = getRouteComponentName(view)
-      for (const item of state.cachedViews) {
-        if (item === name) {
-          const index = state.cachedViews.indexOf(item)
-          state.cachedViews.splice(index, 1)
-          break
-        }
+      const index = state.cachedViews.indexOf(name)
+      if (index >= 0) {
+        state.cachedViews.splice(index, 1)
       }
     },
 
     DEL_OTHERS_VISITED_VIEWS: (state, view) => {
-      /**
-      for (const [i, v] of state.visitedViews.entries()) {
-        if (v.path === view.path) {
-          state.visitedViews = state.visitedViews.slice(i, i + 1)
-          break
-        }
-      }
-      */
       // 算法?
       state.visitedViews = [Object.assign({}, view, {
         title: view.meta.title || 'no-name'

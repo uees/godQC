@@ -182,6 +182,17 @@
       </el-table-column>
 
     </el-table>
+
+    <div v-show="!listLoading" class="pagination-container">
+      <el-pagination
+        :total="total"
+        :current-page.sync="queryParams.page"
+        :page-sizes="pageSizes"
+        :page-size="queryParams.per_page"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"/>
+    </div>
   </div>
 </template>
 

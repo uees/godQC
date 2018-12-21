@@ -27,7 +27,7 @@ class QCRecordController extends Controller
         }
 
         $query = $this->parseFields($query);
-        $query = $this->parseWhere($query, ['conclusion', 'test_times', 'created_at']);
+        $query = $this->parseWhere($query, ['conclusion', 'show_reality', 'test_times', 'created_at']);
 
         if (\request()->filled('testing')) {
             $query = $query->whereNull('said_package_at');

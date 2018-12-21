@@ -140,8 +140,9 @@ export default {
 
             if (dispose.id) {
               this.$confirm(`检测到此批号有返工处理记录:\n
-                  ${dispose.batch.product_name} ${dispose.batch.batch_number},\n
-                  ${dispose.method}\n
+                  品名：${dispose.batch.product_name} ${dispose.batch.product_name_suffix}\n
+                  批号：${dispose.batch.batch_number}\n
+                  处理方式：${dispose.method}\n\n
                   是否此批次?`, '提示', {
                 confirmButtonText: '是',
                 cancelButtonText: '否',

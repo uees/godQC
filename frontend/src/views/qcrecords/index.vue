@@ -40,6 +40,31 @@
       </el-select>
     </div>
 
+    <div class="filter-container">
+      <el-select
+        v-model="queryParams.conclusion"
+        clearable
+        placeholder="结论"
+        @change="selectConclusion"
+      >
+        <el-option label="合格" value="PASS"/>
+        <el-option label="不合格" value="NG"/>
+      </el-select>
+
+      <el-date-picker
+        v-model="pickerDate"
+        :picker-options="pickerOptions"
+        type="daterange"
+        align="right"
+        clearable
+        value-format="yyyy-MM-dd"
+        range-separator="至"
+        start-placeholder="检测日期开始"
+        end-placeholder="检测日期结束"
+        @change="dateChanged"
+      />
+    </div>
+
     <el-table
       v-loading.body="listLoading"
       :data="records"
@@ -198,18 +223,56 @@ export default {
         with: 'batch,items',
         type: 'FQC', // FQC, IQC
         tested: 1,
-        q: ''
+        q: '',
+        conclusion: '',
+        show_reality: '',
+        created_at: ''
+      },
+      pickerDate: null,
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      }
+    }
+  },
+  watch: {
+    pickerDate(val) {
+      if (Array.isArray(val)) {
+        this.queryParams.created_at = 'date:' + val.join(',')
+      } else {
+        this.queryParams.created_at = ''
       }
     }
   },
   created() {
     this.initType()
     this.initReal()
+    this.fetchData()
   },
   mounted() {
-    this.$nextTick(function () {
-      this.fetchData()
-    })
     Bus.$on('record-updated', (obj) => {
       this.records.splice(this.updateIndex, 1, obj)
       this.updateIndex = -1 // 重置 updateIndex
@@ -231,6 +294,22 @@ export default {
     },
     initReal() {
       this.real = this.$route.path.endsWith('/real')
+    },
+    selectConclusion() {
+      if (!this.real) {
+        if (this.queryParams.conclusion === 'NG') {
+          // 允许展示的 NG
+          this.queryParams.show_reality = 1
+        } else {
+          this.queryParams.conclusion = ''
+          this.queryParams.show_reality = 0
+        }
+      }
+
+      this.fetchData()
+    },
+    dateChanged() {
+      this.fetchData()
     },
     handleDownload() {
       this.$message({

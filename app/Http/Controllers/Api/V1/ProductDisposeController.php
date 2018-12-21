@@ -114,9 +114,11 @@ class ProductDisposeController extends Controller
         $dispose = ProductDispose::with('batch')
             ->whereHas('batch', function (Builder $query) use ($request) {
                 $batchNumber = $request->get('batch_number');
+                $productName = $request->get('product_name');
                 $type = $request->get('type');
 
-                $query->where('batch_number', $batchNumber)
+                $query->where('product_name', $productName)
+                    ->where('batch_number', $batchNumber)
                     ->where('type', $type)
                     ->where('is_done', false);
             })->first();
@@ -149,9 +151,9 @@ class ProductDisposeController extends Controller
         foreach ($recordFrom->items as $item) {
             if ($item->conclusion == 'NG') {
                 array_push($items, [
-                    'item' => $item['name'],
+                    'item' => $item['item'],
                     'spec' => $item['spec'],
-                    'value' => '',
+                    'memo' => $item['memo'],
                 ]);
             }
         }

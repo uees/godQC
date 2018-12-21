@@ -49,7 +49,7 @@
       row-key="id"
       style="width: 100%;"
     >
-      <el-table-column label="取样时间" align="center" width="180">
+      <el-table-column label="取样时间" align="center">
         <template slot-scope="scope">
           {{ echoTime(scope.row.created_at) }}
         </template>
@@ -246,11 +246,9 @@ export default {
   },
   created() {
     this.initType()
+    this.fetchData()
   },
   mounted() {
-    this.$nextTick(function () {
-      this.fetchData()
-    })
     Bus.$on('record-sampled', (record) => {
       // fix ONLY_SHOW
       record.items = record.items.filter(item => {

@@ -50,8 +50,8 @@ class Controller extends BaseController
     protected function parseWhere(Builder $query, array $fields)
     {
         foreach ($fields as $field) {
-            $value = request($field);
-            if (is_null($value)) {
+            $value = request($field, '');
+            if ($value == '') {
                 continue;
             }
 

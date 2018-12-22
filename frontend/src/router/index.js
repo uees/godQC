@@ -79,7 +79,7 @@ export const constantRouterMap = [
         hidden: true,
         props: true,
         name: 'disposes.show',
-        meta: { title: '处理意见' }
+        meta: { title: '处理意见', name: 'Dispose' }
       },
       {
         path: 'records/:id',
@@ -87,7 +87,7 @@ export const constantRouterMap = [
         hidden: true,
         props: true,
         name: 'records.show',
-        meta: { title: '检测记录' }
+        meta: { title: '检测记录', name: 'ShowRecord' }
       },
       {
         path: 'records/:id/real',
@@ -95,7 +95,7 @@ export const constantRouterMap = [
         hidden: true,
         props: true,
         name: 'records.show-real',
-        meta: { title: '检测记录(real)' }
+        meta: { title: '检测记录(真)', name: 'ShowRecord' }
       }
     ]
   }
@@ -136,7 +136,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/qcrecords/index'),
         hidden: true,
         name: 'fqc-list-real',
-        meta: { title: '产品检测记录(Real)', name: 'TestRecords' }
+        meta: { title: '产品检测记录(真)', name: 'TestRecords' }
       }
     ]
   },
@@ -168,7 +168,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/qcrecords/index'),
         hidden: true,
         name: 'iqc-list-real',
-        meta: { title: '来料检测记录(Real)', name: 'TestRecords' }
+        meta: { title: '来料检测记录(真)', name: 'TestRecords' }
       }
     ]
   },

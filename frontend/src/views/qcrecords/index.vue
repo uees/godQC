@@ -13,15 +13,7 @@
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-search"
-        @click="fetchData">刷新
-      </el-button>
-
-      <el-button
-        class="filter-item"
-        type="primary"
-        icon="el-icon-document"
-        @click="handleDownload">导出
-      </el-button>
+        @click="fetchData"/>
 
       <el-select
         v-model="listShowItems"
@@ -63,6 +55,15 @@
         end-placeholder="检测日期结束"
         @change="dateChanged"
       />
+
+      <el-button
+        :loading="downloadLoading"
+        style="margin:0 0 20px 20px;"
+        type="primary"
+        icon="document"
+        @click="handleDownload">
+        {{ $t('excel.export') }} Excel
+      </el-button>
     </div>
 
     <el-table
@@ -122,6 +123,11 @@
 
       <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <router-link
+            v-if="scope.row.test_times <= 1 || showReality(scope.row)"
+            :to="{name: 'records.show', params: { id: scope.row.id }}">
+            查看 <!-- 重检测不展示 -->
+          </router-link>
           <el-button
             v-if="showReality(scope.row) && scope.row.conclusion === 'NG'"
             type="text"
@@ -136,10 +142,11 @@
         </template>
       </el-table-column>
 
+      <!-- 重检测不展示 -->
       <el-table-column type="expand">
         <template slot-scope="scope">
           <el-table
-            :data="filterItems(scope.row.items)"
+            :data="scope.row.test_times <= 1 || showReality(scope.row) ? filterItems(scope.row.items) : []"
             :cell-class-name="conclusionClass"
             border
             header-cell-class-name="table-header-th"
@@ -201,6 +208,13 @@ import testOperation from './mixin/testOperation'
 import ItemForm from './components/ItemForm'
 import RecordForm from './components/RecordForm'
 
+function cleanSpelChar(value) {
+  const p = /["'<>%;)(&+\\\/|:*?]/
+  if (p.test(value)) {
+    return value.replace(p, '')
+  }
+}
+
 export default {
   name: 'TestRecords',
   components: {
@@ -219,6 +233,7 @@ export default {
       real: false, // 强制真实开关
       records: [],
       listLoading: false,
+      downloadLoading: false,
       queryParams: {
         with: 'batch,items',
         type: 'FQC', // FQC, IQC
@@ -258,6 +273,24 @@ export default {
       }
     }
   },
+  computed: {
+    filename: function () {
+      let fname = '检测流水'
+      if (this.queryParams.q) {
+        fname += '_' + cleanSpelChar(this.queryParams.q)
+      }
+      if (Array.isArray(this.listShowItems) && this.listShowItems.length > 0) {
+        fname += '_' + this.listShowItems.join(',')
+      }
+      if (this.queryParams.conclusion) {
+        fname += '_' + this.queryParams.conclusion
+      }
+      if (Array.isArray(this.pickerDate) && this.pickerDate.length > 0) {
+        fname += '_' + this.pickerDate.join('~')
+      }
+      return fname
+    }
+  },
   watch: {
     pickerDate(val) {
       if (Array.isArray(val)) {
@@ -281,8 +314,8 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      qcRecordApi.list({params: this.queryParams}).then(response => {
-        const {data} = response.data
+      qcRecordApi.list({ params: this.queryParams }).then(response => {
+        const { data } = response.data
         this.records = data
         if (this.real) {
           this.excludeOnlyShow()
@@ -311,29 +344,12 @@ export default {
     dateChanged() {
       this.fetchData()
     },
-    handleDownload() {
-      this.$message({
-        showClose: true,
-        message: '还未实现此功能'
-      })
-    },
-    showReality(record) {
-      if (record.conclusion === 'PASS') {
-        return true
-      }
-
-      if (this.real) {
-        return true
-      }
-
-      return record.show_reality
-    },
     showDispose(row) {
       qcRecordApi.detail(row.id, { params: { with: 'willDispose' } }).then(response => {
         const { data } = response.data // data is record
 
         if (data.willDispose) {
-          this.$router.push({ name: 'disposes.show', params: { id: data.willDispose.id }})
+          this.$router.push({ name: 'disposes.show', params: { id: data.willDispose.id } })
         } else {
           this.$message('无处理记录')
         }
@@ -346,6 +362,44 @@ export default {
 
       return items.filter(item => {
         return item.is_show !== false
+      })
+    },
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['取样时间', '品名', '批号']
+          .concat(this.listShowItems)
+          .concat(['结论', '检测人', '完成时间', '归档/写装时间'])
+        const data = this.records2Json()
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: true,
+          bookType: 'xlsx'
+        })
+        this.downloadLoading = false
+      })
+    },
+    records2Json() {
+      return this.records.map(record => {
+        let productName = record.batch.product_name
+        if (record.batch.product_name_suffix) {
+          productName += '[' + record.batch.product_name_suffix + ']'
+        }
+
+        return [
+          this.echoTime(record.created_at),
+          productName,
+          record.batch.batch_number
+        ].concat(this.listShowItems.map(name => {
+          return this.echoItem(record, name)
+        })).concat([
+          record.conclusion,
+          record.testers,
+          this.echoTime(record.completed_at),
+          this.echoTime(record.said_package_at)
+        ])
       })
     }
   }

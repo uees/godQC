@@ -10,7 +10,7 @@
 
       <el-input
         v-model="queryParams.q"
-        style="width: 250px;"
+        style="width: 250px; margin-left: 10px;"
         class="filter-item"
         placeholder="搜索"
         @keyup.enter.native="handleSearch"/>
@@ -19,9 +19,8 @@
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
-        icon="el-icon-refresh"
-        @click="fetchData">刷新
-      </el-button>
+        icon="el-icon-search"
+        @click="fetchData"/>
 
       <el-select
         v-model="listShowItems"

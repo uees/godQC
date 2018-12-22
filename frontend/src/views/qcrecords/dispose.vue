@@ -40,13 +40,11 @@ export default {
       dispose: this.newDispose()
     }
   },
-  mounted() {
-    productDisposeApi.detail(this.id, {params: {with: 'batch'}}).then(response => {
-      const { data } = response.data
-      this.dispose = data
-
-      this.$route.meta.title = `${this.dispose.batch.batch_number} 处理方法`
-    })
+  created() {
+    this.fetchData()
+  },
+  activated() {
+    // 添加keep-alive后会增加两个生命周期mounted>activated、离开时执行deactivated
   },
   methods: {
     newDispose() {
@@ -77,6 +75,13 @@ export default {
           memo: ''
         }
       }
+    },
+    fetchData() {
+      productDisposeApi.detail(this.id, {params: {with: 'batch'}}).then(response => {
+        const { data } = response.data
+        this.dispose = data
+        // this.$route.meta.title = `${this.dispose.batch.batch_number} 处理方法`
+      })
     }
   }
 }

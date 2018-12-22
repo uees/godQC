@@ -26,11 +26,24 @@ export default {
       })
 
       if (item) {
-        if (this.real === false && item.conclusion === 'NG') {
-          return item.fake_value
-        }
-        return item.value
+        return this.showReality(record) ? item.value : item.fake_value
       }
+
+      return ''
+    },
+    showReality(record) {
+      // 产品合格显示真实
+      if (record.conclusion === 'PASS') {
+        return true
+      }
+
+      // 强制真实 或者 检测时 显示真实
+      if (this.real || typeof this.real === 'undefined') {
+        return true
+      }
+
+      // 查找配置项
+      return record.show_reality
     },
     excludeOnlyShow() {
       this.records = this.records.map(record => {

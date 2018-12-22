@@ -1,9 +1,20 @@
 <template>
   <div>
     <div class="main-context">
-      <div v-if="record.disposed" class="link-div">
+      <el-button
+        :loading="downloadLoading"
+        style="margin:0 0 20px 20px;"
+        type="primary"
+        icon="document"
+        @click="handleDownload">
+        {{ $t('excel.export') }} Excel
+      </el-button>
+
+      <div v-if="real && record.disposed" class="link-div">
         被
-        <router-link :to="{name: 'disposes.show', params: {id: record.disposed.id }}" class="link">
+        <router-link
+          :to="{name: 'disposes.show', params: {id: record.disposed.id }}"
+          class="link">
           处理
         </router-link>
         后的检测记录
@@ -14,27 +25,31 @@
           <tr>
             <th>品名</th>
             <th>批号</th>
-            <th v-if="record.test_times">第几次检测</th>
-            <th>检测员</th>
             <th>结论</th>
+            <th>检测员</th>
+            <th>检测日期</th>
+            <th v-if="record.test_times">第几次检测</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>{{ record.batch.product_name }} {{ record.batch.product_name_suffix }}</td>
+            <td>{{ productName }}</td>
             <td>{{ record.batch.batch_number }}</td>
-            <td v-if="record.test_times">{{ record.test_times }}</td>
-            <td>{{ record.testers }}</td>
             <td>{{ echoConclusion(record.conclusion) }}</td>
+            <td>{{ record.testers }}</td>
+            <th>{{ echoTime(record.created_at) }}</th>
+            <td v-if="record.test_times">{{ record.test_times }}</td>
           </tr>
         </tbody>
       </table>
 
       <el-table
+        v-loading="listLoading"
         :data="filterItems(record.items)"
+        element-loading-text="拼命加载中"
         border
-        style="width: 100%"
-      >
+        fit
+        highlight-current-row>
         <el-table-column prop="item" label="项目"/>
         <el-table-column label="要求">
           <template slot-scope="props">
@@ -55,8 +70,10 @@
         <el-table-column prop="memo" label="备注"/>
       </el-table>
 
-      <div v-if="record.willDispose" class="link-div">
-        <router-link :to="{name: 'disposes.show', params: {id: record.willDispose.id }}" class="link">
+      <div v-if="showReality(record) && record.willDispose" class="link-div">
+        <router-link
+          :to="{name: 'disposes.show', params: {id: record.willDispose.id }}"
+          class="link">
           处理办法
         </router-link>
       </div>
@@ -77,28 +94,35 @@ export default {
   ],
   props: {
     id: {
-      type: Number,
+      type: String,
       required: true
     }
   },
   data() {
     return {
       real: false,
-      record: this.newRecord()
+      record: this.newRecord(),
+      fileType: 'xlsx',
+      autoWidth: true,
+      listLoading: false,
+      downloadLoading: false
+    }
+  },
+  computed: {
+    filename: function () {
+      return this.productName + '_' + this.record.batch.batch_number
+    },
+    productName: function () {
+      let product_name = this.record.batch.product_name
+      if (this.record.batch.product_name_suffix) {
+        product_name = product_name + '_' + this.record.batch.product_name_suffix
+      }
+      return product_name
     }
   },
   created() {
     this.initReal()
-  },
-  mounted() {
-    qcRecordApi.detail(this.id, {
-      params: { with: 'batch,items,willDispose,disposed' }
-    }).then(response => {
-      const { data } = response.data
-      this.record = data
-
-      this.$route.meta.title = `${this.record.batch.batch_number} 检测记录`
-    })
+    this.fetchData()
   },
   methods: {
     newRecord() {
@@ -110,6 +134,16 @@ export default {
         testers: '',
         completed_at: null,
         said_package_at: null,
+        created_at: {
+          date: '',
+          timezone_type: '',
+          timezone: ''
+        },
+        updated_at: {
+          date: '',
+          timezone_type: '',
+          timezone: ''
+        },
         memo: '',
         show_reality: false,
         batch: this.newBatch(),
@@ -139,6 +173,17 @@ export default {
         memo: ''
       }
     },
+    fetchData() {
+      this.listLoading = true
+      qcRecordApi.detail(this.id, {
+        params: { with: 'batch,items,willDispose,disposed' }
+      }).then(response => {
+        const { data } = response.data
+        this.record = data
+        // this.$route.meta.title = `${this.record.batch.batch_number} 检测记录`
+        this.listLoading = false
+      })
+    },
     initReal() {
       this.real = this.$route.path.endsWith('/real')
     },
@@ -165,6 +210,53 @@ export default {
       return items.filter(item => {
         return item.is_show !== false
       })
+    },
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['品名', '批号', '结论', '检测员', '检测日期', '第几次检测']
+        const data = this.record2Json()
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
+    record2Json() {
+      const filterVal = ['item', 'spec', 'value', 'conclusion', 'tester', 'memo']
+      const data = this.record.items.map(item => filterVal.map(key => {
+        if (key === 'spec') {
+          return this.echoSpec(item['spec'])
+        }
+        if (key === 'value') {
+          return this.showReality(this.record) ? item['value'] : item['fake_value']
+        }
+        if (key === 'conclusion') {
+          return this.showReality(this.record) ? this.record.conclusion : 'PASS'
+        }
+        return item[key]
+      }))
+
+      const emptyRow = [...Array(6).map(() => '')]
+
+      data.unshift(['项目', '要求', '检测结果', '结论', '检测员', '备注'])
+      data.unshift(emptyRow)
+      data.unshift(emptyRow)
+      data.unshift(emptyRow)
+      data.unshift([
+        this.productName,
+        this.record.batch.batch_number,
+        this.echoConclusion(this.record.conclusion),
+        this.record.testers,
+        this.echoTime(this.record.created_at),
+        this.record.test_times
+      ])
+
+      return data
     }
   }
 }
@@ -188,6 +280,7 @@ export default {
       color: #666;
     }
   }
+
   .main-context {
     padding: 20px 15px;
   }

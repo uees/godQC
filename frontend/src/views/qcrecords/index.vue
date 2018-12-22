@@ -124,12 +124,12 @@
       <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <router-link
-            v-if="showReality(scope.row)"
+            v-if="real"
             :to="{name: 'records.show-real', params: { id: scope.row.id }}">
             查看 <!-- 展示真实 -->
           </router-link>
           <router-link
-            v-else-if="scope.row.test_times <= 1"
+            v-else
             :to="{name: 'records.show', params: { id: scope.row.id }}">
             查看 <!-- 重检测不展示 -->
           </router-link>
@@ -360,14 +360,9 @@ export default {
       })
     },
     filterItems(record) {
-      if (this.showReality(record)) {
+      // 必须根据 real 判断
+      if (this.real) {
         return record.items
-      }
-
-      // 以下为选择展示
-      // 测试次数＞1
-      if (record.test_times > 1) {
-        return []
       }
 
       return record.items.filter(item => {

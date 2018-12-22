@@ -188,6 +188,10 @@ export default {
       this.real = this.$route.path.endsWith('/real')
     },
     showReality(record) {
+      if (record.conclusion === 'PASS') {
+        return true
+      }
+
       if (this.real) {
         return true
       }

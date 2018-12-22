@@ -13,16 +13,7 @@
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-search"
-        @click="handleSearch">搜索
-      </el-button>
-
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-refresh"
-        @click="fetchData">刷新
-      </el-button>
+        @click="handleSearch"/>
 
       <el-button
         class="filter-item"
@@ -41,142 +32,176 @@
     </div>
 
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="创建时间">
+      <el-table-column align="center" label="创建时间" width="100">
         <template slot-scope="scope">
-          <span v-if="scope.row.created_at">{{ echoTime(scope.row.created_at) }}</span>
+          <span v-if="scope.row.created_at">
+            {{ echoTime(scope.row.created_at) }}
+          </span>
         </template>
       </el-table-column>
 
       <el-table-column width="150" align="center" label="品名">
         <template slot-scope="scope">
           <el-autocomplete
+            v-if="scope.row.is_edit"
             v-model="scope.row.product_name"
             :fetch-suggestions="querySearchProducts"
             value-key="internal_name"
             select-when-unmatched
             placeholder="品名"
             @select="save(scope)"
+            @blur="save(scope)"
           />
+          <span v-else>{{ scope.row.product_name }}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="批号">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.batch_number" placeholder="批号" @blur="save(scope)"/>
+          <el-input
+            v-if="scope.row.is_edit"
+            v-model="scope.row.batch_number"
+            placeholder="批号"
+            @blur="save(scope)"/>
+          <span v-else>{{ scope.row.batch_number }}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="12小时显影">
         <template slot-scope="scope">
           <el-autocomplete
+            v-if="scope.row.is_edit"
             v-model="scope.row.h12_xian_ying"
             :fetch-suggestions="querySearchXianYing"
             select-when-unmatched
-            placeholder="放置12小时显影"
+            placeholder="阻焊放置12小时"
             @select="save(scope)"
+            @blur="save(scope)"
           />
+          <span v-else>{{ scope.row.h12_xian_ying }}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="24小时显影">
         <template slot-scope="scope">
           <el-autocomplete
+            v-if="scope.row.is_edit"
             v-model="scope.row.h24_xian_ying"
             :fetch-suggestions="querySearchXianYing"
             select-when-unmatched
-            placeholder="放置24小时显影"
+            placeholder="阻焊放置24小时"
             @select="save(scope)"
+            @blur="save(scope)"
           />
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="隔夜显影">
-        <template slot-scope="scope">
-          <el-autocomplete
-            v-model="scope.row.ge_ye_xian_ying"
-            :fetch-suggestions="querySearchXianYing"
-            select-when-unmatched
-            placeholder="隔夜显影"
-            @select="save(scope)"
-          />
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="隔夜曝光">
-        <template slot-scope="scope">
-          <el-autocomplete
-            v-model="scope.row.ge_ye_bao_guang"
-            :fetch-suggestions="querySearchLevel"
-            select-when-unmatched
-            placeholder="隔夜曝光"
-            @select="save(scope)"
-          />
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="老化">
-        <template slot-scope="scope">
-          <el-autocomplete
-            v-model="scope.row.lao_hua"
-            :fetch-suggestions="querySearchPassNG"
-            select-when-unmatched
-            placeholder="老化"
-            @select="save(scope)"
-          />
+          <span v-else>{{ scope.row.h24_xian_ying }}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="耐焊性">
         <template slot-scope="scope">
           <el-autocomplete
+            v-if="scope.row.is_edit"
             v-model="scope.row.nai_han_xing"
             :fetch-suggestions="querySearchPassNG"
             select-when-unmatched
-            placeholder="耐焊性"
+            placeholder="阻焊耐焊性"
             @select="save(scope)"
+            @blur="save(scope)"
           />
+          <span v-else>{{ scope.row.nai_han_xing }}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="耐溶剂">
         <template slot-scope="scope">
           <el-autocomplete
+            v-if="scope.row.is_edit"
             v-model="scope.row.nai_rong_ji"
             :fetch-suggestions="querySearchPassNG"
             select-when-unmatched
-            placeholder="耐溶剂"
+            placeholder="阻焊耐溶剂"
             @select="save(scope)"
+            @blur="save(scope)"
           />
+          <span v-else>{{ scope.row.nai_rong_ji }}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="耐酸碱">
         <template slot-scope="scope">
           <el-autocomplete
+            v-if="scope.row.is_edit"
             v-model="scope.row.nai_suan_jian"
             :fetch-suggestions="querySearchPassNG"
             select-when-unmatched
-            placeholder="耐酸碱"
+            placeholder="阻焊耐酸碱"
             @select="save(scope)"
+            @blur="save(scope)"
           />
+          <span v-else>{{ scope.row.nai_suan_jian }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="隔夜显影">
+        <template slot-scope="scope">
+          <el-autocomplete
+            v-if="scope.row.is_edit"
+            v-model="scope.row.ge_ye_xian_ying"
+            :fetch-suggestions="querySearchXianYing"
+            select-when-unmatched
+            placeholder="湿膜隔夜显影"
+            @select="save(scope)"
+            @blur="save(scope)"
+          />
+          <span v-else>{{ scope.row.ge_ye_xian_ying }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="隔夜曝光">
+        <template slot-scope="scope">
+          <el-autocomplete
+            v-if="scope.row.is_edit"
+            v-model="scope.row.ge_ye_bao_guang"
+            :fetch-suggestions="querySearchLevel"
+            select-when-unmatched
+            placeholder="湿膜隔夜曝光"
+            @select="save(scope)"
+            @blur="save(scope)"
+          />
+          <span v-else>{{ scope.row.ge_ye_bao_guang }}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="检测员">
         <template slot-scope="scope">
           <el-autocomplete
+            v-if="scope.row.is_edit"
             v-model="scope.row.tester"
             :fetch-suggestions="querySearchTesters"
             select-when-unmatched
             value-key="name"
             placeholder="检测员"
             @select="save(scope)"
+            @blur="save(scope)"
           />
+          <span v-else>{{ scope.row.tester }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="60" class-name="small-padding fixed-width">
+      <el-table-column align="center" label="操作" width="50" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            v-if="!scope.row.is_edit"
+            type="text"
+            size="small"
+            @click="scope.row.is_edit = true">编辑
+          </el-button>
+          <el-button
+            v-else
+            type="text"
+            size="small"
+            @click="handleSave(scope)">保存
+          </el-button>
           <el-button type="text" size="small" @click="handleDelete(scope)">删除</el-button>
         </template>
       </el-table-column>
@@ -233,7 +258,10 @@ export default {
       this.listLoading = true
       patternTestApi.list({ params: this.queryParams }).then(response => {
         const { data } = response.data
-        this.list = data
+        this.list = data.map(record => {
+          record.is_edit = false
+          return record
+        })
         this.updateCache()
         this.pagination(response)
         this.listLoading = false
@@ -288,6 +316,7 @@ export default {
     },
     newTest() {
       return {
+        is_edit: true,
         id: null,
         product_name: '',
         batch_number: '',
@@ -329,11 +358,28 @@ export default {
         message: '还未实现此功能'
       })
     },
+    handleSave(scope) {
+      const noEmptyDataIndex = Object.keys(scope.row).findIndex(key => {
+        if (key === 'is_edit') { // 跳过标志字段
+          return false
+        }
+        return scope.row[key]
+      })
+      if (noEmptyDataIndex < 0) {
+        this.list.splice(scope.$index, 1)
+        this.updateCache()
+      } else {
+        scope.row.is_edit = false
+      }
+    },
     save(scope) {
       const index = scope.$index
       const test = scope.row
 
       const changed = Object.keys(test).some(key => {
+        if (key === 'is_edit') { // 跳过标志字段
+          return false
+        }
         return test[key] != this.cachedData[index][key]
       })
 
@@ -348,9 +394,8 @@ export default {
 
         request.then(response => {
           const { data } = response.data
-
+          data.is_edit = true // 保持编辑
           this.list.splice(index, 1, data) // 更新视图
-
           this.updateCache()
         })
       }

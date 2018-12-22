@@ -45,7 +45,7 @@
 
       <el-table
         v-loading="listLoading"
-        :data="filterItems(record.items)"
+        :data="filterItems(record)"
         element-loading-text="拼命加载中"
         border
         fit
@@ -206,12 +206,15 @@ export default {
         return '不合格'
       }
     },
-    filterItems(items) {
+    filterItems(record) {
+      // 必须根据 real 判断
       if (this.real) {
-        return items
+        return record.items.filter(item => {
+          return item.spec.value_type !== 'ONLY_SHOW'
+        })
       }
 
-      return items.filter(item => {
+      return record.items.filter(item => {
         return item.is_show !== false
       })
     },

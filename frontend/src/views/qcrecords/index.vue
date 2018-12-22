@@ -362,7 +362,9 @@ export default {
     filterItems(record) {
       // 必须根据 real 判断
       if (this.real) {
-        return record.items
+        return record.items.filter(item => {
+          return item.spec.value_type !== 'ONLY_SHOW'
+        })
       }
 
       return record.items.filter(item => {

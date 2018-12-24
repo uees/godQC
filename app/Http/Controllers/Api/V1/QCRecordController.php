@@ -105,6 +105,25 @@ class QCRecordController extends Controller
             $testRecord->batch->update($batch);
         }
 
+        if ($request->filled('do_update_items')) {
+            $items = $request->get('items');
+            $items = is_array($items) ? $items : json_decode($items);
+
+            foreach ($items as $item) {
+                $testRecord->items()
+                    ->where('id', $item['id'])
+                    ->update([
+                        'value' => $item['value'],
+                        'fake_value' => $item['fake_value'],
+                        'tester' => $item['tester'],
+                        'conclusion' => $item['conclusion'],
+                        'memo' => $item['memo'],
+                    ]);
+            }
+
+            $testRecord->items;  // 加载关系
+        }
+
         if ($testRecord->update($request->all())) {
             return TestRecordResource::make($testRecord);
         }

@@ -334,6 +334,15 @@ export default {
         this.records.splice(scope.$index, 1, data)
       })
     },
+    updateRecordWithItems(scope) {
+      scope.row.do_update_items = 1
+      qcRecordApi.update(scope.row.id, scope.row).then(response => {
+        const { data } = response.data
+        data.items = scope.row.items
+        this.records.splice(scope.$index, 1, data)
+        this.$message('更新成功')
+      })
+    },
     updateRecordItem(scope, props) {
       updateRecordItem(scope.row.id, props.row.id, props.row).then(response => {
         const { data } = response.data

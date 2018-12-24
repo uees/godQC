@@ -125,6 +125,13 @@
             style="margin-bottom: 10px"
             @click="handleShowItemForm(scope)">添加项目
           </el-button>
+
+          <el-button
+            type="primary"
+            style="margin-bottom: 10px; margin-left: 10px"
+            @click="handleSave(scope)">手动保存
+          </el-button>
+
           <el-table
             :data="scope.row.items"
             :cell-class-name="conclusionClass"
@@ -290,6 +297,10 @@ export default {
         this.updateCache()
         this.listLoading = false
       })
+    },
+    handleSave(scope) {
+      this.updateRecordWithItems(scope)
+      this.updateCache()
     }
   }
 }

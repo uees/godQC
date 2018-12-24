@@ -22,6 +22,14 @@ const whiteList = ['/login', '/auth-redirect']// no redirect whitelist
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
+
+  // 加载建议数据, 防止启动时重复调用
+  if (store.state.basedata.suggests.length === 0) {
+    store.dispatch('basedata/FetchSuggest').then(() => {
+      next()
+    })
+  }
+
   if (Cookies.get('access-token')) { // determine if there has token
     /* has token*/
     if (to.path === '/login') {

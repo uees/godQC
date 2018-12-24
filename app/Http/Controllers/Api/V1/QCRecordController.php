@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 class QCRecordController extends Controller
 {
-    // query params: type, testing, tested, conclusion, test_times, all
+    // query params: type, testing, tested, conclusion, test_times, all, said_package
     public function index()
     {
         $perPage = $this->perPage();
@@ -28,6 +28,12 @@ class QCRecordController extends Controller
 
         $query = $this->parseFields($query);
         $query = $this->parseWhere($query, ['conclusion', 'show_reality', 'test_times', 'created_at']);
+
+        if (request('said_package') == '1') {
+            $query = $query->whereNotNull('said_package_at');
+        } elseif (request('said_package') == '0') {
+            $query = $query->whereNull('said_package_at');
+        }
 
         if (\request()->filled('testing')) {
             $query = $query->where('is_archived', 0);

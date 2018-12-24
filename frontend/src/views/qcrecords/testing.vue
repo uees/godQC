@@ -37,6 +37,18 @@
           :label="item.label"
           :value="item.value"/>
       </el-select>
+
+      <el-select
+        v-model="queryParams.said_package"
+        clearable
+        style="margin-left: 10px;"
+        placeholder="是否写装"
+        @change="fetchData"
+        @clear="fetchData"
+      >
+        <el-option label="写装" value="1"/>
+        <el-option label="未写装" value="0"/>
+      </el-select>
     </div>
 
     <el-table
@@ -231,6 +243,7 @@ export default {
       listLoading: false,
       queryParams: {
         with: 'batch,items',
+        said_package: '',
         type: 'FQC', // FQC, IQC
         testing: 1,
         q: '',

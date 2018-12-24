@@ -19,7 +19,7 @@ class CustomerPolicy
      */
     public function view(User $user, Customer $customer)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class CustomerPolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -42,7 +42,7 @@ class CustomerPolicy
      */
     public function update(User $user, Customer $customer)
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**

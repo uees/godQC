@@ -35,6 +35,8 @@ class SuggestController extends Controller
 
     public function store(SuggestRequest $request)
     {
+        $this->authorize('create', Suggest::class);
+
         $data = $request->get('data');
         // 格式化数据
         if (!is_null($data)) {
@@ -56,15 +58,20 @@ class SuggestController extends Controller
 
     public function update(SuggestRequest $request, $id)
     {
+        $suggest = Suggest::findOrFail($id);
+
+        $this->authorize('update', $suggest);
+
+        $suggest->fill($request->only(['name', 'parent_id', 'memo']));
+
         $data = $request->get('data');
         // 格式化数据
         if (!is_null($data)) {
             $data = is_array($data) ? $data : json_decode($data);
         }
 
-        $suggest = Suggest::findOrFail($id);
-        $suggest->fill($request->only(['name', 'parent_id', 'memo']));
         $suggest->data = $data;
+
         $suggest->save();
 
         return SuggestResource::make($suggest);
@@ -72,7 +79,11 @@ class SuggestController extends Controller
 
     public function destroy($id)
     {
-        if (Suggest::destroy($id)) {
+        $suggest = Suggest::findOrFail($id);
+
+        $this->authorize('delete', $suggest);
+
+        if ($suggest->delete()) {
             return $this->noContent();
         }
 

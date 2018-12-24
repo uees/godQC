@@ -24,6 +24,9 @@ class AuthServiceProvider extends ServiceProvider
         'App\TestRecord' => 'App\Policies\TestRecordPolicy',
         'App\TestRecordItem' => 'App\Policies\TestRecordItemPolicy',
         'App\TestWay' => 'App\Policies\TestWayPolicy',
+        'App\PatternTest' => 'App\Policies\PatternTestPolicy',
+        'App\ProductBatch' => 'App\Policies\ProductBatchPolicy',
+        'App\Suggest' => 'App\Policies\SuggestPolicy',
     ];
 
     /**

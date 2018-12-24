@@ -19,6 +19,8 @@ class QCRecordItemController extends Controller
 
     public function store(QCRecordItemRequest $request, TestRecord $testRecord)
     {
+        $this->authorize('create', TestRecordItem::class);
+
         $testRecordItem = new TestRecordItem();
         $testRecordItem->fill($request->all());
 
@@ -38,6 +40,8 @@ class QCRecordItemController extends Controller
 
     public function update(QCRecordItemRequest $request, TestRecord $testRecord, TestRecordItem $testRecordItem)
     {
+        $this->authorize('update', $testRecordItem);
+
         if ($testRecord->items->contains($testRecordItem)) {
             // 创建 fake value
             if ($request->get('conclusion') == 'NG') {

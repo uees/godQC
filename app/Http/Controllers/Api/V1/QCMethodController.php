@@ -32,6 +32,8 @@ class QCMethodController extends Controller
 
     public function store(QCMethodRequest $request)
     {
+        $this->authorize('create', TestMethod::class);
+
         $testMethod = new TestMethod();
 
         $testMethod->fill($request->all())->save();
@@ -49,6 +51,9 @@ class QCMethodController extends Controller
     public function update(QCMethodRequest $request, $id)
     {
         $testMethod = TestMethod::findOrFail($id);
+
+        $this->authorize('update', $testMethod);
+
         $testMethod->fill($request->all())->save();
 
         return TestMethodResource::make($testMethod);
@@ -57,11 +62,11 @@ class QCMethodController extends Controller
 
     public function destroy($id)
     {
-        $object = TestMethod::findOrFail($id);
+        $testMethod = TestMethod::findOrFail($id);
 
-        $this->authorize('delete', $object);
+        $this->authorize('delete', $testMethod);
 
-        if ($object->delete()){
+        if ($testMethod->delete()){
             return $this->noContent();
         }
 

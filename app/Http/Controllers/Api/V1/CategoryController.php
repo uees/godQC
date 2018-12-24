@@ -42,6 +42,8 @@ class CategoryController extends Controller
 
     public function store(CategoryRequest $request)
     {
+        $this->authorize('create', Category::class);
+
         $category = new Category();
 
         $category->fill($request->only(['name', 'slug', 'memo']))
@@ -53,6 +55,9 @@ class CategoryController extends Controller
     public function update(CategoryRequest $request, $id)
     {
         $category = Category::findOrFail($id);
+
+        $this->authorize('update', $category);
+
         $category->fill($request->only(['name', 'slug', 'memo']))
             ->save();
 
@@ -61,11 +66,11 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
-        $object = Category::findOrFail($id);
+        $category = Category::findOrFail($id);
 
-        $this->authorize('delete', $object);
+        $this->authorize('delete', $category);
 
-        if ($object->delete()){
+        if ($category->delete()) {
             return $this->noContent();
         }
 
@@ -74,11 +79,12 @@ class CategoryController extends Controller
 
     public function selectTestWay(Category $category)
     {
+        $this->authorize('update', $category);
+
         $testWayId = request('test_way_id');
 
-        if (TestWay::where('id', $testWayId)->exists()) {
+        if ($testWayId && TestWay::where('id', $testWayId)->exists()) {
             $category->testWays()->sync([$testWayId]);
-
             return $this->noContent();
         }
 

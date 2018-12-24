@@ -19,7 +19,7 @@ class TestRecordItemPolicy
      */
     public function view(User $user, TestRecordItem $testRecordItem)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class TestRecordItemPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -42,7 +42,7 @@ class TestRecordItemPolicy
      */
     public function update(User $user, TestRecordItem $testRecordItem)
     {
-        //
+        return !$testRecordItem->testRecord->is_archived || $user->hasRole('admin');
     }
 
     /**
@@ -54,6 +54,6 @@ class TestRecordItemPolicy
      */
     public function delete(User $user, TestRecordItem $testRecordItem)
     {
-        return is_null($testRecordItem->testRecord->said_package_at) || $user->hasRole('admin');
+        return !$testRecordItem->testRecord->is_archived || $user->hasRole('admin');
     }
 }

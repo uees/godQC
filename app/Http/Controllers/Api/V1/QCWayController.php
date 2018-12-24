@@ -29,6 +29,8 @@ class QCWayController extends Controller
 
     public function store(QCWayRequest $request)
     {
+        $this->authorize('create', TestWay::class);
+
         $testWay = new TestWay();
 
         $testWay->fill($request->all())->save();
@@ -46,6 +48,9 @@ class QCWayController extends Controller
     public function update(QCWayRequest $request, $id)
     {
         $testWay = TestWay::findOrFail($id);
+
+        $this->authorize('update', $testWay);
+
         $testWay->fill($request->all())->save();
 
         return TestWayResource::make($testWay);
@@ -54,11 +59,11 @@ class QCWayController extends Controller
 
     public function destroy($id)
     {
-        $object = TestWay::findOrFail($id);
+        $testWay = TestWay::findOrFail($id);
 
-        $this->authorize('delete', $object);
+        $this->authorize('delete', $testWay);
 
-        if ($object->delete()){
+        if ($testWay->delete()){
             return $this->noContent();
         }
 

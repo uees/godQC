@@ -12,21 +12,21 @@ class TestRecordPolicy
 
     public function view(User $user, TestRecord $testRecord)
     {
-        //
+        return true;
     }
 
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     public function update(User $user, TestRecord $testRecord)
     {
-        //
+        return !$testRecord->is_archived || $user->hasRole('admin');
     }
 
     public function delete(User $user, TestRecord $testRecord)
     {
-        return is_null($testRecord->said_package_at) || $user->hasRole('admin');
+        return !$testRecord->is_archived || $user->hasRole('admin');
     }
 }

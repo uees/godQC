@@ -35,6 +35,8 @@ class PatternTestController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('create', PatternTest::class);
+
         $test = new PatternTest();
         $test->fill($request->all());
         $test->save();
@@ -50,7 +52,11 @@ class PatternTestController extends Controller
     public function update(Request $request, $id)
     {
         $test = PatternTest::findOrFail($id);
+
+        $this->authorize('update', $test);
+
         $test->fill($request->all());
+
         $test->save();
 
         return PatternTestResource::make($test);
@@ -58,7 +64,11 @@ class PatternTestController extends Controller
 
     public function destroy($id)
     {
-        if (PatternTest::destroy($id)) {
+        $patternTest = PatternTest::findOrFail($id);
+
+        $this->authorize('delete', $patternTest);
+
+        if ($patternTest->delete()) {
             return $this->noContent();
         }
 

@@ -19,7 +19,7 @@ class TestWayPolicy
      */
     public function view(User $user, TestWay $testWay)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class TestWayPolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**
@@ -42,7 +42,7 @@ class TestWayPolicy
      */
     public function update(User $user, TestWay $testWay)
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**

@@ -58,6 +58,8 @@ class ProductDisposeController extends Controller
     // 创建处理办法
     public function store(ProductDisposeRequest $request)
     {
+        $this->authorize('create', ProductDispose::class);
+
         $productDispose = new ProductDispose();
         $productDispose->fill($request->all());
 
@@ -89,6 +91,9 @@ class ProductDisposeController extends Controller
     public function update(ProductDisposeRequest $request, $id)
     {
         $productDispose = ProductDispose::findOrFail($id);
+
+        $this->authorize('update', $productDispose);
+
         $productDispose->fill($request->all())->save();
 
         return ProductDisposeResource::make($productDispose);
@@ -97,11 +102,11 @@ class ProductDisposeController extends Controller
 
     public function destroy($id)
     {
-        $object = ProductDispose::findOrFail($id);
+        $productDispose = ProductDispose::findOrFail($id);
 
-        $this->authorize('delete', $object);
+        $this->authorize('delete', $productDispose);
 
-        if ($object->delete()){
+        if ($productDispose->delete()){
             return $this->noContent();
         }
 
@@ -132,6 +137,8 @@ class ProductDisposeController extends Controller
 
     public function sample(ProductDispose $productDispose)
     {
+        $this->authorize('create', TestRecord::class);
+
         // step 1. 确定批次
         $batch = $productDispose->batch;
 

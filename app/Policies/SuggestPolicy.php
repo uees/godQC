@@ -3,27 +3,27 @@
 namespace App\Policies;
 
 use App\User;
-use App\TestMethod;
+use App\Suggest;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class TestMethodPolicy
+class SuggestPolicy
 {
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can view the testMethod.
+     * Determine whether the user can view the suggest.
      *
      * @param  \App\User  $user
-     * @param  \App\TestMethod  $testMethod
+     * @param  \App\Suggest  $suggest
      * @return mixed
      */
-    public function view(User $user, TestMethod $testMethod)
+    public function view(User $user, Suggest $suggest)
     {
         return true;
     }
 
     /**
-     * Determine whether the user can create testMethods.
+     * Determine whether the user can create suggests.
      *
      * @param  \App\User  $user
      * @return mixed
@@ -34,25 +34,25 @@ class TestMethodPolicy
     }
 
     /**
-     * Determine whether the user can update the testMethod.
+     * Determine whether the user can update the suggest.
      *
      * @param  \App\User  $user
-     * @param  \App\TestMethod  $testMethod
+     * @param  \App\Suggest  $suggest
      * @return mixed
      */
-    public function update(User $user, TestMethod $testMethod)
+    public function update(User $user, Suggest $suggest)
     {
         return $user->hasRole('admin');
     }
 
     /**
-     * Determine whether the user can delete the testMethod.
+     * Determine whether the user can delete the suggest.
      *
      * @param  \App\User  $user
-     * @param  \App\TestMethod  $testMethod
+     * @param  \App\Suggest  $suggest
      * @return mixed
      */
-    public function delete(User $user, TestMethod $testMethod)
+    public function delete(User $user, Suggest $suggest)
     {
         return $user->hasRole('admin');
     }

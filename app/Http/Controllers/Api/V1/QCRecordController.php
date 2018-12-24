@@ -95,9 +95,13 @@ class QCRecordController extends Controller
             ->where('id', $id)
             ->firstOrFail();
 
+        $this->authorize('update', $testRecord);
+
         if ($request->filled('batch')) {
             $batch = $request->get('batch');
             $batch = is_array($batch) ? $batch : json_decode($batch);
+
+            $this->authorize('update', $testRecord->batch);
             $testRecord->batch->update($batch);
         }
 
@@ -130,6 +134,8 @@ class QCRecordController extends Controller
     // 取样
     public function sample(ProductBatchRequest $request)
     {
+        $this->authorize('create', TestRecord::class);
+
         $productName = $request->get('product_name');
         $productNameSuffix = $request->get('product_name_suffix');
         $batchNumber = $request->get('batch_number');
@@ -208,6 +214,8 @@ class QCRecordController extends Controller
 
     public function archive(TestRecord $testRecord)
     {
+        $this->authorize('update', $testRecord);
+
         $notDone = $testRecord->items()
             ->where(function ($query) {
                 $query->whereNull('value')->orWhere('value', '');
@@ -245,6 +253,8 @@ class QCRecordController extends Controller
 
     public function sayPackage(TestRecord $testRecord)
     {
+        $this->authorize('update', $testRecord);
+
         if (empty($testRecord->testers)) {
             return $this->failed('请输入检测员');
         }
@@ -264,6 +274,8 @@ class QCRecordController extends Controller
 
     public function cancelArchived(TestRecord $testRecord)
     {
+        // $this->authorize('update', $testRecord);
+
         $testRecord->is_archived = false;
 
         if ($testRecord->save()) {
@@ -275,6 +287,8 @@ class QCRecordController extends Controller
 
     public function cancelSayPackage(TestRecord $testRecord)
     {
+        $this->authorize('update', $testRecord);
+
         $testRecord->said_package_at = null;
 
         if ($testRecord->save()) {
@@ -286,6 +300,8 @@ class QCRecordController extends Controller
 
     public function testDone(TestRecord $testRecord)
     {
+        $this->authorize('update', $testRecord);
+
         $testRecord->completed_at = now();
 
         if ($testRecord->save()) {

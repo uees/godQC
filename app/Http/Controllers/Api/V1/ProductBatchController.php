@@ -32,6 +32,8 @@ class ProductBatchController extends Controller
 
     public function store(ProductBatchRequest $request)
     {
+        $this->authorize('create', ProductBatch::class);
+
         $productBatch = new ProductBatch();
 
         $productBatch->fill($request->all())
@@ -50,8 +52,10 @@ class ProductBatchController extends Controller
     public function update(ProductBatchRequest $request, $id)
     {
         $productBatch = ProductBatch::findOrFail($id);
-        $productBatch->fill($request->all())
-            ->save();
+
+        $this->authorize('update', $productBatch);
+
+        $productBatch->fill($request->all())->save();
 
         return ProductBatchResource::make($productBatch);
     }
@@ -59,7 +63,11 @@ class ProductBatchController extends Controller
 
     public function destroy($id)
     {
-        if (ProductBatch::destroy($id)){
+        $productBatch = ProductBatch::findOrFail($id);
+
+        $this->authorize('delete', $productBatch);
+
+        if ($productBatch->delete()){
             return $this->noContent();
         }
 

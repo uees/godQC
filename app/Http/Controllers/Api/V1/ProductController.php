@@ -35,10 +35,11 @@ class ProductController extends Controller
 
     public function store(ProductRequest $request)
     {
+        $this->authorize('create', Product::class);
+
         $product = new Product();
 
-        $product->fill($request->all())
-            ->save();
+        $product->fill($request->all())->save();
 
         // 加载关系
         if ($request->filled('with')) {
@@ -68,8 +69,10 @@ class ProductController extends Controller
     public function update(ProductRequest $request, $id)
     {
         $product = Product::findOrFail($id);
-        $product->fill($request->all())
-            ->save();
+
+        $this->authorize('update', $product);
+
+        $product->fill($request->all())->save();
 
         // 加载关系
         if ($request->filled('with')) {
@@ -84,11 +87,11 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
-        $object = Product::findOrFail($id);
+        $product = Product::findOrFail($id);
 
-        $this->authorize('delete', $object);
+        $this->authorize('delete', $product);
 
-        if ($object->delete()){
+        if ($product->delete()){
             return $this->noContent();
         }
 
@@ -97,6 +100,8 @@ class ProductController extends Controller
 
     public function selectTestWay(Product $product)
     {
+        $this->authorize('update', $product);
+
         $testWayId = request('test_way_id');
 
         if (TestWay::where('id', $testWayId)->exists()) {

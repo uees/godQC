@@ -11,6 +11,8 @@ class CustomerRequirementController extends Controller
 {
     public function store(CustomerRequirementRequest $request)
     {
+        $this->authorize('create', \App\Customer::class);
+
         $requirement = new CustomerRequirement();
 
         $requirement->fill($request->all())
@@ -22,9 +24,10 @@ class CustomerRequirementController extends Controller
 
     public function update(CustomerRequirementRequest $request, $id)
     {
+        $this->authorize('create', \App\Customer::class);
+
         $customerRequirement = CustomerRequirement::findOrFail($id);
-        $customerRequirement->fill($request->all())
-            ->save();
+        $customerRequirement->fill($request->all())->save();
 
         return CustomerRequirementResource::make($customerRequirement);
     }
@@ -32,6 +35,8 @@ class CustomerRequirementController extends Controller
 
     public function destroy($id)
     {
+        $this->authorize('create', \App\Customer::class);
+
         if (CustomerRequirement::destroy($id)) {
             return $this->noContent();
         }

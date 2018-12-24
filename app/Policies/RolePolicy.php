@@ -19,7 +19,7 @@ class RolePolicy
      */
     public function view(User $user, Role $role)
     {
-        //
+        return true;
     }
 
     /**

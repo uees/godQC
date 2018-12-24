@@ -19,7 +19,7 @@ class ProductPolicy
      */
     public function view(User $user, Product $product)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class ProductPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -42,7 +42,7 @@ class ProductPolicy
      */
     public function update(User $user, Product $product)
     {
-        //
+        return $user->hasRole('admin');
     }
 
     /**

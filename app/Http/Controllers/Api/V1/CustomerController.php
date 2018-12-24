@@ -30,6 +30,8 @@ class CustomerController extends Controller
 
     public function store(CustomerRequest $request)
     {
+        $this->authorize('create', Customer::class);
+
         $customer = new Customer();
 
         $customer->fill($request->all())
@@ -52,6 +54,9 @@ class CustomerController extends Controller
     public function update(CustomerRequest $request, $id)
     {
         $customer = Customer::findOrFail($id);
+
+        $this->authorize('update', $customer);
+
         $customer->fill($request->all())->save();
 
         return CustomerResource::make($customer);
@@ -60,11 +65,11 @@ class CustomerController extends Controller
 
     public function destroy($id)
     {
-        $object = Customer::findOrFail($id);
+        $customer = Customer::findOrFail($id);
 
-        $this->authorize('delete', $object);
+        $this->authorize('delete', $customer);
 
-        if($object->delete()) {
+        if($customer->delete()) {
             return $this->noContent();
         }
 
@@ -73,6 +78,8 @@ class CustomerController extends Controller
 
     public function selectProducts(Customer $customer)
     {
+        $this->authorize('update', $customer);
+
         $product_ids = request('product_ids', []);
         $product_ids = is_array($product_ids)? $product_ids : explode(',', $product_ids);
 
@@ -83,6 +90,8 @@ class CustomerController extends Controller
 
     public function selectProduct(Customer $customer)
     {
+        $this->authorize('update', $customer);
+
         if (request()->filled('product_id')) {
             $customer->products()->attach(request('product_id'));
         }

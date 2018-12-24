@@ -19,7 +19,7 @@ class ProductDisposePolicy
      */
     public function view(User $user, ProductDispose $productDispose)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class ProductDisposePolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -42,7 +42,7 @@ class ProductDisposePolicy
      */
     public function update(User $user, ProductDispose $productDispose)
     {
-        //
+        return true;
     }
 
     /**

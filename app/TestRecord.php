@@ -12,6 +12,7 @@ class TestRecord extends Model
         'test_times',
         'conclusion',
         'testers',
+        'is_archived',
         'memo',
     ];
 
@@ -29,6 +30,7 @@ class TestRecord extends Model
 
     protected $casts = [
         'show_reality' => 'boolean',
+        'is_archived' => 'boolean',
     ];
 
     /**

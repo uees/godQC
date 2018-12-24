@@ -12,7 +12,7 @@
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
-        icon="el-icon-search"
+        icon="el-icon-refresh"
         @click="fetchData"/>
 
       <el-select
@@ -125,13 +125,11 @@
         <template slot-scope="scope">
           <router-link
             v-if="real"
-            :to="{name: 'records.show-real', params: { id: scope.row.id }}">
-            查看 <!-- 展示真实 -->
+            :to="{name: 'records.show-real', params: { id: scope.row.id }}">查看
           </router-link>
           <router-link
             v-else
-            :to="{name: 'records.show', params: { id: scope.row.id }}">
-            查看 <!-- 重检测不展示 -->
+            :to="{name: 'records.show', params: { id: scope.row.id }}">查看
           </router-link>
           <el-button
             v-if="showReality(scope.row) && scope.row.conclusion === 'NG'"
@@ -140,7 +138,7 @@
             @click="showDispose(scope.row)">处理办法
           </el-button>
           <template v-if="real">
-            <el-button type="text" size="small" @click="handleCancelSayPackage(scope)">取消归档</el-button>
+            <el-button type="text" size="small" @click="handleCancelArchive(scope)">取消归档</el-button>
             <el-button type="text" size="small" @click="handleShowRecordEditForm(scope)">编辑</el-button>
             <el-button type="text" size="small" @click="handleDeleteRecord(scope)">删除</el-button>
           </template>

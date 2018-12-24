@@ -30,11 +30,9 @@ class QCRecordController extends Controller
         $query = $this->parseWhere($query, ['conclusion', 'show_reality', 'test_times', 'created_at']);
 
         if (\request()->filled('testing')) {
-            $query = $query->whereNull('said_package_at');
-        }
-
-        if (\request()->filled('tested')) {
-            $query = $query->whereNotNull('said_package_at');
+            $query = $query->where('is_archived', 0);
+        } elseif (\request()->filled('tested')) {
+            $query = $query->where('is_archived', 1);
         }
 
         if (\request()->filled('type')) {
@@ -202,7 +200,7 @@ class QCRecordController extends Controller
         return TestRecordResource::make($testRecord);
     }
 
-    public function sayPackage(TestRecord $testRecord)
+    public function archive(TestRecord $testRecord)
     {
         $notDone = $testRecord->items()
             ->where(function ($query) {
@@ -214,19 +212,15 @@ class QCRecordController extends Controller
             ->exists();
 
         if ($notDone) {
-            return $this->failed('检测未完成');
-        }
-
-        if (empty($testRecord->testers)) {
-            return $this->failed('请输入检测员');
-        }
-
-        if ($testRecord->conclusion == 'NG' && is_null($testRecord->willDispose)) {
-            return $this->failed('此批次不合格，并且还未提交处理意见，写装/归档失败');
+            return $this->failed('检测未完成， 不能归档');
         }
 
         if (empty($testRecord->conclusion)) {
             $testRecord->conclusion = 'PASS';
+        }
+
+        if ($testRecord->conclusion == 'NG' && is_null($testRecord->willDispose)) {
+            return $this->failed('此批次不合格，并且还未提交处理意见，不能归档');
         }
 
         // 留空就表示合格, 这里帮忙填入PASS
@@ -234,10 +228,40 @@ class QCRecordController extends Controller
             ->whereNull('conclusion')
             ->update(['conclusion' => 'PASS']);
 
+        $testRecord->is_archived = true;
+
+        if ($testRecord->save()) {
+            return TestRecordResource::make($testRecord);
+        }
+
+        return $this->failed('操作失败');
+    }
+
+    public function sayPackage(TestRecord $testRecord)
+    {
+        if (empty($testRecord->testers)) {
+            return $this->failed('请输入检测员');
+        }
+
+        if ($testRecord->conclusion == 'NG' && is_null($testRecord->willDispose)) {
+            return $this->failed('此批次不合格，并且还未提交处理意见，不能写装');
+        }
+
         $testRecord->said_package_at = now();
 
         if ($testRecord->save()) {
-            return $this->noContent();
+            return TestRecordResource::make($testRecord);
+        }
+
+        return $this->failed('操作失败');
+    }
+
+    public function cancelArchived(TestRecord $testRecord)
+    {
+        $testRecord->is_archived = false;
+
+        if ($testRecord->save()) {
+            return TestRecordResource::make($testRecord);
         }
 
         return $this->failed('操作失败');
@@ -248,7 +272,7 @@ class QCRecordController extends Controller
         $testRecord->said_package_at = null;
 
         if ($testRecord->save()) {
-            return $this->noContent();
+            return TestRecordResource::make($testRecord);
         }
 
         return $this->failed('操作失败');

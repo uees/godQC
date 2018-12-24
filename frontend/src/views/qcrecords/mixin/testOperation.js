@@ -3,6 +3,8 @@ import {
   updateRecordItem,
   deleteRecordItem,
   testDone,
+  archive,
+  cancelArchive,
   sayPackage,
   cancelSayPackage
 } from '@/api/qc'
@@ -164,50 +166,71 @@ export default {
       // show dispose form
       Bus.$emit('show-dispose-form', record)
     },
-    handleSayPackage(scope) {
+    handleArchive(scope) {
       const record = scope.row
       const index = scope.$index
 
-      if (!record.completed_at) {
-        return this.$message({
-          message: '检测未完成, 检测完了才能写装',
-          type: 'error',
-          duration: 3 * 1000
-        })
-      }
+      // 检测完成后才能归档
+      // 不合格且没处理意见的不能归档
 
-      this.$confirm('写装后，记录将归入完成列表', '提示', {
+      this.$confirm('归档后，记录将归入检测记录列表', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'info'
       }).then(() => {
-        sayPackage(record.id).then(() => {
+        archive(record.id).then(() => {
           this.records.splice(index, 1)
           this.updateCache()
           this.$message({
             type: 'success',
-            message: '归档成功，请到已检列表查看'
+            message: '归档成功'
           })
         })
+      })
+    },
+    handleCancelArchive(scope) {
+      const record = scope.row
+      const index = scope.$index
+
+      this.$confirm('取消归档后，记录将回到在检列表', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info'
+      }).then(() => {
+        cancelArchive(record.id).then(() => {
+          this.records.splice(index, 1)
+          this.updateCache()
+          this.$message({
+            type: 'success',
+            message: '已取消归档'
+          })
+        })
+      })
+    },
+    handleSayPackage(scope) {
+      const record = scope.row
+      const index = scope.$index
+
+      sayPackage(record.id).then((response) => {
+        const { data } = response.data
+        data.batch = record.batch
+        data.items = record.items
+        this.records.splice(index, 1, data) // 更新
+        this.updateCache()
+        this.$message({ type: 'success', message: '已经标记为"写装"' })
       })
     },
     handleCancelSayPackage(scope) {
       const record = scope.row
       const index = scope.$index
 
-      this.$confirm('取消后，记录将回到在检列表', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'info'
-      }).then(() => {
-        cancelSayPackage(record.id).then(() => {
-          this.records.splice(index, 1)
-          this.updateCache()
-          this.$message({
-            type: 'success',
-            message: '已取消归档，请到在检列表查看'
-          })
-        })
+      cancelSayPackage(record.id).then((response) => {
+        const { data } = response.data
+        data.batch = record.batch
+        data.items = record.items
+        this.records.splice(index, 1, data)
+        this.updateCache()
+        this.$message({ type: 'success', message: '已标记为"未写装"' })
       })
     },
     handleShowRecordEditForm(scope) {

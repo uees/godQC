@@ -25,6 +25,7 @@ class TestRecordResource extends Resource
             'testers' => $this->testers,
             'completed_at' => $this->completed_at,
             'said_package_at' => $this->said_package_at,
+            'is_archived' => (boolean)$this->is_archived,
             'memo' => $this->memo,
             'batch' => ProductBatchResource::make($this->whenLoaded('batch')),
             'items' => TestRecordItemResource::collection($this->whenLoaded('items')),

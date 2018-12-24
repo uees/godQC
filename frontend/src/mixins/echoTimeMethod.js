@@ -7,7 +7,7 @@ export default {
         const dt = new Date(date)
 
         return dt.getFullYear() + '/' +
-          dt.getMonth() + '/' +
+          dt.getMonth() + 1 + '/' + // 从 Date 对象返回月份 (0 ~ 11)
           dt.getDate() + ' ' +
           dt.getHours() + ':' +
           dt.getMinutes()

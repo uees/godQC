@@ -12,7 +12,7 @@
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
-        icon="el-icon-search"
+        icon="el-icon-refresh"
         @click="handleSearch"/>
 
       <el-button

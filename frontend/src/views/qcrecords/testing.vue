@@ -19,7 +19,7 @@
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
-        icon="el-icon-search"
+        icon="el-icon-refresh"
         @click="fetchData"/>
 
       <el-select
@@ -98,17 +98,21 @@
             style="color: red"
             @click="handleMakeDispose(scope.row)">处理意见
           </el-button>
+          <el-button v-if="scope.row.said_package_at" type="text" size="small" @click="handleCancelSayPackage(scope)">取消写装</el-button>
+          <el-button v-else type="text" size="small" @click="handleSayPackage(scope)">写装</el-button>
+          <el-button type="text" size="small" @click="handleArchive(scope)">归档</el-button>
           <el-button type="text" size="small" @click="handleShowRecordEditForm(scope)">编辑</el-button>
-          <el-button type="text" size="small" @click="handleShowItemForm(scope)">添加项目</el-button>
-          <el-button type="text" size="small" @click="handleSayPackage(scope)">
-            {{ scope.row.conclusion === 'PASS' ? '写装' : '归档' }}
-          </el-button>
           <el-button type="text" size="small" @click="handleDeleteRecord(scope)">删除</el-button>
         </template>
       </el-table-column>
 
       <el-table-column type="expand">
         <template slot-scope="scope">
+          <el-button
+            type="primary"
+            style="margin-bottom: 10px"
+            @click="handleShowItemForm(scope)">添加项目
+          </el-button>
           <el-table
             :data="scope.row.items"
             :cell-class-name="conclusionClass"

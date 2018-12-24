@@ -40,6 +40,14 @@ export function testDone(record_id) {
   return request.get(`qc-records/${record_id}/test-done`)
 }
 
+export function archive(record_id) {
+  return request.get(`qc-records/${record_id}/archive`)
+}
+
+export function cancelArchive(record_id) {
+  return request.get(`qc-records/${record_id}/archive/cancel`)
+}
+
 export function sayPackage(record_id) {
   return request.get(`qc-records/${record_id}/say-package`)
 }

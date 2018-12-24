@@ -30,6 +30,8 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
     Route::get('qc-records/{testRecord}/test-done', 'QCRecordController@testDone');
     Route::get('qc-records/{testRecord}/say-package', 'QCRecordController@sayPackage');
     Route::get('qc-records/{testRecord}/say-package/cancel', 'QCRecordController@cancelSayPackage');
+    Route::get('qc-records/{testRecord}/archive', 'QCRecordController@archive');
+    Route::get('qc-records/{testRecord}/archive/cancel', 'QCRecordController@cancelArchived');
 
     Route::apiResources([
         'categories' => 'CategoryController',

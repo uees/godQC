@@ -76,10 +76,13 @@
 
         <el-table-column align="center" label="是否展示">
           <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.spec.is_show"
-              active-text="是"
-              inactive-text="否"/>
+            <el-switch v-model="scope.row.spec.is_show"/>
+          </template>
+        </el-table-column>
+
+        <el-table-column align="center" label="必填值">
+          <template slot-scope="scope">
+            <el-switch v-model="scope.row.spec.required"/>
           </template>
         </el-table-column>
 
@@ -114,6 +117,7 @@ export function newWaysItem() {
     method_id: 0,
     spec: {
       is_show: true,
+      required: true,
       value_type: '', // RANGE, INFO, VALUE
       data: {
         min: undefined,

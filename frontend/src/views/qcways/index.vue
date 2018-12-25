@@ -105,11 +105,20 @@ export default {
     }
   },
   methods: {
-    //
+    handleUpdate(row) {
+      this.updateIndex = this.tableData.indexOf(row)
+      this.propObj = Object.assign({}, row)
+
+      // required 支持
+      this.propObj.way = this.propObj.way.map(item => {
+        if (typeof item.spec.required === 'undefined') {
+          item.spec.required = true
+        }
+        return item
+      })
+
+      this.action = 'update'
+    }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

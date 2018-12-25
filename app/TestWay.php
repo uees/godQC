@@ -24,6 +24,7 @@ class TestWay extends Model
             'method_id' => '',
             'spec' => [
                 'is_show' => true,   // 是否展示
+                'required' => true,  // 是否必须填值项
                 'value_type' => '',  // RANGE, INFO, NUMBER, ONLY_SHOW
                 'data' => [
                     'min' => 0,

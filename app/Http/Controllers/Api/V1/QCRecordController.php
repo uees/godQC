@@ -235,6 +235,7 @@ class QCRecordController extends Controller
     {
         $this->authorize('update', $testRecord);
 
+        /*
         $notDone = $testRecord->items()
             ->where(function ($query) {
                 $query->whereNull('value')->orWhere('value', '');
@@ -246,6 +247,23 @@ class QCRecordController extends Controller
 
         if ($notDone) {
             return $this->failed('检测未完成， 不能归档');
+        }
+        */
+
+        $allowEmptyItems = ['主剂', '固化剂', '配油'];
+
+        foreach ($testRecord->items as $item) {
+            if (in_array($item->item, $allowEmptyItems)) {
+                continue;
+            }
+
+            if (isset($item->spec['required']) && $item->spec['required'] == false) {
+                continue;
+            }
+
+            if (is_null($item->value) || $item->value == '') {
+                return $this->failed("检测项目 '{$item['item']}' 的值未填写， 不能归档");
+            }
         }
 
         if (empty($testRecord->conclusion)) {
@@ -368,6 +386,7 @@ class QCRecordController extends Controller
                     'method_id' => 0,
                     'spec' => [
                         'is_show' => true,
+                        'required' => false,
                         'value_type' => 'INFO',
                         'data' => [
                             'value' => $value,
@@ -386,6 +405,7 @@ class QCRecordController extends Controller
                     'method_id' => 0,
                     'spec' => [
                         'is_show' => true,
+                        'required' => false,
                         'value_type' => 'INFO',
                         'data' => [
                             'value' => $value,
@@ -404,6 +424,7 @@ class QCRecordController extends Controller
                     'method_id' => 0,
                     'spec' => [
                         'is_show' => true,
+                        'required' => false,
                         'value_type' => 'INFO',
                         'data' => [
                             'value' => $value,

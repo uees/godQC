@@ -291,22 +291,19 @@ export default {
     },
     checkDone(scope) {
       const record = scope.row
+      // 如果必检项目没有值，则表示检测未完成
+      const notDone = record.items.some(item => {
+        if (typeof item.spec.required === 'undefined' || item.spec.required) {
+          return !item.value
+        }
+        return false
+      })
       const isNG = record.items.some(item => item.conclusion === 'NG')
 
-      // 如果有检测值和检测结论都为空的项目，则表示检测未完成
-      const notDone = record.items.some(item => {
-        return !item.conclusion && !item.value
-      })
-
-      // 下结论
-      if (isNG) {
-        record.conclusion = 'NG'
-      }
-
-      if (!notDone) {
-        if (!isNG) { // 检测完了才下合格结论
-          record.conclusion = 'PASS'
-        }
+      if (notDone) {
+        record.conclusion = isNG ? 'NG' : null // 下结论
+      } else {
+        record.conclusion = isNG ? 'NG' : 'PASS' // 检测完了才下合格结论
 
         if (!record.completed_at) {
           this.testDone(scope)

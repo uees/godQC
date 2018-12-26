@@ -5,11 +5,5 @@ export default {
     ...mapState('basedata', { // namespaced module
       categories: state => state.categories
     })
-  },
-
-  created () {
-    if (this.categories.length === 0) {
-      this.$store.dispatch('basedata/FetchCategory')
-    }
   }
 }

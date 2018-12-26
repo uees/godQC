@@ -7,6 +7,7 @@ use App\Events\RecordDeleted;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductBatchRequest;
 use App\Http\Resources\TestRecordResource;
+use App\Category;
 use App\Product;
 use App\ProductBatch;
 use App\TestRecord;
@@ -15,7 +16,7 @@ use Illuminate\Http\Request;
 
 class QCRecordController extends Controller
 {
-    // query params: type, testing, tested, conclusion, test_times, all, said_package
+    // query params: type, testing, tested, conclusion, test_times, all, said_package, category
     public function index()
     {
         $perPage = $this->perPage();
@@ -45,6 +46,19 @@ class QCRecordController extends Controller
             $query = $query->whereHas('batch', function (Builder $query) {
                 $query->where('type', \request('type'));
             });
+        }
+
+        // 类别筛选支持
+        $category = \request('category');
+        if ($category) {
+            $category = Category::where('name', $category)->first();
+
+            if (!is_null($category)) {
+                $query = $query->whereHas('batch', function (Builder $query) use ($category) {
+                    $products =  $category->products->pluck('internal_name');
+                    $query->whereIn('product_name', $products);
+                });
+            }
         }
 
         if (\request()->filled('q')) {

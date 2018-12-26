@@ -33,16 +33,6 @@
     </div>
 
     <div class="filter-container">
-      <el-select
-        v-model="queryParams.conclusion"
-        clearable
-        placeholder="结论"
-        @change="selectConclusion"
-      >
-        <el-option label="合格" value="PASS"/>
-        <el-option label="不合格" value="NG"/>
-      </el-select>
-
       <el-date-picker
         v-model="pickerDate"
         :picker-options="pickerOptions"
@@ -55,6 +45,30 @@
         end-placeholder="检测日期结束"
         @change="dateChanged"
       />
+
+      <el-select
+        v-model="queryParams.category"
+        clearable
+        placeholder="类别"
+        @change="fetchData"
+      >
+        <el-option
+          v-for="category in categories"
+          :label="category.name"
+          :value="category.name"
+          :key="category.id"
+        />
+      </el-select>
+
+      <el-select
+        v-model="queryParams.conclusion"
+        clearable
+        placeholder="结论"
+        @change="selectConclusion"
+      >
+        <el-option label="合格" value="PASS"/>
+        <el-option label="不合格" value="NG"/>
+      </el-select>
 
       <el-button
         :loading="downloadLoading"
@@ -205,6 +219,7 @@ import echoSpecMethod from '@/mixins/echoSpecMethod'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
 import testItemSuggestions from '@/mixins/testItemSuggestions'
 import pagination from '@/mixins/pagination'
+import queryCategory from '@/mixins/queryCategory'
 import commonMethods from './mixin/commonMethods'
 import testOperation from './mixin/testOperation'
 import ItemForm from './components/ItemForm'
@@ -228,6 +243,7 @@ export default {
     testItemSuggestions,
     commonMethods,
     testOperation,
+    queryCategory,
     pagination
   ],
   data() {
@@ -242,6 +258,7 @@ export default {
         tested: 1,
         q: '',
         conclusion: '',
+        category: '',
         show_reality: '',
         created_at: ''
       },

@@ -12,13 +12,7 @@ export default {
     })
   },
   created() {
-    if (this.suggests.length === 0) {
-      this.$store.dispatch('basedata/FetchSuggest').then(() => {
-        this.fetchTesters()
-      })
-    } else {
-      this.fetchTesters()
-    }
+    this.fetchTesters()
   },
   methods: {
     fetchTesters() {

@@ -123,17 +123,13 @@
 
       <el-table-column prop="testers" align="center" label="检测人"/>
 
-      <el-table-column align="center" label="完成时间">
-        <template slot-scope="scope">
-          {{ echoTime(scope.row.completed_at) }}
-        </template>
-      </el-table-column>
-
       <el-table-column align="center" label="写装时间">
         <template slot-scope="scope">
           {{ echoTime(scope.row.said_package_at) }}
         </template>
       </el-table-column>
+
+      <el-table-column prop="memo" align="center" label="备注"/>
 
       <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -262,6 +258,7 @@ export default {
         show_reality: '',
         created_at: ''
       },
+      pageSizes: [20, 40, 100],
       pickerDate: null,
       pickerOptions: {
         shortcuts: [{
@@ -300,6 +297,9 @@ export default {
       }
       if (Array.isArray(this.listShowItems) && this.listShowItems.length > 0) {
         fname += '_' + this.listShowItems.join(',')
+      }
+      if (this.queryParams.category) {
+        fname += '_' + this.queryParams.category
       }
       if (this.queryParams.conclusion) {
         fname += '_' + this.queryParams.conclusion

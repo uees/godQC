@@ -28,6 +28,9 @@
             <th>结论</th>
             <th>检测员</th>
             <th>检测日期</th>
+            <th>完成时间</th>
+            <th>写装时间</th>
+            <th>备注</th>
             <th v-if="record.test_times">第几次检测</th>
           </tr>
         </thead>
@@ -38,6 +41,9 @@
             <td>{{ echoConclusion(record.conclusion) }}</td>
             <td>{{ record.testers }}</td>
             <th>{{ echoTime(record.created_at) }}</th>
+            <th>{{ echoTime(record.completed_at) }}</th>
+            <th>{{ echoTime(record.said_package_at) }}</th>
+            <th>{{ record.memo }}</th>
             <td v-if="record.test_times">{{ record.test_times }}</td>
           </tr>
         </tbody>

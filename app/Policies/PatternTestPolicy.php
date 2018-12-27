@@ -27,6 +27,6 @@ class PatternTestPolicy
 
     public function delete(User $user, PatternTest $patternTest)
     {
-        return $user->hasRole('admin');
+        return $user->hasRole('admin') || $user->hasRole('fqc');
     }
 }

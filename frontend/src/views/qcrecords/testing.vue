@@ -15,13 +15,6 @@
         placeholder="搜索"
         @keyup.enter.native="handleSearch"/>
 
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-refresh"
-        @click="fetchData"/>
-
       <el-select
         v-model="listShowItems"
         :multiple-limit="3"
@@ -49,6 +42,13 @@
         <el-option label="写装" value="1"/>
         <el-option label="未写装" value="0"/>
       </el-select>
+
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-refresh"
+        @click="fetchData"/>
     </div>
 
     <el-table
@@ -92,12 +92,20 @@
       </el-table-column>
       <el-table-column prop="testers" label="检测人" align="center"/>
 
-      <el-table-column label="备注" width="300" align="center">
+      <el-table-column label="备注" align="center">
         <template slot-scope="scope">
           <el-input
             v-model="scope.row.memo"
-            placeholder="请输入内容"
+            :rows="2"
+            type="textarea"
+            placeholder="备注"
             @blur="onRecordMemoBlur(scope)"/>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="注意事项" align="center">
+        <template slot-scope="scope">
+          <span>{{ echoRequire(scope.row) }}</span>
         </template>
       </el-table-column>
 
@@ -301,6 +309,34 @@ export default {
     handleSave(scope) {
       this.updateRecordWithItems(scope)
       this.updateCache()
+    },
+    echoRequire(record) {
+      let result = ''
+
+      for (const item of record.items) {
+        if (item.item === '桥线' &&
+          ((item.spec.data.value && item.spec.data.value !== '做记录') || item.spec.data.max)) {
+          result += '桥线,'
+        }
+
+        if (item.item === '表面张力') {
+          result += '表面张力,'
+        }
+
+        if (item.item === '混合粘度') {
+          result += '混合粘度,'
+        }
+
+        if (item.item === '黑点') {
+          result += '黑点,'
+        }
+
+        if (item.item === '重检粘度') {
+          result += '重检粘度,'
+        }
+      }
+
+      return result
     }
   }
 }

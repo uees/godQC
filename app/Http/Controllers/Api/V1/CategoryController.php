@@ -83,6 +83,11 @@ class CategoryController extends Controller
 
         $testWayId = request('test_way_id');
 
+        if (is_null($testWayId)) {
+            $category->testWays()->delete();
+            return $this->noContent();
+        }
+
         if ($testWayId && TestWay::where('id', $testWayId)->exists()) {
             $category->testWays()->sync([$testWayId]);
             return $this->noContent();

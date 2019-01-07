@@ -42,7 +42,8 @@ class ProductPolicy
      */
     public function update(User $user, Product $product)
     {
-        return $user->hasRole('admin');
+        // return $user->hasRole('admin');
+		return true;
     }
 
     /**

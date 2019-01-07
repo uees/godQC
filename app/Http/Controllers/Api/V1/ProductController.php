@@ -91,7 +91,7 @@ class ProductController extends Controller
 
         $this->authorize('delete', $product);
 
-        if ($product->delete()){
+        if ($product->delete()) {
             return $this->noContent();
         }
 
@@ -103,6 +103,11 @@ class ProductController extends Controller
         $this->authorize('update', $product);
 
         $testWayId = request('test_way_id');
+
+        if (is_null($testWayId)) {
+            $product->testWays()->delete();
+            return $this->noContent();
+        }
 
         if (TestWay::where('id', $testWayId)->exists()) {
             $product->testWays()->sync([$testWayId]);

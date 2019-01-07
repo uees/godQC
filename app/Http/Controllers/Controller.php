@@ -15,7 +15,7 @@ class Controller extends BaseController
     protected function perPage()
     {
         $perPage = request('per_page', config('qc.perPage', 20));
-        $maxPerPage = config('qc.maxPerPage', 40);
+        $maxPerPage = config('qc.maxPerPage', 100);
         return $perPage <= $maxPerPage ? $perPage : $maxPerPage;
     }
 

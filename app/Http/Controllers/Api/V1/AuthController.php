@@ -15,7 +15,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api')->only(['me', 'logout', 'logoutAnywhere']);
+        $this->middleware('auth:api')->only(['me', 'logout', 'logoutEverywhere']);
 
         if (!isset(static::$passwordClient)) {
             static::$passwordClient = Client::where('password_client', 1)
@@ -69,10 +69,11 @@ class AuthController extends Controller
         return $this->message('登出成功');
     }
 
-    public function logoutAnywhere()
+    public function logoutEverywhere()
     {
-        $token_ids = \Auth::guard('api')->user()->tokens->pluck('id')->toArray();
-        if (\Auth::guard('api')->user()->tokens()->delete()) {
+        $user = \request()->user();
+        $token_ids = $user->tokens()->pluck('id')->toArray();
+        if ($user->tokens()->delete()) {
             \DB::table('oauth_refresh_tokens')
                 ->whereIn('access_token_id', $token_ids)
                 ->delete();

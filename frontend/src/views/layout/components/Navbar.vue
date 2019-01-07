@@ -42,6 +42,9 @@
           <el-dropdown-item divided>
             <span style="display:block;" @click="logout">{{ $t('navbar.logOut') }}</span>
           </el-dropdown-item>
+          <el-dropdown-item divided>
+            <span style="display:block;" @click="logoutEverywhere">全部退出</span>
+          </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -83,6 +86,11 @@ export default {
     },
     logout() {
       this.$store.dispatch('LogOut').then(() => {
+        location.reload()// In order to re-instantiate the vue-router object to avoid bugs
+      })
+    },
+    logoutEverywhere() {
+      this.$store.dispatch('LogoutEverywhere').then(() => {
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
     }

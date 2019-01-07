@@ -21,7 +21,7 @@ export function logout() {
 
 export function logoutEverywhere() {
   return request({
-    url: 'auth/logout-anywhere',
+    url: 'auth/logout-everywhere',
     method: 'post'
   })
 }

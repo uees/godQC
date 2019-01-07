@@ -17,7 +17,7 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
     Route::post('auth/login', 'AuthController@login');
     Route::post('auth/refresh', 'AuthController@refresh');
     Route::post('auth/logout', 'AuthController@logout');
-    Route::post('auth/logout-anywhere', 'AuthController@logoutAnywhere');
+    Route::post('auth/logout-everywhere', 'AuthController@logoutEverywhere');
 
     Route::get('users/me', 'AuthController@me');
     Route::post('categories/{category}/qc-ways', 'CategoryController@selectTestWay');

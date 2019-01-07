@@ -19,6 +19,13 @@ export function logout() {
   })
 }
 
+export function logoutEverywhere() {
+  return request({
+    url: 'auth/logout-anywhere',
+    method: 'post'
+  })
+}
+
 export function refresh(refresh_token) {
   return request.post('auth/refresh', {
     refresh_token

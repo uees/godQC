@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import { login, logout, refresh, getUserInfo } from '../../api/login'
+import { login, logout, logoutEverywhere, refresh, getUserInfo } from '../../api/login'
 
 const user = {
   state: {
@@ -95,6 +95,22 @@ const user = {
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         logout().then(() => {
+          commit('SET_TOKEN', {
+            access_token: '',
+            refresh_token: '',
+            expires_in: 0
+          })
+          commit('SET_ROLES', [])
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    LogoutEverywhere({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        logoutEverywhere().then(() => {
           commit('SET_TOKEN', {
             access_token: '',
             refresh_token: '',

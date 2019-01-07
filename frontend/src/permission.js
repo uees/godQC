@@ -27,10 +27,16 @@ router.beforeEach((to, from, next) => {
   if (store.state.basedata.suggests.length === 0) {
     store.dispatch('basedata/FetchSuggest').then(() => {
       next({ ...to, replace: true })
+    }).catch(err => {
+      Message.error(err || '网络错误')
+      NProgress.done()
     })
   } else if (store.state.basedata.categories.length === 0) {
     store.dispatch('basedata/FetchCategory').then(() => {
       next({ ...to, replace: true })
+    }).catch(err => {
+      Message.error(err || '网络错误')
+      NProgress.done()
     })
   } else if (Cookies.get('access-token')) { // determine if there has token
     /* has token*/

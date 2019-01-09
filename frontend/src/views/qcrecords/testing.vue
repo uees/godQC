@@ -314,25 +314,22 @@ export default {
       let result = ''
 
       for (const item of record.items) {
-        if (item.item === '桥线' &&
-          ((item.spec.data.value && item.spec.data.value !== '做记录') || item.spec.data.max)) {
-          result += '桥线,'
-        }
-
-        if (item.item === '表面张力') {
+        if (item.item === '桥线') {
+          if ((item.spec.data.value && item.spec.data.value !== '做记录') || item.spec.data.max) {
+            result += '桥线,'
+          }
+        } else if (item.item === '表面张力') {
           result += '表面张力,'
-        }
-
-        if (item.item === '混合粘度') {
+        } else if (item.item === '混合粘度') {
           result += '混合粘度,'
-        }
-
-        if (item.item === '黑点') {
+        } else if (item.item === '黑点') {
           result += '黑点,'
-        }
-
-        if (item.item === '重检粘度') {
+        } else if (item.item === '重检粘度') {
           result += '重检粘度,'
+        } else if (item.item === '红外匹配度') {
+          if (item.spec.value_type === 'INFO') {
+            result += '健鼎油注意红外,'
+          }
         }
       }
 

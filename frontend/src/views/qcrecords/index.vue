@@ -8,13 +8,6 @@
         placeholder="搜索"
         @keyup.enter.native="handleSearch"/>
 
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-refresh"
-        @click="fetchData"/>
-
       <el-select
         v-model="listShowItems"
         :multiple-limit="3"
@@ -30,6 +23,13 @@
           :label="item.label"
           :value="item.value"/>
       </el-select>
+
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-refresh"
+        @click="fetchData"/>
     </div>
 
     <div class="filter-container">

@@ -22,7 +22,7 @@ class CategoryResource extends Resource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'products' => ProductResource::collection($this->whenLoaded('products')),
-            'testWays' => TestWayResource::collection($this->whenLoaded('testWays')),
+            'testWay' => TestWayResource::make($this->whenLoaded('testWay')),
         ];
     }
 }

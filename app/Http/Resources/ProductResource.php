@@ -30,7 +30,7 @@ class ProductResource extends Resource
             'viscosity_width' => $this->viscosity_width,
             'metas' => $this->metas,
             'customers' => CustomerResource::collection($this->whenLoaded('customers')),
-            'testWays' => TestWayResource::collection($this->whenLoaded('testWays')),
+            'testWay' => TestWayResource::make($this->whenLoaded('testWay')),
             'category' => CategoryResource::make($this->whenLoaded('category')),
         ];
     }

@@ -89,7 +89,7 @@ export function newObj() {
     metas: {},
     category: {},
     customers: [],
-    testWays: [],
+    testWay: {},
     created_at: {
       date: '',
       timezone_type: '',
@@ -100,7 +100,7 @@ export function newObj() {
       timezone_type: '',
       timezone: ''
     },
-    with: 'category,testWays' // 加载关系
+    with: 'category,testWay' // 加载关系
   }
 }
 

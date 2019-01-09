@@ -10,6 +10,7 @@ class Product extends Model
 
     protected $fillable = [
         'category_id',
+        'test_way_id',
         'internal_name',
         'market_name',
         'part_a',
@@ -38,10 +39,10 @@ class Product extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function testWays()
+    public function testWay()
     {
-        return $this->morphToMany(TestWay::class, 'testable');
+        return $this->belongsTo(TestWay::class);
     }
 }

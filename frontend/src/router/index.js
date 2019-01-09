@@ -185,26 +185,14 @@ export const asyncRouterMap = [
     ]
   },
   {
-    path: '/test/methods',
+    path: '/categories',
     component: Layout,
     children: [
       {
         path: 'index',
-        component: () => import('@/views/qcmethods/index'),
-        name: 'TestMethods',
-        meta: { title: '检测方法', icon: 'table' }
-      }
-    ]
-  },
-  {
-    path: '/test/ways',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/qcways/index'),
-        name: 'TestWays',
-        meta: { title: '检测流程', icon: 'size' }
+        component: () => import('@/views/categories/index'),
+        name: 'Categories',
+        meta: { title: '产品分类', icon: 'list' }
       }
     ]
   },
@@ -221,14 +209,29 @@ export const asyncRouterMap = [
     ]
   },
   {
-    path: '/categories',
+    path: '/test/methods',
     component: Layout,
     children: [
       {
         path: 'index',
-        component: () => import('@/views/categories/index'),
-        name: 'Categories',
-        meta: { title: '产品分类', icon: 'list' }
+        component: () => import('@/views/qcmethods/index'),
+        name: 'TestMethods',
+        meta: { title: '检测方法', icon: 'table' }
+      }
+    ]
+  },
+  {
+    path: '/test/ways',
+    component: Layout,
+    meta: {
+      roles: ['admin']
+    },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/qcways/index'),
+        name: 'TestWays',
+        meta: { title: '检测流程', icon: 'size' }
       }
     ]
   },

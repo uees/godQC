@@ -378,15 +378,11 @@ class QCRecordController extends Controller
 
     protected function makeTestWay(Product $product)
     {
-        $test_way = [];
-
         $category = $product->category;
-        if ($category->testWays()->count()) {
-            $test_way = $category->testWays[0]->way;
-        }
+        $test_way = $category->testWay ? $category->testWay->way : [];
 
-        if ($product->testWays()->count()) {
-            $test_way = $this->mergeTestWay($test_way, $product->testWays[0]->way);
+        if ($productTestWay = $product->testWay) {
+            $test_way = $this->mergeTestWay($test_way, $productTestWay->way);
         }
 
         if ($category->slug == 'H-8100' || $category->slug == 'H-9100') {

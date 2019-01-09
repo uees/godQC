@@ -49,8 +49,8 @@
 
       <el-table-column label="检测流程">
         <template slot-scope="scope">
-          <span v-if="scope.row.testWays && scope.row.testWays.length > 0">
-            {{ scope.row.testWays[0].name }}
+          <span v-if="scope.row.testWay && scope.row.testWay.name">
+            {{ scope.row.testWay.name }}
           </span>
         </template>
       </el-table-column>
@@ -117,7 +117,7 @@ export default {
       api: productApi,
       propProductId: 0,
       queryParams: {
-        with: 'category,testWays'
+        with: 'category,testWay'
       }
     }
   },

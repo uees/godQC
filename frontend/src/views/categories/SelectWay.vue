@@ -49,12 +49,10 @@ export default {
       this.dialogFormVisible = true
       this.categoryId = categoryId
       // get the category way
-      categoryApi.detail(categoryId, {params: {with: 'testWays'}}).then(response => {
+      categoryApi.detail(categoryId, {params: {with: 'testWay'}}).then(response => {
         const { data } = response.data
-        const ways = data.testWays
-        // if way this.way = way
-        if (ways && ways.length !== 0) {
-          this.way = ways[0]
+        if (data.testWay) {
+          this.way = data.testWay
         }
       })
     })
@@ -65,7 +63,7 @@ export default {
   methods: {
     newWay() {
       return {
-        id: 0,
+        id: null,
         name: '',
         way: [],
         created_at: {
@@ -120,7 +118,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

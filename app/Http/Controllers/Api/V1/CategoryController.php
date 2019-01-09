@@ -14,6 +14,10 @@ class CategoryController extends Controller
     {
         $query = Category::query();
 
+        if (\request()->filled('with')) {
+            $query = $query->with(explode(',', request('with')));
+        }
+
         if (\request()->filled('q')) {
             $name_condition = queryCondition('name', \request('q'));
             $slug_condition = queryCondition('slug', \request('q'));
@@ -83,13 +87,24 @@ class CategoryController extends Controller
 
         $testWayId = request('test_way_id');
 
-        if (is_null($testWayId)) {
-            $category->testWays()->delete();
+        if (empty($testWayId) || (int)$testWayId == 0) {
+            $testWay = $category->testWay;
+
+            $category->testWay()->dissociate();  // 此方法会设置关联外键为 null
+            $category->save();
+
+            // 没有使用的 testWay 直接删除
+            if (!$testWay->products()->exists() && !$testWay->categories()->exists()) {
+                $testWay->delete();
+            }
+
             return $this->noContent();
         }
 
-        if ($testWayId && TestWay::where('id', $testWayId)->exists()) {
-            $category->testWays()->sync([$testWayId]);
+        if (TestWay::where('id', $testWayId)->exists()) {
+            $category->testWay()->associate($testWayId);
+            $category->save();
+
             return $this->noContent();
         }
 

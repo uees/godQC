@@ -104,13 +104,22 @@ class ProductController extends Controller
 
         $testWayId = request('test_way_id');
 
-        if (is_null($testWayId)) {
-            $product->testWays()->delete();
+        if (empty($testWayId) || (int)$testWayId == 0) {
+            $testWay = $product->testWay;
+
+            $product->testWay()->dissociate();
+            $product->save();
+
+            if (!$testWay->products()->exists() && !$testWay->categories()->exists()) {
+                $testWay->delete();
+            }
+
             return $this->noContent();
         }
 
         if (TestWay::where('id', $testWayId)->exists()) {
-            $product->testWays()->sync([$testWayId]);
+            $product->testWay()->associate($testWayId);
+            $product->save();
 
             return $this->noContent();
         }

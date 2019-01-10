@@ -56,9 +56,6 @@ export default {
         }
       })
     })
-    this.$nextTick(function () {
-      // this.way = category way
-    })
   },
   methods: {
     newWay() {
@@ -92,14 +89,8 @@ export default {
       this.way = way
     },
     submit() {
-      this.$refs['obj_form'].validate(valid => {
-        if (valid) {
-          categorySelectTestWay(this.categoryId, this.way.id).then(response => {
-            this.done()
-          })
-        } else {
-          return false
-        }
+      categorySelectTestWay(this.categoryId, this.way.id).then(response => {
+        this.done()
       })
     },
     done() {

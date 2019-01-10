@@ -3,14 +3,14 @@
     <el-dialog :visible.sync="dialogFormVisible" title="选择检测流程" @close="close">
       <el-form
         ref="obj_form"
-        :model="way"
+        :model="testWay"
         class="small-space"
         label-position="right"
         label-width="70px">
 
         <el-form-item label="检测流程">
           <el-autocomplete
-            v-model="way.name"
+            v-model="testWay.name"
             :fetch-suggestions="queryWays"
             :debounce="300"
             value-key="name"
@@ -18,29 +18,26 @@
             placeholder="检测流程"
             @select="handleSelect"
           />
-          <el-button
-            v-show="!way.name"
-            type="primary"
-            icon="el-icon-edit"
-            @click="handleCreateWay">添加
-          </el-button>
         </el-form-item>
+        <el-button type="primary" @click="submit">确定</el-button>
+        <el-button v-if="testWay.id" type="success" icon="el-icon-edit" @click="handleEditWay">编辑</el-button>
+        <el-button v-else type="warning" @click="handleCreateWay">创建</el-button>
       </el-form>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="close">取 消</el-button>
-        <el-button type="primary" @click="submit">确 定</el-button>
-      </div>
     </el-dialog>
 
-    <way-form :action.sync="WayFormAction" :prop-obj.sync="WayFormObj"/>
+    <way-form
+      :action.sync="WayFormAction"
+      :prop-obj.sync="WayFormObj"
+      @create-done="createWayDone"
+      @update-done="updateWayDone"
+    />
   </div>
 </template>
 
 <script>
 import { qcWayApi, productSelectTestWay } from '@/api/qc'
-import { productApi } from '@/api/basedata'
 import Bus from '@/store/bus'
+import { deepClone } from '@/utils'
 import WayForm from '../qcways/dialog'
 
 export default {
@@ -50,28 +47,26 @@ export default {
   },
   data() {
     return {
-      productId: 0,
-      way: this.newWay(),
-      ways: [],
+      product: null,
+      tableDataIndex: -1,
+      testWay: this.newWay(),
       dialogFormVisible: false,
       WayFormAction: '',
-      WayFormObj: undefined
+      WayFormObj: this.newWay()
     }
   },
   mounted() {
-    Bus.$on('product-select-way', (productId) => {
+    Bus.$on('product-select-way', (scope) => {
+      // 初始化
+      this.product = deepClone(scope.row)
+      this.tableDataIndex = scope.$index
+      if (this.product.testWay) {
+        this.testWay = this.product.testWay
+      } else {
+        this.testWay = this.newWay()
+      }
+      // 显示
       this.dialogFormVisible = true
-      this.productId = productId
-      // get the category way
-      productApi.detail(productId, {params: {with: 'testWay'}}).then(response => {
-        const { data } = response.data
-        if (data.testWay) {
-          this.way = data.testWay
-        }
-      })
-    })
-    this.$nextTick(function () {
-      // this.way = category way
     })
   },
   methods: {
@@ -93,7 +88,7 @@ export default {
       }
     },
     resetWay() {
-      this.way = this.newWay()
+      this.testWay = this.newWay()
     },
     queryWays(queryString, cb) {
       qcWayApi.list({ params: { q: queryString } }).then(response => {
@@ -102,22 +97,28 @@ export default {
         cb(data)
       })
     },
-    handleSelect(way) {
-      this.way = way
-    },
     handleCreateWay() {
       this.WayFormAction = 'create'
+      this.WayFormObj = this.newWay()
+    },
+    handleEditWay() {
+      this.WayFormAction = 'update'
+      this.WayFormObj = this.testWay
     },
     submit() {
-      this.$refs['obj_form'].validate(valid => {
-        if (valid) {
-          productSelectTestWay(this.productId, this.way.id).then(response => {
-            this.done()
-          })
-        } else {
-          return false
-        }
+      productSelectTestWay(this.product.id, this.testWay.id).then(() => {
+        this.$emit('test-way-updated', this.tableDataIndex, this.testWay)
+        this.done()
       })
+    },
+    handleSelect(way) {
+      this.testWay = Object.assign({}, way)
+    },
+    createWayDone() {
+      this.testWay = Object.assign({}, this.WayFormObj)
+    },
+    updateWayDone() {
+      this.testWay = Object.assign({}, this.WayFormObj)
     },
     done() {
       this.$notify({
@@ -130,6 +131,8 @@ export default {
     },
     close() {
       this.dialogFormVisible = false
+      this.WayFormAction = ''
+      this.WayFormObj = null
       this.resetWay()
     }
   }

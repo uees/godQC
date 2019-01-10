@@ -49,9 +49,12 @@
 
       <el-table-column label="检测流程">
         <template slot-scope="scope">
-          <span v-if="scope.row.testWay && scope.row.testWay.name">
-            {{ scope.row.testWay.name }}
-          </span>
+          <el-button type="text" size="small" @click="showSelectWay(scope)">
+            <span v-if="scope.row.testWay && scope.row.testWay.name">
+              {{ scope.row.testWay.name }}
+            </span>
+            <span v-else>选择</span>
+          </el-button>
         </template>
       </el-table-column>
 
@@ -63,7 +66,7 @@
 
       <el-table-column align="center" label="操作" width="180" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="showSelectWay(scope.row)">检测流程</el-button>
+          <el-button v-if="scope.row.testWay" type="text" size="small" @click="clearWay(scope)">清除流程</el-button>
           <el-button type="text" size="small" @click="handleUpdate(scope.row)">编辑</el-button>
           <el-button type="text" size="small" @click="handleDelete(scope.row)">删除</el-button>
         </template>
@@ -88,7 +91,7 @@
       @createDone="createDone"
       @updateDone="updateDone"/>
 
-    <select-way/>
+    <select-way @test-way-updated="testWayUpdated"/>
   </div>
 </template>
 
@@ -100,6 +103,7 @@ import FormDialog from './dialog'
 import SelectWay from './SelectWay'
 import Bus from '@/store/bus'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
+import { productSelectTestWay } from '@/api/qc'
 
 export default {
   name: 'Products',
@@ -115,22 +119,30 @@ export default {
   data() {
     return {
       api: productApi,
-      propProductId: 0,
       queryParams: {
         with: 'category,testWay'
       }
     }
   },
   methods: {
-    showSelectWay(product) {
-      this.propProductId = product.id
-
-      Bus.$emit('product-select-way', product.id)
+    showSelectWay(scope) {
+      Bus.$emit('product-select-way', scope)
+    },
+    clearWay(scope) {
+      productSelectTestWay(scope.row.id, null).then(response => {
+        scope.row.testWay = null
+      })
     },
     handleUpdate(row) {
       this.updateIndex = this.tableData.indexOf(row)
       this.propObj = Object.assign({}, row, this.queryParams) // 加载关系
       this.action = 'update'
+    },
+    testWayUpdated(index, testWay) {
+      const product = this.tableData[index]
+      product.testWay = testWay
+
+      this.tableData.splice(index, 1, product)
     }
   }
 }

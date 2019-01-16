@@ -49,26 +49,25 @@ class QCRecordController extends Controller
         }
 
         // 类别筛选支持
-        $category = \request('category');
-        if ($category) {
-            $category = Category::where('name', $category)->first();
-
-            if (!is_null($category)) {
+        if (\request('category')) {
+            if ($category = Category::where('name', \request('category'))->first()) {
                 $query = $query->whereHas('batch', function (Builder $query) use ($category) {
-                    $products =  $category->products->pluck('internal_name');
+                    $products = $category->products->pluck('internal_name');
                     $query->whereIn('product_name', $products);
                 });
             }
         }
 
         if (\request()->filled('q')) {
-            $query = $query->whereHas('batch', function (Builder $query) {
-                $name_condition = queryCondition('product_name', \request('q'));
-                $batch_condition = queryCondition('batch_number', \request('q'));
+            $memo_condition = queryCondition('memo', \request('q'));
+            $query = $query->where($memo_condition)
+                ->orWhereHas('batch', function (Builder $query) {
+                    $name_condition = queryCondition('product_name', \request('q'));
+                    $batch_condition = queryCondition('batch_number', \request('q'));
 
-                $query->where($name_condition)
-                    ->orWhere($batch_condition);
-            });
+                    $query->where($name_condition)
+                        ->orWhere($batch_condition);
+                });
         }
 
         $query = $query->orderBy($this->sortBy(), $this->order());

@@ -100,7 +100,7 @@ class ProductController extends Controller
 
     public function selectTestWay(Product $product)
     {
-        $this->authorize('update', $product);
+        $this->authorize('delete', $product);
 
         $testWayId = request('test_way_id');
 
@@ -111,7 +111,9 @@ class ProductController extends Controller
             $product->save();
 
             if (!$testWay->products()->exists() && !$testWay->categories()->exists()) {
-                $testWay->delete();
+                if (request()->user()->can('delete', $testWay)) {
+                    $testWay->delete();
+                }
             }
 
             return $this->noContent();

@@ -83,7 +83,7 @@ class CategoryController extends Controller
 
     public function selectTestWay(Category $category)
     {
-        $this->authorize('update', $category);
+        $this->authorize('delete', $category);
 
         $testWayId = request('test_way_id');
 
@@ -95,7 +95,9 @@ class CategoryController extends Controller
 
             // 没有使用的 testWay 直接删除
             if (!$testWay->products()->exists() && !$testWay->categories()->exists()) {
-                $testWay->delete();
+                if (request()->user()->can('delete', $testWay)) {
+                    $testWay->delete();
+                }
             }
 
             return $this->noContent();

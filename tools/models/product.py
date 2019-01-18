@@ -11,7 +11,7 @@ class Product(Base):
 
     __tablename__ = 'products'
     __table_args__ = {
-        "mysql_charset": "utf8"
+        "mysql_charset": "utf8mb4"
     }
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -25,7 +25,7 @@ class Product(Base):
     spec = Column(String(32), nullable=True)
     label_viscosity = Column(String(32), nullable=True)
     viscosity_width = Column(String(32), nullable=True)
-    metas = Column(Text, nullable=True)
+    metas = Column(Text, nullable=True)  # part a and b viscosity, template
     created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('CURRENT_TIMESTAMP'))
     updated_at = Column(TIMESTAMP(True), nullable=True)
 

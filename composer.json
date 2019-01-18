@@ -14,6 +14,7 @@
         "laravel/framework": "5.5.*",
         "laravel/passport": "~4.0",
         "laravel/tinker": "~1.0",
+        "massivescale/celery-php": "^2.1",
         "yzalis/identicon": "^1.2"
     },
     "require-dev": {

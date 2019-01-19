@@ -19,6 +19,7 @@ class CategoryResource extends Resource
             'name' => $this->name,
             'slug' => $this->slug,
             'memo' => $this->memo,
+            'metas' => $this->metas,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'products' => ProductResource::collection($this->whenLoaded('products')),

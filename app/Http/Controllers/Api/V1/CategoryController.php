@@ -83,10 +83,11 @@ class CategoryController extends Controller
 
     public function selectTestWay(Category $category)
     {
-        $this->authorize('delete', $category);
+        $this->authorize('updateTestway', $category);
 
         $testWayId = request('test_way_id');
 
+        // clear way
         if (empty($testWayId) || (int)$testWayId == 0) {
             $testWay = $category->testWay;
 
@@ -103,6 +104,7 @@ class CategoryController extends Controller
             return $this->noContent();
         }
 
+        // update way
         if (TestWay::where('id', $testWayId)->exists()) {
             $category->testWay()->associate($testWayId);
             $category->save();
@@ -111,5 +113,23 @@ class CategoryController extends Controller
         }
 
         return $this->failed('操作失败');
+    }
+
+    public function updateTemplates(Category $category)
+    {
+        $this->authorize('updateTemplates', $category);
+
+        $templates = request('templates');
+
+        if (is_null($templates)) {
+            // clear templates
+            $category->setMeta('templates', null);
+        } else {
+            $category->setMeta('templates', $templates);
+        }
+
+        $category->save();
+
+        return $this->noContent();
     }
 }

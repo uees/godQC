@@ -40,18 +40,54 @@
       :data="tableData"
       style="width: 100%">
 
-      <el-table-column :sortable="true" prop="name" label="名称"/>
-      <el-table-column :sortable="true" prop="slug" label="型号"/>
-      <el-table-column prop="memo" label="备注"/>
       <el-table-column label="创建时间">
         <template slot-scope="scope">
           {{ echoTime(scope.row.created_at) }}
         </template>
       </el-table-column>
 
+      <el-table-column :sortable="true" prop="name" label="名称"/>
+      <el-table-column :sortable="true" prop="slug" label="型号"/>
+      <el-table-column prop="memo" label="备注"/>
+
+      <el-table-column label="报告模板">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="showTemplateDialog(scope)">
+            <span v-if="scope.row.metas && scope.row.metas.templates">
+              {{ displayTemplates(scope.row.metas.templates) }}
+            </span>
+            <span v-else>选择</span>
+          </el-button>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="检测流程">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="showSelectWay(scope)">
+            <span v-if="scope.row.testWay && scope.row.testWay.name">
+              {{ scope.row.testWay.name }}
+            </span>
+            <span v-else>选择</span>
+          </el-button>
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="操作" width="180" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="showSelectWay(scope.row)">检测流程</el-button>
+          <el-button
+            v-if="scope.row.testWay"
+            type="text"
+            size="small"
+            @click="clearWay(scope)">
+            清除流程
+          </el-button>
+          <el-button
+            v-if="scope.row.metas && scope.row.metas.templates"
+            type="text"
+            size="small"
+            @click="clearTemplates(scope)">
+            清除模板
+          </el-button>
           <el-button
             type="text"
             size="small"
@@ -73,15 +109,19 @@
       @createDone="createDone"
       @updateDone="updateDone"/>
 
-    <select-way/>
+    <select-way @test-way-updated="testWayUpdated"/>
+
+    <template-dialog @template-updated="templateUpdated"/>
   </div>
 </template>
 
 <script>
 import list from '@/mixins/list'
 import { categoryApi } from '@/api/basedata'
+import { categorySelectTestWay, categoryUpdateTemplates } from '@/api/qc'
 import FormDialog from './dialog'
 import SelectWay from './SelectWay'
+import TemplateDialog from './TemplateDialog'
 import Bus from '@/store/bus'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
 
@@ -89,6 +129,7 @@ export default {
   name: 'Categories',
   components: {
     FormDialog,
+    TemplateDialog,
     SelectWay
   },
   mixins: [
@@ -98,19 +139,61 @@ export default {
   data() {
     return {
       api: categoryApi,
-      propCategoryId: 0
+      queryParams: {
+        with: 'testWay'
+      }
     }
   },
   methods: {
-    showSelectWay(category) {
-      this.propCategoryId = category.id
+    showSelectWay(scope) {
+      Bus.$emit('category-select-way', scope)
+    },
+    showTemplateDialog(scope) {
+      Bus.$emit('category-select-template', scope)
+    },
+    clearTemplates(scope) {
+      this.$confirm('是否清除模板?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        categoryUpdateTemplates(scope.row.id, null).then(() => {
+          if (scope.row.metas) {
+            scope.row.metas.templates = null
+          }
+        })
+      })
+    },
+    clearWay(scope) {
+      this.$confirm('是否清除检测流程?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        categorySelectTestWay(scope.row.id, null).then(() => {
+          scope.row.testWay = null
+        })
+      })
+    },
+    testWayUpdated(index, testWay) {
+      const category = this.tableData[index]
+      category.testWay = testWay
 
-      Bus.$emit('category-select-way', category.id)
+      this.tableData.splice(index, 1, category)
+    },
+    templateUpdated(index, templates) {
+      const category = this.tableData[index]
+      category.metas.templates = templates
+
+      this.tableData.splice(index, 1, category)
+    },
+    displayTemplates(templates) {
+      let result = ''
+      if (Array.isArray(templates)) {
+        result = templates.map(template => template.name).join(';')
+      }
+      return result
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

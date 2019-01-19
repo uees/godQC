@@ -86,7 +86,7 @@ export function newObj() {
     color: '',
     label_viscosity: '',
     viscosity_width: '',
-    metas: {},
+    metas: null,
     category: {},
     customers: [],
     testWay: {},

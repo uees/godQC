@@ -40,12 +40,13 @@
       :data="tableData"
       style="width: 100%">
 
-      <el-table-column :sortable="true" prop="name" label="名称"/>
       <el-table-column label="创建时间">
         <template slot-scope="scope">
           {{ echoTime(scope.row.created_at) }}
         </template>
       </el-table-column>
+
+      <el-table-column :sortable="true" prop="name" label="名称"/>
 
       <el-table-column align="center" label="操作" width="100" class-name="small-padding fixed-width">
         <template slot-scope="scope">

@@ -20,6 +20,7 @@ class Product extends Model
         'spec',
         'label_viscosity',
         'viscosity_width',
+        'metas',
     ];
 
     /**

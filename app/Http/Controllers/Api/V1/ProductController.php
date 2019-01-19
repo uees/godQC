@@ -100,7 +100,7 @@ class ProductController extends Controller
 
     public function selectTestWay(Product $product)
     {
-        $this->authorize('delete', $product);
+        $this->authorize('updateTestway', $product);
 
         $testWayId = request('test_way_id');
 
@@ -127,5 +127,23 @@ class ProductController extends Controller
         }
 
         return $this->failed('操作失败');
+    }
+
+    public function updateTemplates(Product $product)
+    {
+        $this->authorize('updateTemplates', $product);
+
+        $templates = request('templates');
+
+        if (is_null($templates)) {
+            // clear templates
+            $product->setMeta('templates', null);
+        } else {
+            $product->setMeta('templates', $templates);
+        }
+
+        $product->save();
+
+        return $this->noContent();
     }
 }

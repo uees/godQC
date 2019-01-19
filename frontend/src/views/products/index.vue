@@ -40,12 +40,37 @@
       :data="tableData"
       style="width: 100%">
 
-      <el-table-column prop="category.name" label="类别"/>
+      <el-table-column label="创建时间">
+        <template slot-scope="scope">
+          {{ echoTime(scope.row.created_at) }}
+        </template>
+      </el-table-column>
+
       <el-table-column prop="internal_name" label="名称"/>
-      <el-table-column prop="color" label="颜色"/>
-      <el-table-column prop="part_a" label="A组分"/>
-      <el-table-column prop="part_b" label="B组分"/>
-      <el-table-column prop="ab_ratio" label="比例(A:B)"/>
+      <el-table-column prop="market_name" label="销售名"/>
+      <el-table-column prop="category.name" label="类别"/>
+
+      <el-table-column label="配比">
+        <template slot-scope="scope">
+          <span v-if="scope.row.part_a">
+            {{ scope.row.part_a }}:样品 = {{ scope.row.ab_ratio }}
+          </span>
+          <span v-if="scope.row.part_b">
+            样品:{{ scope.row.part_b }} = {{ scope.row.ab_ratio }}
+          </span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="报告模板">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="showTemplateDialog(scope)">
+            <span v-if="scope.row.metas && scope.row.metas.templates">
+              {{ displayTemplates(scope.row.metas.templates) }}
+            </span>
+            <span v-else>选择</span>
+          </el-button>
+        </template>
+      </el-table-column>
 
       <el-table-column label="检测流程">
         <template slot-scope="scope">
@@ -58,15 +83,16 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="创建时间">
-        <template slot-scope="scope">
-          {{ echoTime(scope.row.created_at) }}
-        </template>
-      </el-table-column>
-
       <el-table-column align="center" label="操作" width="180" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button v-if="scope.row.testWay" type="text" size="small" @click="clearWay(scope)">清除流程</el-button>
+          <el-button
+            v-if="scope.row.metas && scope.row.metas.templates"
+            type="text"
+            size="small"
+            @click="clearTemplates(scope)">
+            清除模板
+          </el-button>
           <el-button type="text" size="small" @click="handleUpdate(scope.row)">编辑</el-button>
           <el-button type="text" size="small" @click="handleDelete(scope.row)">删除</el-button>
         </template>
@@ -92,6 +118,7 @@
       @updateDone="updateDone"/>
 
     <select-way @test-way-updated="testWayUpdated"/>
+    <template-dialog @template-updated="templateUpdated"/>
   </div>
 </template>
 
@@ -101,14 +128,16 @@ import pagination from '@/mixins/pagination'
 import { productApi } from '@/api/basedata'
 import FormDialog from './dialog'
 import SelectWay from './SelectWay'
+import TemplateDialog from './TemplateDialog'
 import Bus from '@/store/bus'
 import echoTimeMethod from '@/mixins/echoTimeMethod'
-import { productSelectTestWay } from '@/api/qc'
+import { productSelectTestWay, productUpdateTemplates } from '@/api/qc'
 
 export default {
   name: 'Products',
   components: {
     FormDialog,
+    TemplateDialog,
     SelectWay
   },
   mixins: [
@@ -128,9 +157,31 @@ export default {
     showSelectWay(scope) {
       Bus.$emit('product-select-way', scope)
     },
+    showTemplateDialog(scope) {
+      Bus.$emit('product-select-template', scope)
+    },
     clearWay(scope) {
-      productSelectTestWay(scope.row.id, null).then(response => {
-        scope.row.testWay = null
+      this.$confirm('是否清除检测流程?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        productSelectTestWay(scope.row.id, null).then(() => {
+          scope.row.testWay = null
+        })
+      })
+    },
+    clearTemplates(scope) {
+      this.$confirm('是否清除模板?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        productUpdateTemplates(scope.row.id, null).then(() => {
+          if (scope.row.metas) {
+            scope.row.metas.templates = null
+          }
+        })
       })
     },
     handleUpdate(row) {
@@ -143,6 +194,19 @@ export default {
       product.testWay = testWay
 
       this.tableData.splice(index, 1, product)
+    },
+    templateUpdated(index, templates) {
+      const product = this.tableData[index]
+      product.metas.templates = templates
+
+      this.tableData.splice(index, 1, product)
+    },
+    displayTemplates(templates) {
+      let result = ''
+      if (Array.isArray(templates)) {
+        result = templates.map(template => template.name).join(';')
+      }
+      return result
     }
   }
 }

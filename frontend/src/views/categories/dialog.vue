@@ -41,6 +41,7 @@ export function newObj() {
     slug: '',
     name: '',
     memo: '',
+    metas: null,
     created_at: {
       date: '',
       timezone_type: '',
@@ -75,7 +76,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

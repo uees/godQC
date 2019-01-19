@@ -57,4 +57,14 @@ class ProductPolicy
     {
         return $user->hasRole('admin');
     }
+
+    public function updateTestway(User $user, Category $category)
+    {
+        return $user->hasRole('admin');
+    }
+
+    public function updateTemplates(User $user, Category $category)
+    {
+        return $user->hasRole('admin');
+    }
 }

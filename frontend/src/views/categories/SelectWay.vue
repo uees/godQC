@@ -3,14 +3,14 @@
     <el-dialog :visible.sync="dialogFormVisible" title="选择检测流程" @close="close">
       <el-form
         ref="obj_form"
-        :model="way"
+        :model="testWay"
         class="small-space"
         label-position="right"
         label-width="70px">
 
         <el-form-item label="检测流程">
           <el-autocomplete
-            v-model="way.name"
+            v-model="testWay.name"
             :fetch-suggestions="queryWays"
             :debounce="300"
             value-key="name"
@@ -22,7 +22,6 @@
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button @click="close">取 消</el-button>
         <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
@@ -31,30 +30,29 @@
 
 <script>
 import { qcWayApi, categorySelectTestWay } from '@/api/qc'
-import { categoryApi } from '@/api/basedata'
 import Bus from '@/store/bus'
+import { deepClone } from '@/utils'
 
 export default {
   name: 'SelectWay',
   data() {
     return {
-      categoryId: 0,
-      way: this.newWay(),
-      ways: [],
+      category: null,
+      tableDataIndex: -1,
+      testWay: this.newWay(),
       dialogFormVisible: false
     }
   },
   mounted() {
-    Bus.$on('category-select-way', (categoryId) => {
+    Bus.$on('category-select-way', (scope) => {
+      this.category = deepClone(scope.row)
+      this.tableDataIndex = scope.$index
+      if (this.category.testWay) {
+        this.testWay = this.category.testWay
+      } else {
+        this.testWay = this.newWay()
+      }
       this.dialogFormVisible = true
-      this.categoryId = categoryId
-      // get the category way
-      categoryApi.detail(categoryId, {params: {with: 'testWay'}}).then(response => {
-        const { data } = response.data
-        if (data.testWay) {
-          this.way = data.testWay
-        }
-      })
     })
   },
   methods: {
@@ -76,7 +74,7 @@ export default {
       }
     },
     resetWay() {
-      this.way = this.newWay()
+      this.testWay = this.newWay()
     },
     queryWays(queryString, cb) {
       qcWayApi.list({ params: { q: queryString } }).then(response => {
@@ -85,11 +83,12 @@ export default {
         cb(data)
       })
     },
-    handleSelect(way) {
-      this.way = way
+    handleSelect(testWay) {
+      this.testWay = Object.assign({}, testWay)
     },
     submit() {
-      categorySelectTestWay(this.categoryId, this.way.id).then(response => {
+      categorySelectTestWay(this.category.id, this.testWay.id).then(response => {
+        this.$emit('test-way-updated', this.tableDataIndex, this.testWay)
         this.done()
       })
     },

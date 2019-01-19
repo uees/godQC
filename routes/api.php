@@ -20,12 +20,20 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
     Route::post('auth/logout-everywhere', 'AuthController@logoutEverywhere');
 
     Route::get('users/me', 'AuthController@me');
+
     Route::post('categories/{category}/qc-ways', 'CategoryController@selectTestWay');
+    Route::post('categories/{category}/templates', 'CategoryController@updateTemplates');
+
     Route::post('products/{product}/qc-ways', 'ProductController@selectTestWay');
+    Route::post('products/{product}/templates', 'ProductController@updateTemplates');
+
     Route::post('product-disposes/{productDispose}/sample', 'ProductDisposeController@sample');
+
     Route::get('product-batches/disposes', 'ProductDisposeController@batchDispose');
+
     Route::post('customers/{customer}/products', 'CustomerController@selectProducts');
     Route::post('customers/{customer}/products/add', 'CustomerController@selectProduct');
+
     Route::post('qc-records/sample', 'QCRecordController@sample');
     Route::get('qc-records/{testRecord}/test-done', 'QCRecordController@testDone');
     Route::get('qc-records/{testRecord}/say-package', 'QCRecordController@sayPackage');

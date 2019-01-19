@@ -11,9 +11,7 @@ trait MetaTrait
      */
     public function getMetasAttribute($value)
     {
-        if (isset($value)) {
-            return \GuzzleHttp\json_decode($value);
-        }
+        return \json_decode($value);
     }
 
     /**
@@ -21,7 +19,7 @@ trait MetaTrait
      */
     public function setMetasAttribute($value)
     {
-        $this->attributes['metas'] = \GuzzleHttp\json_encode($value);
+        $this->attributes['metas'] = \json_encode($value);
     }
 
     /**
@@ -51,8 +49,9 @@ trait MetaTrait
     /**
      * @param string $key
      * @param mixed $value
+     * @param int|null $limit
      */
-    public function pushMeta($key, $value)
+    public function pushMeta($key, $value, $limit = null)
     {
         $v = (array)($this->metas->{$key} ?? []);
 
@@ -61,25 +60,7 @@ trait MetaTrait
             $v = [$v];
         }
 
-        array_push($v, $value);
-
-        $this->setMeta($key, $v);
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @param int $limit
-     */
-    public function pushMetaLimitLength($key, $value, $limit = 10)
-    {
-        $v = (array)($this->metas->{$key} ?? []);
-
-        if (!empty(array_diff_assoc(array_keys($v), range(0, sizeof($v))))) {
-            $v = [$v];
-        }
-
-        if (count($v) >= $limit) {
+        if (isset($limit) && count($v) >= $limit) {
             array_shift($v);  // 移除第一个
         }
 

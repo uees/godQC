@@ -6,11 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
+    use MetaTrait;
+
     protected $fillable = [
         'test_way_id',
         'name',
         'slug',
         'memo',
+        'metas',
     ];
 
     /**

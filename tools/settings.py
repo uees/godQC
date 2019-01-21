@@ -19,3 +19,6 @@ DB_PASSWORD = os.getenv('DB_PASSWORD')
 REDIS_HOST = os.getenv("REDIS_HOST")
 REDIS_PORT = os.getenv("REDIS_PORT")
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
+
+REPORTS_ROOT = os.path.join(ROOT_PATH, '../storage/app/public/reports')
+TEMPLATES_ROOT = os.path.join(ROOT_PATH, 'basedata/templates')

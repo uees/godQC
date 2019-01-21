@@ -2,6 +2,7 @@
 
 from sqlalchemy import (TIMESTAMP, Column, ForeignKey, Integer, String, Text,
                         text)
+from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import relationship
 
 from .base import Base
@@ -15,7 +16,7 @@ class Product(Base):
     }
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    category_id = Column(Integer, ForeignKey('categories.id'))
+    category_id = Column(INTEGER(unsigned=True), ForeignKey('categories.id'))
     internal_name = Column(String(64), unique=True)
     market_name = Column(String(64))
     part_a = Column(String(64), nullable=True)

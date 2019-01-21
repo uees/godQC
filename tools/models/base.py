@@ -6,10 +6,8 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 import settings
 
-if settings.DB_CONNECTION == "sqlite":
-    connString = "sqlite:///{}".format(settings.DB_DATABASE)
-else:
-    connString = "mysql+pymysql://{0.DB_USERNAME}:{0.DB_PASSWORD}@{0.DB_HOST}:{0.DB_PORT}/{0.DB_DATABASE}".format(settings)
+# only mysql
+connString = "mysql+pymysql://{0.DB_USERNAME}:{0.DB_PASSWORD}@{0.DB_HOST}:{0.DB_PORT}/{0.DB_DATABASE}".format(settings)
 
 engine = create_engine(connString)
 

@@ -1,22 +1,21 @@
 # -*- coding:utf-8 -*-
 from celery.utils.log import get_task_logger
+from DictObject import DictObject
 
 from .celery import app
+from .generator import Generator
 
 logger = get_task_logger(__name__)
 
 
 @app.task
-def add(x, y):
-    logger.info('Adding {0} + {1}'.format(x, y))
-    return x + y
+def make_report(product, batch, tips=None, options=None):
+    logger.info('生成报告： {}_{}'.format(product, batch))
 
-
-@app.task
-def mul(x, y):
-    return x * y
-
-
-@app.task
-def xsum(numbers):
-    return sum(numbers)
+    generator = Generator(DictObject({
+        'name': product,
+        'batch': batch,
+        'tips': tips,
+        'options': options
+        }))
+    generator.generate_report()

@@ -94,7 +94,7 @@ class QCRecordController extends Controller
         $query = TestRecord::query();
 
         if (\request()->filled('with')) {
-            $query = $query->with(explode(',', request('with')));
+            $query->with(explode(',', request('with')));
         }
 
         $testRecord = $query->findOrFail($id);

@@ -19,10 +19,10 @@ class QCMethodController extends Controller
             $name_condition = queryCondition('name', \request('q'));
             $content_condition = queryCondition('content', \request('q'));
 
-            $query = $query->where($name_condition)->orWhere($content_condition);
+            $query->where($name_condition)->orWhere($content_condition);
         }
 
-        $query = $query->orderBy($this->sortBy(), $this->order());
+        $query->orderBy($this->sortBy(), $this->order());
 
         $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 

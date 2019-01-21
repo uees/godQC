@@ -19,7 +19,7 @@ class QCWayController extends Controller
             $query=$query->where($name_condition);
         }
 
-        $query = $query->orderBy($this->sortBy(), $this->order());
+        $query->orderBy($this->sortBy(), $this->order());
 
         $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 

@@ -57,7 +57,7 @@ class ProductController extends Controller
         $query = Product::query();
 
         if (\request()->filled('with')) {
-            $query = $query->with(explode(',', request('with')));
+            $query->with(explode(',', request('with')));
         }
 
         $product = $query->findOrFail($id);

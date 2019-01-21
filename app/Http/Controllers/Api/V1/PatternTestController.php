@@ -18,11 +18,11 @@ class PatternTestController extends Controller
             $product_name_condition = queryCondition('product_name', \request('q'));
             $batch_number_condition = queryCondition('batch_number', \request('q'));
 
-            $query = $query->where($product_name_condition)
+            $query->where($product_name_condition)
                 ->orWhere($batch_number_condition);
         }
 
-        $query = $query->orderBy($this->sortBy(), $this->order());
+        $query->orderBy($this->sortBy(), $this->order());
 
         if (\request()->filled('all')) {
             $suggests = $query->get();

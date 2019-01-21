@@ -15,14 +15,14 @@ class CategoryController extends Controller
         $query = Category::query();
 
         if (\request()->filled('with')) {
-            $query = $query->with(explode(',', request('with')));
+            $query->with(explode(',', request('with')));
         }
 
         if (\request()->filled('q')) {
             $name_condition = queryCondition('name', \request('q'));
             $slug_condition = queryCondition('slug', \request('q'));
 
-            $query = $query->where($name_condition)
+            $query->where($name_condition)
                 ->orWhere($slug_condition);
         }
 
@@ -36,7 +36,7 @@ class CategoryController extends Controller
         $query = Category::query();
 
         if (\request()->filled('with')) {
-            $query = $query->with(explode(',', request('with')));
+            $query->with(explode(',', request('with')));
         }
 
         $category = $query->findOrFail($id);

@@ -18,11 +18,11 @@ class ProductBatchController extends Controller
             $name_condition = queryCondition('product_name', \request('q'));
             $batch_condition = queryCondition('batch_number', \request('q'));
 
-            $query = $query->where($name_condition)
+            $query->where($name_condition)
                 ->orWhere($batch_condition);
         }
 
-        $query = $query->orderBy($this->sortBy(), $this->order());
+        $query->orderBy($this->sortBy(), $this->order());
 
         $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 

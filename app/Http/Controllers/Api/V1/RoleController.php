@@ -16,7 +16,7 @@ class RoleController extends Controller
         if (\request()->filled('q')) {
             $name_condition = queryCondition('name', \request('q'));
 
-            $query = $query->where($name_condition);
+            $query->where($name_condition);
         }
 
         $roles = $query->get(); // 直接获取所有

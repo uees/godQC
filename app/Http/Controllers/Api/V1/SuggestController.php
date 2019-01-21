@@ -14,15 +14,15 @@ class SuggestController extends Controller
     {
         $query = Suggest::query();
 
-        $query = $this->parseWhere($query, ['parent_id', 'name']);
+        $this->parseWhere($query, ['parent_id', 'name']);
 
         if (\request()->filled('q')) {
             $name_condition = queryCondition('name', \request('q'));
 
-            $query = $query->where($name_condition);
+            $query->where($name_condition);
         }
 
-        $query = $query->orderBy($this->sortBy(), $this->order());
+        $query->orderBy($this->sortBy(), $this->order());
 
         if (\request()->filled('all')) {
             $suggests = $query->get();

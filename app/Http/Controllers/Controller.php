@@ -31,21 +31,17 @@ class Controller extends BaseController
 
     /**
      * @param Builder $query
-     * @return Builder
      */
     protected function parseFields(Builder $query)
     {
         if (request()->filled('fields')) {
-            $query = $query->addSelect(explode(',', request('fields')));
+            $query->addSelect(explode(',', request('fields')));
         }
-
-        return $query;
     }
 
     /**
      * @param Builder $query
      * @param array $fields
-     * @return Builder
      */
     protected function parseWhere(Builder $query, array $fields)
     {
@@ -58,19 +54,17 @@ class Controller extends BaseController
             if (preg_match('/^date:(\d{4}-\d{2}-\d{2}),?(\d{4}-\d{2}-\d{2})?$/', $value, $matches)) {
                 if (count($matches) == 2) {
                     $min = $matches[1];
-                    $query = $query->where($field, '>', $min);
+                    $query->where($field, '>', $min);
                 } elseif (count($matches) == 3) {
                     $min = $matches[1];
                     $max = $matches[2];
-                    $query = $query->whereBetween($field, [$min, $max]);
+                    $query->whereBetween($field, [$min, $max]);
                 }
             } elseif (str_contains($value, ',')) {
-                $query = $query->whereIn($field, explode(',', $value));
+                $query->whereIn($field, explode(',', $value));
             } else {
-                $query = $query->where($field, $value);
+                $query->where($field, $value);
             }
         }
-
-        return $query;
     }
 }

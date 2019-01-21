@@ -22,13 +22,13 @@ class ProductDisposeController extends Controller
         $query = ProductDispose::query();
 
         if (\request()->filled('with')) {
-            $query = $query->with(explode(',', request('with')));
+            $query->with(explode(',', request('with')));
         }
 
-        $query = $this->parseWhere($query, ['author', 'created_at', 'from_record_id', 'to_record_id', 'product_batch_id']);
+        $this->parseWhere($query, ['author', 'created_at', 'from_record_id', 'to_record_id', 'product_batch_id']);
 
         if (\request()->filled('done')) {
-            $query = $query->where('is_done', 1);
+            $query->where('is_done', 1);
         }
 
         if (\request()->filled('q')) {
@@ -36,14 +36,14 @@ class ProductDisposeController extends Controller
             $batch_condition = queryCondition('batch_number', \request('q'));
             $method_condition = queryCondition('method', \request('q'));
 
-            $query = $query->where($method_condition)
+            $query->where($method_condition)
                 ->orWhereHas('batch', function (Builder $query) use ($name_condition, $batch_condition) {
                     $query->where($name_condition)
                         ->orWhere($batch_condition);
                 });
         }
 
-        $query = $query->orderBy($this->sortBy(), $this->order());
+        $query->orderBy($this->sortBy(), $this->order());
 
         if (\request()->filled('all')) {
             $results = $query->get();
@@ -79,7 +79,7 @@ class ProductDisposeController extends Controller
         $query = ProductDispose::query();
 
         if (\request()->filled('with')) {
-            $query = $query->with(explode(',', request('with')));
+            $query->with(explode(',', request('with')));
         }
 
         $productDispose = $query->findOrFail($id);

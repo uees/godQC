@@ -17,10 +17,10 @@ class CustomerController extends Controller
 
         if (\request()->filled('q')) {
             $name_condition = queryCondition('name', \request('q'));
-            $query = $query->where($name_condition);
+            $query->where($name_condition);
         }
 
-        $query = $query->orderBy($this->sortBy(), $this->order());
+        $query->orderBy($this->sortBy(), $this->order());
 
         $pagination = $query->paginate($perPage)->appends(request()->except('page'));
 

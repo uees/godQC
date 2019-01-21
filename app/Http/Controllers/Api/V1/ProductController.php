@@ -130,12 +130,15 @@ class ProductController extends Controller
         $this->authorize('updateTemplates', $product);
 
         $templates = request('templates');
+        $is_cancel_category_template = (boolean)request('cancel_category_template');
 
         if (is_null($templates)) {
             // clear templates
             $product->setMeta('templates', null);
+            $product->setMeta('cancel_category_template', false);
         } else {
             $product->setMeta('templates', $templates);
+            $product->setMeta('cancel_category_template', $is_cancel_category_template);
         }
 
         $product->save();

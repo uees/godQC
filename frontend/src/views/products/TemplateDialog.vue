@@ -6,6 +6,12 @@
       title="选择模板"
       @close="close">
 
+      <el-form class="small-space" label-position="right" label-width="120px">
+        <el-form-item label="取消分类模板">
+          <el-switch v-model="cancelCategoryTemplate"/>
+        </el-form-item>
+      </el-form>
+
       <el-table :data="templates" border fit highlight-current-row style="width: 100%">
         <el-table-column label="模板">
           <template slot-scope="scope">
@@ -66,7 +72,8 @@ export default {
       product: null,
       tableDataIndex: -1,
       visible: false,
-      templates: []
+      templates: [],
+      cancelCategoryTemplate: false
     }
   },
   mounted() {
@@ -108,7 +115,7 @@ export default {
     },
     submit() {
       this.clearData()
-      productUpdateTemplates(this.product.id, this.templates).then(response => {
+      productUpdateTemplates(this.product.id, this.templates, this.cancelCategoryTemplate).then(() => {
         this.$emit('template-updated', this.tableDataIndex, this.templates)
         this.close()
       })

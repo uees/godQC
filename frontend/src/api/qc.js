@@ -20,8 +20,8 @@ export function productSelectTestWay(product_id, test_way_id) {
   return request.post(`products/${product_id}/qc-ways`, { test_way_id })
 }
 
-export function productUpdateTemplates(product_id, templates) {
-  return request.post(`products/${product_id}/templates`, { templates })
+export function productUpdateTemplates(product_id, templates, cancel_category_template) {
+  return request.post(`products/${product_id}/templates`, { templates, cancel_category_template })
 }
 
 export function customerSelectProducts(customer_id, product_ids) {

@@ -195,7 +195,7 @@ export default {
     },
     handleUpdate(row) {
       this.updateIndex = this.tableData.indexOf(row)
-      this.propObj = Object.assign({}, row, this.queryParams) // 加载关系
+      this.propObj = Object.assign({}, this.queryParams, row) // 加载关系
       this.action = 'update'
     },
     testWayUpdated(index, testWay) {

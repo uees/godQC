@@ -16,7 +16,7 @@ class QCWayController extends Controller
 
         if (\request()->filled('q')) {
             $name_condition = queryCondition('name', \request('q'));
-            $query=$query->where($name_condition);
+            $query = $query->where($name_condition);
         }
 
         $query->orderBy($this->sortBy(), $this->order());
@@ -63,7 +63,7 @@ class QCWayController extends Controller
 
         $this->authorize('delete', $testWay);
 
-        if ($testWay->delete()){
+        if ($testWay->delete()) {
             return $this->noContent();
         }
 

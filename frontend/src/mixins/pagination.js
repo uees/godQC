@@ -1,5 +1,5 @@
 export default {
-  data () {
+  data() {
     return {
       total: 0,
       pageCount: 0,
@@ -12,16 +12,16 @@ export default {
   },
 
   methods: {
-    pagination (response) {
+    pagination(response) {
       const { meta } = response.data
       this.total = +meta.total
       this.pageCount = Math.ceil(this.total / this.queryParams.per_page)
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.queryParams.per_page = val
       this.fetchData()
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.queryParams.page = val
       this.fetchData()
     }

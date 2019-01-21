@@ -6,7 +6,11 @@
     </header>
     <!-- main section -->
     <section v-show="todos.length" class="main">
-      <input id="toggle-all" :checked="allChecked" class="toggle-all" type="checkbox" @change="toggleAll({ done: !allChecked })">
+      <input id="toggle-all"
+             :checked="allChecked"
+             class="toggle-all"
+             type="checkbox"
+             @change="toggleAll({ done: !allChecked })">
       <label for="toggle-all"/>
       <ul class="todo-list">
         <todo

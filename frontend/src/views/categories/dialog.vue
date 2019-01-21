@@ -76,7 +76,7 @@ export default {
     update() {
       this.$refs['obj_form'].validate(valid => {
         if (valid) {
-          const postData = Object.assign({}, this.obj, {with: 'testWay'})
+          const postData = Object.assign({}, this.obj, { with: 'testWay' })
           this.api.update(this.obj.id, postData).then(response => {
             const { data } = response.data
             this.obj = data

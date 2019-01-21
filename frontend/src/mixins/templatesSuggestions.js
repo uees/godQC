@@ -26,7 +26,7 @@ export default {
     },
     querySearchTemplates(queryString, cb) {
       const templates = this.templatesSuggestions.map(template => {
-        return {value: template, label: template}
+        return { value: template, label: template }
       })
 
       const results = queryString

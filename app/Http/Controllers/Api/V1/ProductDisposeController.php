@@ -106,7 +106,7 @@ class ProductDisposeController extends Controller
 
         $this->authorize('delete', $productDispose);
 
-        if ($productDispose->delete()){
+        if ($productDispose->delete()) {
             return $this->noContent();
         }
 

@@ -9,7 +9,7 @@ class ProductDisposeResource extends Resource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return array
      */
     public function toArray($request)
@@ -18,9 +18,9 @@ class ProductDisposeResource extends Resource
             'id' => (int)$this->id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'product_batch_id' => (int) $this->product_batch_id,
-            'from_record_id' => (int) $this->from_record_id,
-            'to_record_id' => (int) $this->to_record_id,
+            'product_batch_id' => (int)$this->product_batch_id,
+            'from_record_id' => (int)$this->from_record_id,
+            'to_record_id' => (int)$this->to_record_id,
             'method' => $this->method,
             'author' => $this->author,
             'memo' => $this->memo,

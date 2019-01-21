@@ -35,7 +35,7 @@ export default {
   props: {
     todo: {
       type: Object,
-      default: function() {
+      default: function () {
         return {}
       }
     }

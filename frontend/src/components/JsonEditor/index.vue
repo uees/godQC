@@ -9,6 +9,7 @@ import CodeMirror from 'codemirror'
 import 'codemirror/addon/lint/lint.css'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/rubyblue.css'
+
 require('script-loader!jsonlint')
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/addon/lint/lint'
@@ -55,18 +56,21 @@ export default {
 </script>
 
 <style scoped>
-.json-editor{
-  height: 100%;
-  position: relative;
-}
-.json-editor >>> .CodeMirror {
-  height: auto;
-  min-height: 300px;
-}
-.json-editor >>> .CodeMirror-scroll{
-  min-height: 300px;
-}
-.json-editor >>> .cm-s-rubyblue span.cm-string {
-  color: #F08047;
-}
+  .json-editor {
+    height: 100%;
+    position: relative;
+  }
+
+  .json-editor >>> .CodeMirror {
+    height: auto;
+    min-height: 300px;
+  }
+
+  .json-editor >>> .CodeMirror-scroll {
+    min-height: 300px;
+  }
+
+  .json-editor >>> .cm-s-rubyblue span.cm-string {
+    color: #F08047;
+  }
 </style>

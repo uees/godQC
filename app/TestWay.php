@@ -19,7 +19,7 @@ class TestWay extends Model
     public function newItem()
     {
         return [
-            'name'=> '',
+            'name' => '',
             'method' => '',
             'method_id' => '',
             'spec' => [

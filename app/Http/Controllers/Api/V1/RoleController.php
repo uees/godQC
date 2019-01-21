@@ -61,7 +61,7 @@ class RoleController extends Controller
 
         $this->authorize('delete', $role);
 
-        if ($role->delete()){
+        if ($role->delete()) {
             return $this->noContent();
         }
 

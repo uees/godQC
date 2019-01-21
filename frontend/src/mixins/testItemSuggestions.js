@@ -27,7 +27,7 @@ export default {
       })
 
       this.testItemSuggestions = testItems.map(suggest => {
-        return {value: suggest.name, label: suggest.name}
+        return { value: suggest.name, label: suggest.name }
       })
     },
     querySearchItems(queryString, cb) {

@@ -13,8 +13,8 @@ class TestMethodPolicy
     /**
      * Determine whether the user can view the testMethod.
      *
-     * @param  \App\User  $user
-     * @param  \App\TestMethod  $testMethod
+     * @param  \App\User $user
+     * @param  \App\TestMethod $testMethod
      * @return mixed
      */
     public function view(User $user, TestMethod $testMethod)
@@ -25,7 +25,7 @@ class TestMethodPolicy
     /**
      * Determine whether the user can create testMethods.
      *
-     * @param  \App\User  $user
+     * @param  \App\User $user
      * @return mixed
      */
     public function create(User $user)
@@ -36,8 +36,8 @@ class TestMethodPolicy
     /**
      * Determine whether the user can update the testMethod.
      *
-     * @param  \App\User  $user
-     * @param  \App\TestMethod  $testMethod
+     * @param  \App\User $user
+     * @param  \App\TestMethod $testMethod
      * @return mixed
      */
     public function update(User $user, TestMethod $testMethod)
@@ -48,8 +48,8 @@ class TestMethodPolicy
     /**
      * Determine whether the user can delete the testMethod.
      *
-     * @param  \App\User  $user
-     * @param  \App\TestMethod  $testMethod
+     * @param  \App\User $user
+     * @param  \App\TestMethod $testMethod
      * @return mixed
      */
     public function delete(User $user, TestMethod $testMethod)

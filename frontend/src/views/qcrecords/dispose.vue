@@ -77,7 +77,7 @@ export default {
       }
     },
     fetchData() {
-      productDisposeApi.detail(this.id, {params: {with: 'batch'}}).then(response => {
+      productDisposeApi.detail(this.id, { params: { with: 'batch' } }).then(response => {
         const { data } = response.data
         this.dispose = data
         // this.$route.meta.title = `${this.dispose.batch.batch_number} 处理方法`
@@ -91,20 +91,24 @@ export default {
   .main-context {
     padding: 20px 15px;
   }
+
   .author {
     font-size: 18px;
     color: #666;
     padding: 10px;
   }
+
   .time {
     font-size: 12px;
     color: #999;
     padding: 10px;
   }
+
   .batch {
     color: #666;
     padding: 10px;
   }
+
   .method {
     font-size: 20px;
     margin-top: 10px;
@@ -113,6 +117,7 @@ export default {
     background-color: #f7f7f7;
     padding: 20px 10px;
   }
+
   .link {
     text-decoration: underline;
     color: blue;

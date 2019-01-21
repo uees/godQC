@@ -13,8 +13,8 @@ class TestWayPolicy
     /**
      * Determine whether the user can view the testWay.
      *
-     * @param  \App\User  $user
-     * @param  \App\TestWay  $testWay
+     * @param  \App\User $user
+     * @param  \App\TestWay $testWay
      * @return mixed
      */
     public function view(User $user, TestWay $testWay)
@@ -25,7 +25,7 @@ class TestWayPolicy
     /**
      * Determine whether the user can create testWays.
      *
-     * @param  \App\User  $user
+     * @param  \App\User $user
      * @return mixed
      */
     public function create(User $user)
@@ -36,8 +36,8 @@ class TestWayPolicy
     /**
      * Determine whether the user can update the testWay.
      *
-     * @param  \App\User  $user
-     * @param  \App\TestWay  $testWay
+     * @param  \App\User $user
+     * @param  \App\TestWay $testWay
      * @return mixed
      */
     public function update(User $user, TestWay $testWay)
@@ -48,8 +48,8 @@ class TestWayPolicy
     /**
      * Determine whether the user can delete the testWay.
      *
-     * @param  \App\User  $user
-     * @param  \App\TestWay  $testWay
+     * @param  \App\User $user
+     * @param  \App\TestWay $testWay
      * @return mixed
      */
     public function delete(User $user, TestWay $testWay)

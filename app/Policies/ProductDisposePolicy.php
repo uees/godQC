@@ -13,8 +13,8 @@ class ProductDisposePolicy
     /**
      * Determine whether the user can view the productDispose.
      *
-     * @param  \App\User  $user
-     * @param  \App\ProductDispose  $productDispose
+     * @param  \App\User $user
+     * @param  \App\ProductDispose $productDispose
      * @return mixed
      */
     public function view(User $user, ProductDispose $productDispose)
@@ -25,7 +25,7 @@ class ProductDisposePolicy
     /**
      * Determine whether the user can create productDisposes.
      *
-     * @param  \App\User  $user
+     * @param  \App\User $user
      * @return mixed
      */
     public function create(User $user)
@@ -36,8 +36,8 @@ class ProductDisposePolicy
     /**
      * Determine whether the user can update the productDispose.
      *
-     * @param  \App\User  $user
-     * @param  \App\ProductDispose  $productDispose
+     * @param  \App\User $user
+     * @param  \App\ProductDispose $productDispose
      * @return mixed
      */
     public function update(User $user, ProductDispose $productDispose)
@@ -48,8 +48,8 @@ class ProductDisposePolicy
     /**
      * Determine whether the user can delete the productDispose.
      *
-     * @param  \App\User  $user
-     * @param  \App\ProductDispose  $productDispose
+     * @param  \App\User $user
+     * @param  \App\ProductDispose $productDispose
      * @return mixed
      */
     public function delete(User $user, ProductDispose $productDispose)

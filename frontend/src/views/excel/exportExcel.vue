@@ -3,11 +3,17 @@
   <div class="app-container">
 
     <div>
-      <FilenameOption v-model="filename" />
-      <AutoWidthOption v-model="autoWidth" />
-      <BookTypeOption v-model="bookType" />
-      <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;" type="primary" icon="document" @click="handleDownload">{{ $t('excel.export') }} Excel</el-button>
-      <a href="https://panjiachen.github.io/vue-element-admin-site/feature/component/excel.html" target="_blank" style="margin-left:15px;">
+      <FilenameOption v-model="filename"/>
+      <AutoWidthOption v-model="autoWidth"/>
+      <BookTypeOption v-model="bookType"/>
+      <el-button :loading="downloadLoading"
+                 style="margin:0 0 20px 20px;"
+                 type="primary"
+                 icon="document"
+                 @click="handleDownload">{{ $t('excel.export') }} Excel
+      </el-button>
+      <a href="https://panjiachen.github.io/vue-element-admin-site/feature/component/excel.html" target="_blank"
+         style="margin-left:15px;">
         <el-tag type="info">Documentation</el-tag>
       </a>
     </div>
@@ -107,11 +113,11 @@ export default {
 </script>
 
 <style>
-.radio-label {
-  font-size: 14px;
-  color: #606266;
-  line-height: 40px;
-  padding: 0 12px 0 30px;
-}
+  .radio-label {
+    font-size: 14px;
+    color: #606266;
+    line-height: 40px;
+    padding: 0 12px 0 30px;
+  }
 </style>
 

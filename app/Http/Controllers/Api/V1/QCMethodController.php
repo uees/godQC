@@ -66,7 +66,7 @@ class QCMethodController extends Controller
 
         $this->authorize('delete', $testMethod);
 
-        if ($testMethod->delete()){
+        if ($testMethod->delete()) {
             return $this->noContent();
         }
 

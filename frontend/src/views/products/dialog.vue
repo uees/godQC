@@ -75,7 +75,7 @@ import { productApi } from '@/api/basedata'
 
 export function newObj() {
   return {
-    id: 0,
+    id: null,
     category_id: 1, // 默认ID 1 是 `未分类`
     internal_name: '',
     market_name: '',

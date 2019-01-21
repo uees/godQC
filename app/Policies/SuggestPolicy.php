@@ -13,8 +13,8 @@ class SuggestPolicy
     /**
      * Determine whether the user can view the suggest.
      *
-     * @param  \App\User  $user
-     * @param  \App\Suggest  $suggest
+     * @param  \App\User $user
+     * @param  \App\Suggest $suggest
      * @return mixed
      */
     public function view(User $user, Suggest $suggest)
@@ -25,7 +25,7 @@ class SuggestPolicy
     /**
      * Determine whether the user can create suggests.
      *
-     * @param  \App\User  $user
+     * @param  \App\User $user
      * @return mixed
      */
     public function create(User $user)
@@ -36,8 +36,8 @@ class SuggestPolicy
     /**
      * Determine whether the user can update the suggest.
      *
-     * @param  \App\User  $user
-     * @param  \App\Suggest  $suggest
+     * @param  \App\User $user
+     * @param  \App\Suggest $suggest
      * @return mixed
      */
     public function update(User $user, Suggest $suggest)
@@ -48,8 +48,8 @@ class SuggestPolicy
     /**
      * Determine whether the user can delete the suggest.
      *
-     * @param  \App\User  $user
-     * @param  \App\Suggest  $suggest
+     * @param  \App\User $user
+     * @param  \App\Suggest $suggest
      * @return mixed
      */
     public function delete(User $user, Suggest $suggest)

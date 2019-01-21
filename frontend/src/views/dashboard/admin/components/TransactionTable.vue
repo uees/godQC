@@ -41,7 +41,7 @@ export default {
   methods: {
     fetchData() {
       categoryApi.list().then(response => {
-        const {data} = response.data
+        const { data } = response.data
         this.list = data
       })
     }

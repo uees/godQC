@@ -67,7 +67,7 @@ class ProductBatchController extends Controller
 
         $this->authorize('delete', $productBatch);
 
-        if ($productBatch->delete()){
+        if ($productBatch->delete()) {
             return $this->noContent();
         }
 

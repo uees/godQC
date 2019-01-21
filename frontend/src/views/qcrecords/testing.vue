@@ -118,7 +118,9 @@
             style="color: red"
             @click="handleMakeDispose(scope.row)">处理意见
           </el-button>
-          <el-button v-if="scope.row.said_package_at" type="text" size="small" @click="handleCancelSayPackage(scope)">取消写装</el-button>
+          <el-button v-if="scope.row.said_package_at" type="text" size="small" @click="handleCancelSayPackage(scope)">
+            取消写装
+          </el-button>
           <el-button v-else type="text" size="small" @click="handleSayPackage(scope)">写装</el-button>
           <el-button type="text" size="small" @click="handleArchive(scope)">归档</el-button>
           <el-button type="text" size="small" @click="handleShowRecordEditForm(scope)">编辑</el-button>

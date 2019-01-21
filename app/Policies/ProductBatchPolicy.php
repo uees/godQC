@@ -13,8 +13,8 @@ class ProductBatchPolicy
     /**
      * Determine whether the user can view the productBatch.
      *
-     * @param  \App\User  $user
-     * @param  \App\ProductBatch  $productBatch
+     * @param  \App\User $user
+     * @param  \App\ProductBatch $productBatch
      * @return mixed
      */
     public function view(User $user, ProductBatch $productBatch)
@@ -25,7 +25,7 @@ class ProductBatchPolicy
     /**
      * Determine whether the user can create productBatches.
      *
-     * @param  \App\User  $user
+     * @param  \App\User $user
      * @return mixed
      */
     public function create(User $user)
@@ -36,8 +36,8 @@ class ProductBatchPolicy
     /**
      * Determine whether the user can update the productBatch.
      *
-     * @param  \App\User  $user
-     * @param  \App\ProductBatch  $productBatch
+     * @param  \App\User $user
+     * @param  \App\ProductBatch $productBatch
      * @return mixed
      */
     public function update(User $user, ProductBatch $productBatch)
@@ -48,8 +48,8 @@ class ProductBatchPolicy
     /**
      * Determine whether the user can delete the productBatch.
      *
-     * @param  \App\User  $user
-     * @param  \App\ProductBatch  $productBatch
+     * @param  \App\User $user
+     * @param  \App\ProductBatch $productBatch
      * @return mixed
      */
     public function delete(User $user, ProductBatch $productBatch)

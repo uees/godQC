@@ -60,7 +60,7 @@ class AuthController extends Controller
     public function logout()
     {
         $token = \Auth::guard('api')->user()->token();
-        if ($token->delete()){
+        if ($token->delete()) {
             \DB::table('oauth_refresh_tokens')
                 ->where('access_token_id', $token->id)
                 ->delete();

@@ -67,20 +67,22 @@ export default {
 </script>
 
 <style scoped>
-.bug-btn.el-button--small {
-  padding: 9px 10px;
-}
-.bug-svg {
-  width: 1em;
-  height: 1em;
-  vertical-align: -0.15em;
-  fill: currentColor;
-  overflow: hidden;
-}
-.message-title {
-  font-size: 16px;
-  color: #333;
-  font-weight: bold;
-  padding-right: 8px;
-}
+  .bug-btn.el-button--small {
+    padding: 9px 10px;
+  }
+
+  .bug-svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+  }
+
+  .message-title {
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
+    padding-right: 8px;
+  }
 </style>

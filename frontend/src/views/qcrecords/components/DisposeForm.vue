@@ -76,7 +76,7 @@ export default {
   },
   mounted() {
     Bus.$on('show-dispose-form', (record) => {
-      productDisposeApi.list({params: {from_record_id: record.id, all: 1}}).then(response => {
+      productDisposeApi.list({ params: { from_record_id: record.id, all: 1 } }).then(response => {
         const { data } = response.data
         this.dialogFormVisible = true
         if (data.length && data.length > 0) {

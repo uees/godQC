@@ -69,7 +69,7 @@ class CustomerController extends Controller
 
         $this->authorize('delete', $customer);
 
-        if($customer->delete()) {
+        if ($customer->delete()) {
             return $this->noContent();
         }
 
@@ -81,7 +81,7 @@ class CustomerController extends Controller
         $this->authorize('update', $customer);
 
         $product_ids = request('product_ids', []);
-        $product_ids = is_array($product_ids)? $product_ids : explode(',', $product_ids);
+        $product_ids = is_array($product_ids) ? $product_ids : explode(',', $product_ids);
 
         $customer->products()->sync($product_ids);
 

@@ -7,25 +7,31 @@
         class="filter-item"
         placeholder="搜索"
         @keyup.enter.native="handleSearch"/>
+      <el-select
+        v-model="queryParams.category_id"
+        clearable
+        class="filter-item"
+        placeholder="类别"
+        @change="fetchData"
+      >
+        <el-option
+          v-for="category in categories"
+          :label="category.name"
+          :value="category.id"
+          :key="category.id"
+        />
+      </el-select>
       <el-button
         class="filter-item"
         type="primary"
         icon="el-icon-search"
-        @click="handleSearch">搜索
-      </el-button>
+        @click="handleSearch"/>
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate">添加
-      </el-button>
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-refresh"
-        @click="fetchData">刷新
       </el-button>
       <el-button
         class="filter-item"
@@ -125,6 +131,7 @@
 <script>
 import list from '@/mixins/list'
 import pagination from '@/mixins/pagination'
+import queryCategory from '@/mixins/queryCategory'
 import { productApi } from '@/api/basedata'
 import FormDialog from './dialog'
 import SelectWay from './SelectWay'
@@ -141,6 +148,7 @@ export default {
     SelectWay
   },
   mixins: [
+    queryCategory,
     list,
     pagination,
     echoTimeMethod
@@ -149,6 +157,7 @@ export default {
     return {
       api: productApi,
       queryParams: {
+        category_id: '',
         with: 'category,testWay'
       }
     }

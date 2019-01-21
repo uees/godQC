@@ -24,34 +24,35 @@ class QCRecordController extends Controller
         $query = TestRecord::query();
 
         if (\request()->filled('with')) {
-            $query = $query->with(explode(',', request('with')));
+            $query->with(explode(',', request('with')));
         }
 
-        $query = $this->parseFields($query);
-        $query = $this->parseWhere($query, ['conclusion', 'show_reality', 'test_times', 'created_at']);
+        $this->parseFields($query);
+        $this->parseWhere($query, ['conclusion', 'show_reality', 'test_times', 'created_at']);
 
         if (request('said_package') == '1') {
-            $query = $query->whereNotNull('said_package_at');
+            $query->whereNotNull('said_package_at');
         } elseif (request('said_package') == '0') {
-            $query = $query->whereNull('said_package_at');
+            $query->whereNull('said_package_at');
         }
 
         if (\request()->filled('testing')) {
-            $query = $query->where('is_archived', 0);
+            $query->where('is_archived', 0);
         } elseif (\request()->filled('tested')) {
-            $query = $query->where('is_archived', 1);
+            $query->where('is_archived', 1);
         }
 
         if (\request()->filled('type')) {
-            $query = $query->whereHas('batch', function (Builder $query) {
+            $query->whereHas('batch', function (Builder $query) {
                 $query->where('type', \request('type'));
             });
         }
 
         // 类别筛选支持
-        if (\request('category')) {
-            if ($category = Category::where('name', \request('category'))->first()) {
-                $query = $query->whereHas('batch', function (Builder $query) use ($category) {
+        $categoryId = \request('category');
+        if ($categoryId && $categoryId != '0') {
+            if ($category = Category::where('id', $categoryId)->first()) {
+                $query->whereHas('batch', function (Builder $query) use ($category) {
                     $products = $category->products->pluck('internal_name');
                     $query->whereIn('product_name', $products);
                 });
@@ -60,7 +61,7 @@ class QCRecordController extends Controller
 
         if (\request()->filled('q')) {
             $memo_condition = queryCondition('memo', \request('q'));
-            $query = $query->where($memo_condition)
+            $query->where($memo_condition)
                 ->orWhereHas('batch', function (Builder $query) {
                     $name_condition = queryCondition('product_name', \request('q'));
                     $batch_condition = queryCondition('batch_number', \request('q'));
@@ -70,7 +71,7 @@ class QCRecordController extends Controller
                 });
         }
 
-        $query = $query->orderBy($this->sortBy(), $this->order());
+        $query->orderBy($this->sortBy(), $this->order());
 
         if (\request()->filled('all')) {
             $records = $query->get();

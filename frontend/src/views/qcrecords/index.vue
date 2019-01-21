@@ -15,6 +15,7 @@
         filterable
         clearable
         default-first-option
+        class="filter-item"
         style="margin-left: 10px;"
         placeholder="请选择要列表展示的项目">
         <el-option
@@ -55,7 +56,7 @@
         <el-option
           v-for="category in categories"
           :label="category.name"
-          :value="category.name"
+          :value="category.id"
           :key="category.id"
         />
       </el-select>
@@ -254,7 +255,7 @@ export default {
         tested: 1,
         q: '',
         conclusion: '',
-        category: '',
+        category: '', // category id
         show_reality: '',
         created_at: ''
       },

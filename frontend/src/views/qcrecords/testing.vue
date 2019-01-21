@@ -22,7 +22,7 @@
         filterable
         clearable
         default-first-option
-        style="margin-left: 10px;"
+        class="filter-item"
         placeholder="请选择要列表展示的项目">
         <el-option
           v-for="item in testItemSuggestions"
@@ -34,7 +34,7 @@
       <el-select
         v-model="queryParams.said_package"
         clearable
-        style="margin-left: 10px;"
+        class="filter-item"
         placeholder="是否写装"
         @change="fetchData"
         @clear="fetchData"

@@ -10,19 +10,21 @@ use App\TestWay;
 
 class ProductController extends Controller
 {
-    // sort_by,order,with,q
+    // sort_by,order,with,q,category_id
     public function index()
     {
         $perPage = $this->perPage();
         $query = Product::query();
 
         if (\request()->filled('with')) {
-            $query = $query->with(explode(',', request('with')));
+            $query->with(explode(',', request('with')));
         }
 
-        if (\request()->filled('q')) {
-            $internal_name_condition = queryCondition('internal_name', \request('q'));
-            $query = $query->where($internal_name_condition);
+        $this->parseWhere($query, ['category_id']);
+
+        if ($search = \request()->get('q')) {
+            $condition = queryCondition('internal_name', $search);
+            $query->where($condition);
         }
 
         $pagination = $query->orderBy($this->sortBy(), $this->order())

@@ -197,7 +197,12 @@ export default {
     },
     templateUpdated(index, templates) {
       const product = this.tableData[index]
-      product.metas.templates = templates
+
+      if (product.metas) {
+        product.metas.templates = templates
+      } else {
+        product.metas = { templates }
+      }
 
       this.tableData.splice(index, 1, product)
     },

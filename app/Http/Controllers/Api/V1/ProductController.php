@@ -43,9 +43,7 @@ class ProductController extends Controller
 
         // 加载关系
         if ($request->filled('with')) {
-            foreach (explode(',', $request->get('with')) as $ref) {
-                $product->{$ref};
-            }
+            $product->load(explode(',', request('with')));
         }
 
         return ProductResource::make($product);
@@ -76,9 +74,7 @@ class ProductController extends Controller
 
         // 加载关系
         if ($request->filled('with')) {
-            foreach (explode(',', $request->get('with')) as $ref) {
-                $product->{$ref};
-            }
+            $product->load(explode(',', request('with')));
         }
 
         return ProductResource::make($product);

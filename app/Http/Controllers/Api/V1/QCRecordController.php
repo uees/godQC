@@ -233,10 +233,8 @@ class QCRecordController extends Controller
 
         $testRecord->items()->createMany($items);
 
-
         // loading relationships
-        $testRecord->batch;
-        $testRecord->items;
+        $testRecord->load(['batch', 'items']);
 
         // 触发事件
         event(new QCSampled($batch, $testRecord));

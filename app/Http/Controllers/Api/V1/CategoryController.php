@@ -65,6 +65,10 @@ class CategoryController extends Controller
         $category->fill($request->only(['name', 'slug', 'memo']))
             ->save();
 
+        if (\request()->filled('with')) {
+            $category->load(explode(',', request('with')));
+        }
+
         return CategoryResource::make($category);
     }
 

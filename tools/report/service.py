@@ -1,1 +1,72 @@
 # -- coding: utf-8 -*-
+from datetime import datetime
+
+from models.base import db_session
+from models.product import Product
+from models.qc_record import QCRecord
+
+
+def get_record_by_id(record_id):
+    return QCRecord.query.filter_by(id=record_id).first()
+
+
+def get_product_by_internal_name(internal_name):
+    return Product.query.filter_by(internal_name=internal_name).first()
+
+
+def get_record_product(record):
+    product_name = record.product_batch.product_name
+    return get_product_by_internal_name(product_name)
+
+
+def get_product_templates(product):
+    category = product.category
+
+    category_metas = category.metas
+    product_metas = product.metas
+
+    templates = []
+
+    if hasattr(category_metas, "templates"):
+        templates = category_metas.templates
+
+    if hasattr(product_metas, "cancel_category_template") and product_metas.cancel_category_template:
+        templates = product_metas.templates
+    else:
+        templates = _merge_templates(product_metas.templates, templates)
+
+    return templates
+
+
+def _merge_templates(templates1, templates2):
+    result = templates1
+
+    for template in templates2:
+        if not _has_template(templates1, template):
+            result.append(template)
+
+    return result
+
+
+def _has_template(templates, template):
+    for element in templates:
+        if element.name == template.name:
+            return True
+
+    return False
+
+
+def set_record_reported(record):
+    metas = record.metas
+
+    if not metas:
+        metas = {}
+
+    metas.has_report = True
+    metas.report_date = datetime.strftime(datetime.now(), '%Y-%m-%d')
+
+    record.metas = metas
+    db_session.add(record)
+
+    # 不自动提交会话
+    # db_session.commit()

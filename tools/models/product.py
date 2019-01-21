@@ -1,14 +1,15 @@
 # -- coding: utf-8 -*-
 
-from sqlalchemy import (TIMESTAMP, Column, ForeignKey, Integer, String, Text,
-                        text)
+from sqlalchemy import TIMESTAMP, Column, ForeignKey, Integer, String, text
 from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import relationship
+from DictObject import DictObject
 
 from .base import Base
+from .mixins import MetaMixin
 
 
-class Product(Base):
+class Product(Base, MetaMixin):
 
     __tablename__ = 'products'
     __table_args__ = {
@@ -26,8 +27,10 @@ class Product(Base):
     spec = Column(String(32), nullable=True)
     label_viscosity = Column(String(32), nullable=True)
     viscosity_width = Column(String(32), nullable=True)
-    metas = Column(Text, nullable=True)  # part a and b viscosity, template
     created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('CURRENT_TIMESTAMP'))
     updated_at = Column(TIMESTAMP(True), nullable=True)
 
     category = relationship("Category", back_populates="products")
+
+    def to_dict(self):
+        return DictObject({c.name: getattr(self, c.name) for c in self.__table__.columns})

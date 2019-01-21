@@ -22,3 +22,4 @@ REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
 
 REPORTS_ROOT = os.path.join(ROOT_PATH, '../storage/app/public/reports')
 TEMPLATES_ROOT = os.path.join(ROOT_PATH, 'basedata/templates')
+SPA_ROOT = os.path.join(ROOT_PATH, 'basedata/spa')

@@ -1,38 +1,104 @@
 # -*- coding:utf-8 -*-
 import os
+import random
+from datetime import datetime
+from glob import glob
 
-from DictObject import DictObject
+from celery.utils.log import get_task_logger
 
+from settings import SPA_ROOT, TEMPLATES_ROOT
+
+from . import service
 from .common import today_reports_root
+from .pdf import add_watermark, create_watermark
+from .word import WordTemplate
+
+logger = get_task_logger(__name__)
 
 
 class Generator(object):
     """ 检验报告生成器 """
 
-    def __init__(self, product):
+    def __init__(self, record):
         self.reports_root = today_reports_root()
-        self.product = product
+        self.record = record
+        self.product = service.get_record_product(self.record)
 
     def generate_report(self):
-        pass
+        templates = self.get_templates()
 
-    def report_filename(self):
-        pass
+        for template in templates:
+            if template.name == 'pdf':
+                if not hasattr(template.options, "templates_dir"):
+                    continue
 
-    def unique_filepath(self, path, filename, ext):
-        """ 检查并生成唯一的文件名 """
-        filepath = '%s/%s.%s' % (path, filename, ext)
-        if os.path.exists(filepath):
-            filename = '%s(1)' % filename
-            return self.unique_filename(path, filename, ext)
+                self.generate_pdf(template.options.templates_dir)
 
-        return filepath
+            template_path = self.get_template_path(template.name)
+            context = self.make_context(template)
+            tp = WordTemplate(template_path)
+            tp.replace(context)
 
-    def make_context(self):
-        return DictObject()
+            if hasattr(template.options, "customers") and template.options.customers.find("深南") >= 0:
+                report_file = self.report_filename_sn(template)
+            else:
+                report_file = self.report_filename(template)
+
+            if os.path.exists(report_file):
+                logger.warning("{}已经存在了".format(report_file))
+            else:
+                tp.save(report_file)
+
+    def generate_pdf(self, templates_dir=None):
+        basename = self.product.market_name.replace(' ', '')
+
+        if not templates_dir:
+            templates_dir = basename
+
+        files = glob("*.pdf")
+        f_name = random.choice(files)
+        f_path = os.path.join(SPA_ROOT, os.path.join(templates_dir, f_name))
+
+        out_f_name = '%s-%s.pdf' % (basename, self.record.product_batch.batch_number)
+        out_f_path = os.path.join(self.reports_root, out_f_name)
+
+        watermark = create_watermark(out_f_name, SPA_ROOT)
+        add_watermark(watermark, f_path, out_f_path)
+
+    def report_filename(self, template):
+        batch = self.record.product_batch
+        tips = '_'.join(template.tips)
+        _, extension = os.path.splitext(template.name)
+
+        filename = '{}_{}_{}.{}'.format(batch.batch_number, self.product.internal_name, tips, extension)
+
+        return os.path.join(self.reports_root, filename)
+
+    def report_filename_sn(self, template):
+        qc_date = datetime.strftime(datetime.now(), '%Y%m%d')
+        tips = '_'.join(template.tips)
+        _, extension = os.path.splitext(template.name)
+
+        filename = '{}_{}_{}容大{}COC.{}'.format(
+            self.record.product_batch.batch_number,
+            tips,
+            qc_date,
+            self.product.market_name,
+            extension
+        )
+        return os.path.join(self.reports_root, filename)
+
+    def make_context(self, template):
+        context = self.product.to_dict()
+        context['qc_date'] = datetime.strftime(datetime.now(), '%Y/%m/%d')
+        context['ftir'] = '{}%'.format(round(random.uniform(99.1, 99.8), 2))
+
+        # todo template.options merge
+
+        return context
 
     def get_templates(self):
-        return []
+        return service.get_product_templates(self.product)
 
-    def get_template_path(self):
-        pass
+    def get_template_path(self, template_file):
+        return os.path.join(TEMPLATES_ROOT, template_file)

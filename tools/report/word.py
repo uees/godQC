@@ -22,7 +22,6 @@ class WordTemplate(object):
                     run.add_text(replaced)
                     needCheck = False
             if needCheck:
-                # print sformat, " is not checked in ", paragraph.text
                 start_idx = 0
                 end_idx = 0
                 complete_word = ""
@@ -38,7 +37,6 @@ class WordTemplate(object):
                         if run.text == "}":
                             replaced = complete_word.replace(search_word, content)
                             broken_keys.append((start_idx, end_idx, replaced))
-                    # print ":::", run.text
                     i = i + 1
 
                 for (start_idx, end_idx, replaced) in broken_keys:
@@ -46,7 +44,6 @@ class WordTemplate(object):
                         if start_idx <= run_idx and run_idx <= end_idx:
                             run = run.clear()
                         if run_idx == end_idx:
-                            # print "))", replaced
                             run.add_text(replaced)
 
     def replace(self, filter_format):

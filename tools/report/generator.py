@@ -24,30 +24,31 @@ class Generator(object):
         self.record = record
         self.product = service.get_record_product(self.record)
 
-    def generate_report(self):
+    def run(self):
         templates = self.get_templates()
 
         for template in templates:
-            if template.name == 'pdf':
-                if not hasattr(template.options, "templates_dir"):
-                    continue
+            if template.get("name") == 'pdf':
+                options = template.get("options") if isinstance(template.get("options"), dict) else {}
+                templates_dir = options.get("templates_dir")
+                if templates_dir:
+                    self.generate_pdf(templates_dir)
 
-                self.generate_pdf(template.options.templates_dir)
-
-            template_path = self.get_template_path(template.name)
-            context = self.make_context(template)
-            tp = WordTemplate(template_path)
-            tp.replace(context)
-
-            if hasattr(template.options, "customers") and template.options.customers.find("深南") >= 0:
-                report_file = self.report_filename_sn(template)
             else:
-                report_file = self.report_filename(template)
+                self.generate_report(template)
 
-            if os.path.exists(report_file):
-                logger.warning("{}已经存在了".format(report_file))
-            else:
-                tp.save(report_file)
+    def generate_report(self, template):
+        template_path = self.get_template_path(template.get("name"))
+        context = self.make_context(template)
+
+        tp = WordTemplate(template_path)
+        tp.replace(context)
+
+        report_file = self.report_filename(template)
+        if os.path.exists(report_file):
+            logger.warning("{}已经存在了".format(report_file))
+        else:
+            tp.save(report_file)
 
     def generate_pdf(self, templates_dir=None):
         basename = self.product.market_name.replace(' ', '')
@@ -66,26 +67,24 @@ class Generator(object):
         add_watermark(watermark, f_path, out_f_path)
 
     def report_filename(self, template):
-        batch = self.record.product_batch
-        tips = '_'.join(template.tips)
-        _, extension = os.path.splitext(template.name)
-
-        filename = '{}_{}_{}.{}'.format(batch.batch_number, self.product.internal_name, tips, extension)
-
-        return os.path.join(self.reports_root, filename)
-
-    def report_filename_sn(self, template):
         qc_date = datetime.strftime(datetime.now(), '%Y%m%d')
-        tips = '_'.join(template.tips)
-        _, extension = os.path.splitext(template.name)
+        batch = self.record.product_batch
 
-        filename = '{}_{}_{}容大{}COC.{}'.format(
-            self.record.product_batch.batch_number,
-            tips,
-            qc_date,
-            self.product.market_name,
-            extension
-        )
+        tips = template.get("tips")
+        if isinstance(tips, list):
+            tips = '-'.join(tips)
+
+        _, extension = os.path.splitext(template.get("name"))
+
+        name = '_'.join([batch.batch_number, self.product.internal_name, tips])
+
+        options = template.get("options") if isinstance(template.get("options"), dict) else {}
+        if options.get("customers", "").find("深南") >= 0:
+            flag = "{}容大{}COC_{}".format(qc_date, self.product.market_name, batch.batch_number)
+            filename = "{}_{}{}".format(name, flag, extension)
+        else:
+            filename = '{}{}'.format(name, extension)
+
         return os.path.join(self.reports_root, filename)
 
     def make_context(self, template):
@@ -93,7 +92,7 @@ class Generator(object):
         context['qc_date'] = datetime.strftime(datetime.now(), '%Y/%m/%d')
         context['ftir'] = '{}%'.format(round(random.uniform(99.1, 99.8), 2))
 
-        # todo template.options merge
+        # todo template.get("options", {}) merge
 
         return context
 

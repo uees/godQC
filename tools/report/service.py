@@ -20,20 +20,17 @@ def get_record_product(record):
 
 
 def get_product_templates(product):
-    category = product.category
-
-    category_metas = category.metas
+    category_metas = product.category.metas
     product_metas = product.metas
 
     templates = []
-
-    if hasattr(category_metas, "templates"):
-        templates = category_metas.templates
+    category_templates = category_metas.get("templates", []) if isinstance(category_metas, dict) else []
+    product_templates = product_metas.get("templates", []) if isinstance(product_metas, dict) else []
 
     if hasattr(product_metas, "cancel_category_template") and product_metas.cancel_category_template:
-        templates = product_metas.templates
+        templates = product_templates
     else:
-        templates = _merge_templates(product_metas.templates, templates)
+        templates = _merge_templates(category_templates, product_templates)
 
     return templates
 

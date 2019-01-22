@@ -10,7 +10,7 @@ class QCMethod(Base):
 
     __tablename__ = 'test_methods'
     __table_args__ = {
-        "mysql_charset": "utf8mb4"
+        "mysql_charset": "utf8"
     }
 
     id = Column(Integer, primary_key=True, autoincrement=True)

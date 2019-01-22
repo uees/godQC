@@ -3,7 +3,6 @@
 from sqlalchemy import TIMESTAMP, Column, ForeignKey, Integer, String, text
 from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import relationship
-from DictObject import DictObject
 
 from .base import Base
 from .mixins import MetaMixin
@@ -13,7 +12,7 @@ class Product(Base, MetaMixin):
 
     __tablename__ = 'products'
     __table_args__ = {
-        "mysql_charset": "utf8mb4"
+        "mysql_charset": "utf8"
     }
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -33,4 +32,4 @@ class Product(Base, MetaMixin):
     category = relationship("Category", back_populates="products")
 
     def to_dict(self):
-        return DictObject({c.name: getattr(self, c.name) for c in self.__table__.columns})
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}

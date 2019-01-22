@@ -11,7 +11,7 @@ class Category(Base, MetaMixin):
     __tablename__ = 'categories'
 
     __table_args__ = {
-        "mysql_charset": "utf8mb4"
+        "mysql_charset": "utf8"
     }
 
     id = Column(Integer, primary_key=True, autoincrement=True)

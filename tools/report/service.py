@@ -35,14 +35,13 @@ def get_product_templates(product):
     return templates
 
 
-def _merge_templates(templates1, templates2):
-    result = templates1
+def _merge_templates(category_templates, product_templates):
+    """ 模板合并, product_templates 会覆盖 category_templates 中的同名项 """
+    for template in category_templates:
+        if not _has_template(product_templates, template):
+            product_templates.append(template)
 
-    for template in templates2:
-        if not _has_template(templates1, template):
-            result.append(template)
-
-    return result
+    return product_templates
 
 
 def _has_template(templates, template):

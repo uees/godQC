@@ -13,5 +13,5 @@ def make_report(record_id):
     record = get_record_by_id(record_id)
     product_batch = record.product_batch
     generator = Generator(record)
-    generator.generate_report()
+    generator.run()
     logger.info('生成报告： {}_{}'.format(product_batch.product_name, product_batch.batch_number))

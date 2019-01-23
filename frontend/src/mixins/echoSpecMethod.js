@@ -3,7 +3,9 @@ export default {
     echoSpec(spec) {
       if (spec.value_type === 'INFO' || spec.value_type === 'NUMBER') {
         return spec.data.value
-      } else if (spec.value_type === 'RANGE') {
+      }
+
+      if (spec.value_type === 'RANGE') {
         let result = ''
         if (spec.data.min) {
           result += `≥ ${spec.data.min}, `
@@ -13,6 +15,15 @@ export default {
         }
 
         return result
+      }
+
+      if (spec.value_type === 'ONLY_SHOW') {
+        // value is "要求|结果值"
+        const tmpArr = spec.data.value.split('|')
+        if (tmpArr.length > 0) {
+          return tmpArr[0]
+        }
+        return ''
       }
     }
   }

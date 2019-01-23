@@ -139,6 +139,7 @@ class ProductController extends Controller
             $product->setMeta('templates', null);
             $product->setMeta('cancel_category_template', false);
         } else {
+            $templates = is_array($templates) ? $templates : json_decode($templates);
             $product->setMeta('templates', $templates);
             $product->setMeta('cancel_category_template', $is_cancel_category_template);
         }

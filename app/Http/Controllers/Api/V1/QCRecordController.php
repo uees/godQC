@@ -193,9 +193,11 @@ class QCRecordController extends Controller
         }
 
         // step 2. 创建空白检测表单
-        $testRecord = (new TestRecord());
+        $testRecord = new TestRecord();
 
         $batch->testRecords()->save($testRecord);
+        // 触发事件
+        event(new QCSampled($batch, $testRecord));
 
         // step 3. 创建检测项目
         $test_way = $this->makeTestWay($product);
@@ -204,8 +206,25 @@ class QCRecordController extends Controller
         foreach ($test_way as $item) {
             if ($item['spec']['value_type'] == 'ONLY_SHOW') {
 
+                // 混合粘度
+                if ($item['name'] == "混合粘度") {
+                    $item['spec']['data']['value'] = '|PASS';
+
+                    if ($label_viscosity = (int)$product->label_viscosity) {
+                        $viscosity_width = (int)$product->viscosity_width ?: 5;
+                        if ($viscosity_width > 10) {
+                            $viscosity_width = 10;
+                        }
+
+                        $viscosity = random_int($label_viscosity - $viscosity_width, $label_viscosity + $viscosity_width);
+
+                        $item['spec']['data']['value'] = $product->label_viscosity . '±' . $product->viscosity_width . '|' . $viscosity;
+                    }
+                }
+
                 if (isset($item['spec']['data']['value']) && $item['spec']['data']['value']) {
-                    $value = $item['spec']['data']['value'];
+                    $tmpArr = explode('|', $item['spec']['data']['value']);
+                    $value = count($tmpArr) > 1 ? $tmpArr[1] : 'PASS';
                 } elseif (isset($item['spec']['data']['min']) && $item['spec']['data']['min']) {
                     $value = $item['spec']['data']['min'];
                 } elseif (isset($item['spec']['data']['max']) && $item['spec']['data']['max']) {
@@ -230,15 +249,12 @@ class QCRecordController extends Controller
         }
 
         // 更新粘度值
-        $this->appendNiandu($items);
+        $this->modifyNiandu($items);
 
         $testRecord->items()->createMany($items);
 
         // loading relationships
         $testRecord->load(['batch', 'items']);
-
-        // 触发事件
-        event(new QCSampled($batch, $testRecord));
 
         return TestRecordResource::make($testRecord);
     }
@@ -247,20 +263,9 @@ class QCRecordController extends Controller
     {
         $this->authorize('update', $testRecord);
 
-        /*
-        $notDone = $testRecord->items()
-            ->where(function ($query) {
-                $query->whereNull('value')->orWhere('value', '');
-            })
-            ->where(function ($query) {
-                $query->whereNull('conclusion')->orWhere('conclusion', '');
-            })
-            ->exists();
-
-        if ($notDone) {
-            return $this->failed('检测未完成， 不能归档');
+        if (empty($testRecord->testers)) {
+            return $this->failed('请输入检测员');
         }
-        */
 
         $allowEmptyItems = ['主剂', '固化剂', '配油'];
 
@@ -360,7 +365,7 @@ class QCRecordController extends Controller
         return $this->failed('操作失败');
     }
 
-    protected function appendNiandu(array &$items)
+    protected function modifyNiandu(array &$items)
     {
         // 处理粘度
         foreach ($items as $key => $item) {
@@ -379,67 +384,40 @@ class QCRecordController extends Controller
         $category = $product->category;
         $test_way = $category->testWay ? $category->testWay->way : [];
 
-        if ($productTestWay = $product->testWay) {
-            $test_way = $this->mergeTestWay($test_way, $productTestWay->way);
+        if ($product->testWay) {
+            $test_way = $this->mergeTestWay($test_way, $product->testWay->way);
         }
 
+        // 配油提示
+        $mixinTips = '';
         if ($category->slug == 'H-8100' || $category->slug == 'H-9100') {
-            if (!$this->hasItem($test_way, '固化剂')) {
-                $value = $product->part_b
-                    ? $product->part_b . '; ' . $product->ratio
-                    : 'HD2; 3:1';
-                array_unshift($test_way, [
-                    'name' => '固化剂',
-                    'method' => '',
-                    'method_id' => 0,
-                    'spec' => [
-                        'is_show' => true,
-                        'required' => false,
-                        'value_type' => 'INFO',
-                        'data' => [
-                            'value' => $value,
-                        ],
-                    ]
-                ]);
+            if (!$this->hasItem($test_way, '固化剂') && !$this->hasItem($test_way, '配油')) {
+                $mixinTips = $product->part_b ? $product->part_b . '; ' . $product->ratio : 'HD2; 3:1';
+            }
+        } elseif ($category->slug == 'H-8100 SP' || $category->slug == 'H-9100 SP') {
+            if (!$this->hasItem($test_way, '固化剂') && !$this->hasItem($test_way, '配油')) {
+                $mixinTips = $product->part_b ? $product->part_b . '; ' . $product->ratio : 'HD12; 3:1';
             }
         } elseif ($category->slug == 'H-8100B/H-9100B') {
-            if (!$this->hasItem($test_way, '主剂')) {
-                $value = $product->part_a
-                    ? $product->part_a . '; ' . $product->ratio
-                    : '8G; 3:1';
-                array_unshift($test_way, [
-                    'name' => '主剂',
-                    'method' => '',
-                    'method_id' => 0,
-                    'spec' => [
-                        'is_show' => true,
-                        'required' => false,
-                        'value_type' => 'INFO',
-                        'data' => [
-                            'value' => $value,
-                        ],
-                    ]
-                ]);
+            if (!$this->hasItem($test_way, '主剂') && !$this->hasItem($test_way, '配油')) {
+                $mixinTips = $product->part_a ? $product->part_a . '; ' . $product->ratio : '8G; 3:1';
             }
-        } elseif ($category->slug == 'SPXX') {
-            if (!$this->hasItem($test_way, '固化剂')) {
-                $value = $product->part_b
-                    ? $product->part_b . '; ' . $product->ratio
-                    : 'HD12; 3:1';
-                array_unshift($test_way, [
-                    'name' => '固化剂',
-                    'method' => '',
-                    'method_id' => 0,
-                    'spec' => [
-                        'is_show' => true,
-                        'required' => false,
-                        'value_type' => 'INFO',
-                        'data' => [
-                            'value' => $value,
-                        ],
-                    ]
-                ]);
-            }
+        }
+
+        if ($mixinTips) {
+            array_unshift($test_way, [
+                'name' => '配油',
+                'method' => '',
+                'method_id' => 0,
+                'spec' => [
+                    'is_show' => true,
+                    'required' => false,
+                    'value_type' => 'INFO',
+                    'data' => [
+                        'value' => $mixinTips,
+                    ],
+                ]
+            ]);
         }
 
         return $test_way;

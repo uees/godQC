@@ -129,6 +129,8 @@ class CategoryController extends Controller
             // clear templates
             $category->setMeta('templates', null);
         } else {
+            // json-editor 会把数据转为 json 字符串
+            $templates = is_array($templates) ? $templates : json_decode($templates);
             $category->setMeta('templates', $templates);
         }
 

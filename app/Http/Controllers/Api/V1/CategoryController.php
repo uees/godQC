@@ -14,16 +14,16 @@ class CategoryController extends Controller
     {
         $query = Category::query();
 
-        if (\request()->filled('with')) {
-            $query->with(explode(',', request('with')));
-        }
+        $this->loadRelByQuery($query);
 
-        if (\request()->filled('q')) {
-            $name_condition = queryCondition('name', \request('q'));
-            $slug_condition = queryCondition('slug', \request('q'));
+        if ($search = \request('q')) {
+            $query->where(function ($query) use ($search) {
+                $name_condition = queryCondition('name', $search);
+                $slug_condition = queryCondition('slug', $search);
 
-            $query->where($name_condition)
-                ->orWhere($slug_condition);
+                $query->where($name_condition)
+                    ->orWhere($slug_condition);
+            });
         }
 
         $categories = $query->get(); // 直接获取所有分类
@@ -35,9 +35,7 @@ class CategoryController extends Controller
     {
         $query = Category::query();
 
-        if (\request()->filled('with')) {
-            $query->with(explode(',', request('with')));
-        }
+        $this->loadRelByQuery($query);
 
         $category = $query->findOrFail($id);
 
@@ -65,9 +63,7 @@ class CategoryController extends Controller
         $category->fill($request->only(['name', 'slug', 'memo']))
             ->save();
 
-        if (\request()->filled('with')) {
-            $category->load(explode(',', request('with')));
-        }
+        $this->loadRelByModel($category);
 
         return CategoryResource::make($category);
     }

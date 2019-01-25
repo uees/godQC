@@ -14,12 +14,14 @@ class UserController extends Controller
         $perPage = $this->perPage();
         $query = User::query();
 
-        if (\request()->filled('q')) {
-            $name_condition = queryCondition('name', \request('q'));
-            $email_condition = queryCondition('email', \request('q'));
+        if ($search = \request('q')) {
+            $query->where(function ($query) use ($search) {
+                $name_condition = queryCondition('name', $search);
+                $email_condition = queryCondition('email', $search);
 
-            $query->where($name_condition)
-                ->orWhere($email_condition);
+                $query->where($name_condition)
+                    ->orWhere($email_condition);
+            });
         }
 
         $query->orderBy($this->sortBy(), $this->order());

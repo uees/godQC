@@ -15,11 +15,14 @@ class QCMethodController extends Controller
 
         $query = TestMethod::query();
 
-        if (\request()->filled('q')) {
-            $name_condition = queryCondition('name', \request('q'));
-            $content_condition = queryCondition('content', \request('q'));
+        if ($search = \request('q')) {
+            $query->where(function ($query) use ($search) {
+                $name_condition = queryCondition('name', $search);
+                $content_condition = queryCondition('content', $search);
 
-            $query->where($name_condition)->orWhere($content_condition);
+                $query->where($name_condition)
+                    ->orWhere($content_condition);
+            });
         }
 
         $query->orderBy($this->sortBy(), $this->order());

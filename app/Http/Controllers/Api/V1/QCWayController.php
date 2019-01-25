@@ -14,8 +14,9 @@ class QCWayController extends Controller
         $perPage = $this->perPage();
         $query = TestWay::query();
 
-        if (\request()->filled('q')) {
-            $name_condition = queryCondition('name', \request('q'));
+        if ($search = \request('q')) {
+            $name_condition = queryCondition('name', $search);
+
             $query = $query->where($name_condition);
         }
 

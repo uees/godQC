@@ -14,12 +14,14 @@ class PatternTestController extends Controller
     {
         $query = PatternTest::query();
 
-        if (\request()->filled('q')) {
-            $product_name_condition = queryCondition('product_name', \request('q'));
-            $batch_number_condition = queryCondition('batch_number', \request('q'));
+        if ($search = \request('q')) {
+            $query->where(function ($query) use ($search) {
+                $product_name_condition = queryCondition('product_name', $search);
+                $batch_number_condition = queryCondition('batch_number', $search);
 
-            $query->where($product_name_condition)
-                ->orWhere($batch_number_condition);
+                $query->where($product_name_condition)
+                    ->orWhere($batch_number_condition);
+            });
         }
 
         $query->orderBy($this->sortBy(), $this->order());

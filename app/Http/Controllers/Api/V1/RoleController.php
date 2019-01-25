@@ -13,8 +13,8 @@ class RoleController extends Controller
     {
         $query = Role::query();
 
-        if (\request()->filled('q')) {
-            $name_condition = queryCondition('name', \request('q'));
+        if ($search = \request('q')) {
+            $name_condition = queryCondition('name', $search);
 
             $query->where($name_condition);
         }

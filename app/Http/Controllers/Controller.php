@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -12,36 +13,64 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests, ApiResponseTrait;
 
+    /**
+     * @return int
+     */
     protected function perPage()
     {
-        $perPage = request('per_page', config('qc.perPage', 20));
-        $maxPerPage = config('qc.maxPerPage', 100);
+        $perPage = (int)request('per_page', config('qc.perPage', 20));
+        $maxPerPage = (int)config('qc.maxPerPage', 100);
         return $perPage <= $maxPerPage ? $perPage : $maxPerPage;
     }
 
-    protected function sortBy()
+    /**
+     * @param array $limits
+     * @param string $default
+     * @return string
+     */
+    protected function sortBy(array $limits = null, $default = 'id')
     {
-        return request('sort_by', 'id');
+        $field = request('sort_by', $default);
+
+        if (empty($limits) || in_array($field, $limits)) {
+            return $field;
+        }
+
+        return $default;
     }
 
-    protected function order()
+    /**
+     * @param string $default
+     * @return string
+     */
+    protected function order($default = 'desc')
     {
-        return request('order', 'desc');
+        $order = request('order', $default);
+
+        if (in_array($order, ['asc', 'desc'])) {
+            return $order;
+        }
+
+        return $default;
     }
 
     /**
      * @param Builder $query
+     * @return Builder
      */
     protected function parseFields(Builder $query)
     {
         if (request()->filled('fields')) {
             $query->addSelect(explode(',', request('fields')));
         }
+
+        return $query;
     }
 
     /**
      * @param Builder $query
      * @param array $fields
+     * @return Builder
      */
     protected function parseWhere(Builder $query, array $fields)
     {
@@ -66,5 +95,33 @@ class Controller extends BaseController
                 $query->where($field, $value);
             }
         }
+
+        return $query;
+    }
+
+    /**
+     * @param Builder $query
+     * @return Builder
+     */
+    protected function loadRelByQuery(Builder $query)
+    {
+        if (\request()->filled('with')) {
+            $query->with(explode(',', request('with')));
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param Model $model
+     * @return Model
+     */
+    protected function loadRelByModel(Model $model)
+    {
+        if (\request()->filled('with')) {
+            $model->load(explode(',', request('with')));
+        }
+
+        return $model;
     }
 }

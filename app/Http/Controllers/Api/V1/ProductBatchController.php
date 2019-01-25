@@ -14,12 +14,14 @@ class ProductBatchController extends Controller
         $perPage = $this->perPage();
         $query = ProductBatch::query();
 
-        if (\request()->filled('q')) {
-            $name_condition = queryCondition('product_name', \request('q'));
-            $batch_condition = queryCondition('batch_number', \request('q'));
+        if ($search = \request('q')) {
+            $query->where(function ($query) use ($search) {
+                $name_condition = queryCondition('product_name', $search);
+                $batch_condition = queryCondition('batch_number', $search);
 
-            $query->where($name_condition)
-                ->orWhere($batch_condition);
+                $query->where($name_condition)
+                    ->orWhere($batch_condition);
+            });
         }
 
         $query->orderBy($this->sortBy(), $this->order());

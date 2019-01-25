@@ -16,14 +16,13 @@ class ProductController extends Controller
         $perPage = $this->perPage();
         $query = Product::query();
 
-        if (\request()->filled('with')) {
-            $query->with(explode(',', request('with')));
-        }
+        $this->loadRelByQuery($query);
 
         $this->parseWhere($query, ['category_id']);
 
-        if ($search = \request()->get('q')) {
+        if ($search = \request('q')) {
             $condition = queryCondition('internal_name', $search);
+
             $query->where($condition);
         }
 
@@ -44,9 +43,7 @@ class ProductController extends Controller
         $product->fill($request->all())->save();
 
         // 加载关系
-        if ($request->filled('with')) {
-            $product->load(explode(',', request('with')));
-        }
+        $this->loadRelByModel($product);
 
         return ProductResource::make($product);
     }
@@ -56,9 +53,7 @@ class ProductController extends Controller
     {
         $query = Product::query();
 
-        if (\request()->filled('with')) {
-            $query->with(explode(',', request('with')));
-        }
+        $this->loadRelByQuery($query);
 
         $product = $query->findOrFail($id);
 
@@ -75,9 +70,7 @@ class ProductController extends Controller
         $product->fill($request->all())->save();
 
         // 加载关系
-        if ($request->filled('with')) {
-            $product->load(explode(',', request('with')));
-        }
+        $this->loadRelByModel($product);
 
         return ProductResource::make($product);
     }

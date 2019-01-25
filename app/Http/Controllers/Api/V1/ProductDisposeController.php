@@ -21,26 +21,26 @@ class ProductDisposeController extends Controller
 
         $query = ProductDispose::query();
 
-        if (\request()->filled('with')) {
-            $query->with(explode(',', request('with')));
-        }
+        $this->loadRelByQuery($query);
 
         $this->parseWhere($query, ['author', 'created_at', 'from_record_id', 'to_record_id', 'product_batch_id']);
 
-        if (\request()->filled('done')) {
+        if (\request('done')) {
             $query->where('is_done', 1);
         }
 
-        if (\request()->filled('q')) {
-            $name_condition = queryCondition('product_name', \request('q'));
-            $batch_condition = queryCondition('batch_number', \request('q'));
-            $method_condition = queryCondition('method', \request('q'));
+        if ($search = \request('q')) {
+            $query->where(function (Builder $query) use ($search) {
+                $name_condition = queryCondition('product_name', $search);
+                $batch_condition = queryCondition('batch_number', $search);
+                $method_condition = queryCondition('method', $search);
 
-            $query->where($method_condition)
-                ->orWhereHas('batch', function (Builder $query) use ($name_condition, $batch_condition) {
-                    $query->where($name_condition)
-                        ->orWhere($batch_condition);
-                });
+                $query->where($method_condition)
+                    ->orWhereHas('batch', function (Builder $query) use ($name_condition, $batch_condition) {
+                        $query->where($name_condition)
+                            ->orWhere($batch_condition);
+                    });
+            });
         }
 
         $query->orderBy($this->sortBy(), $this->order());
@@ -78,9 +78,7 @@ class ProductDisposeController extends Controller
     {
         $query = ProductDispose::query();
 
-        if (\request()->filled('with')) {
-            $query->with(explode(',', request('with')));
-        }
+        $this->loadRelByQuery($query);
 
         $productDispose = $query->findOrFail($id);
 

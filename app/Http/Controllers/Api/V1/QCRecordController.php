@@ -23,10 +23,7 @@ class QCRecordController extends Controller
 
         $query = TestRecord::query();
 
-        if (\request()->filled('with')) {
-            $query->with(explode(',', request('with')));
-        }
-
+        $this->loadRelByQuery($query);
         $this->parseFields($query);
         $this->parseWhere($query, ['conclusion', 'show_reality', 'test_times', 'created_at']);
 
@@ -36,15 +33,15 @@ class QCRecordController extends Controller
             $query->whereNull('said_package_at');
         }
 
-        if (\request()->filled('testing')) {
+        if (\request('testing') == '1') {
             $query->where('is_archived', 0);
-        } elseif (\request()->filled('tested')) {
+        } elseif (\request('tested') == '1') {
             $query->where('is_archived', 1);
         }
 
-        if (\request()->filled('type')) {
-            $query->whereHas('batch', function (Builder $query) {
-                $query->where('type', \request('type'));
+        if ($type = \request('type')) {
+            $query->whereHas('batch', function (Builder $query) use ($type) {
+                $query->where('type', $type);
             });
         }
 
@@ -59,21 +56,25 @@ class QCRecordController extends Controller
             }
         }
 
-        if (\request()->filled('q')) {
-            $memo_condition = queryCondition('memo', \request('q'));
-            $query->where($memo_condition)
-                ->orWhereHas('batch', function (Builder $query) {
-                    $name_condition = queryCondition('product_name', \request('q'));
-                    $batch_condition = queryCondition('batch_number', \request('q'));
+        // search
+        if ($search = \request('q')) {
+            $query->where(function (Builder $query) {
+                $memo_condition = queryCondition('memo', \request('q'));
+                $query->where($memo_condition)
+                    ->orWhereHas('batch', function (Builder $query) {
+                        $name_condition = queryCondition('product_name', \request('q'));
+                        $batch_condition = queryCondition('batch_number', \request('q'));
 
-                    $query->where($name_condition)
-                        ->orWhere($batch_condition);
-                });
+                        $query->where($name_condition)
+                            ->orWhere($batch_condition);
+                    });
+            });
+
         }
 
         $query->orderBy($this->sortBy(), $this->order());
 
-        if (\request()->filled('all')) {
+        if (\request('all')) {
             $records = $query->get();
         } else {
             $records = $query->paginate($perPage)->appends(request()->except('page'));
@@ -93,9 +94,7 @@ class QCRecordController extends Controller
     {
         $query = TestRecord::query();
 
-        if (\request()->filled('with')) {
-            $query->with(explode(',', request('with')));
-        }
+        $this->loadRelByQuery($query);
 
         $testRecord = $query->findOrFail($id);
 

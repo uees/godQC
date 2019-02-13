@@ -50,7 +50,6 @@
             select-when-unmatched
             placeholder="品名"
             @select="save(scope)"
-            @blur="save(scope)"
           />
           <span v-else>{{ scope.row.product_name }}</span>
         </template>
@@ -254,12 +253,32 @@ export default {
     })
   },
   methods: {
+    newTest() {
+      return {
+        is_edit: false,
+        is_add: false,
+        id: null,
+        product_name: '',
+        batch_number: '',
+        nai_han_xing: '',
+        nai_rong_ji: '',
+        nai_suan_jian: '',
+        h12_xian_ying: '',
+        h24_xian_ying: '',
+        ge_ye_xian_ying: '',
+        ge_ye_bao_guang: '',
+        die_ban: '',
+        lao_hua: '',
+        tester: ''
+      }
+    },
     fetchData() {
       this.listLoading = true
       patternTestApi.list({ params: this.queryParams }).then(response => {
         const { data } = response.data
         this.list = data.map(record => {
           record.is_edit = false
+          record.is_add = false
           return record
         })
         this.updateCache()
@@ -314,26 +333,11 @@ export default {
 
       cb(results)
     },
-    newTest() {
-      return {
-        is_edit: true,
-        id: null,
-        product_name: '',
-        batch_number: '',
-        nai_han_xing: '',
-        nai_rong_ji: '',
-        nai_suan_jian: '',
-        h12_xian_ying: '',
-        h24_xian_ying: '',
-        ge_ye_xian_ying: '',
-        ge_ye_bao_guang: '',
-        die_ban: '',
-        lao_hua: '',
-        tester: ''
-      }
-    },
     handleCreate() {
-      this.list.unshift(this.newTest())
+      const obj = this.newTest()
+      obj.is_edit = true
+      obj.is_add = true
+      this.list.unshift(obj)
       this.updateCache()
     },
     handleDelete(scope) {
@@ -360,7 +364,7 @@ export default {
     },
     handleSave(scope) {
       const noEmptyDataIndex = Object.keys(scope.row).findIndex(key => {
-        if (key === 'is_edit') { // 跳过标志字段
+        if (key === 'is_edit' || key === 'is_add') { // 跳过标志字段
           return false
         }
         return scope.row[key]
@@ -370,6 +374,7 @@ export default {
         this.updateCache()
       } else {
         scope.row.is_edit = false
+        scope.row.is_add = false
       }
     },
     save(scope) {
@@ -377,7 +382,7 @@ export default {
       const test = scope.row
 
       const changed = Object.keys(test).some(key => {
-        if (key === 'is_edit') { // 跳过标志字段
+        if (key === 'is_edit' || key === 'is_add') { // 跳过标志字段
           return false
         }
         return test[key] != this.cachedData[index][key]
@@ -386,18 +391,22 @@ export default {
       if (changed) {
         let request
 
-        if (test.id) {
-          request = patternTestApi.update(test.id, test)
-        } else {
+        if (test.is_add && !test.id) {
           request = patternTestApi.add(test)
+          test.is_add = false // 立即取消添加标记
+        } else if (test.id) {
+          request = patternTestApi.update(test.id, test)
         }
 
-        request.then(response => {
-          const { data } = response.data
-          data.is_edit = true // 保持编辑
-          this.list.splice(index, 1, data) // 更新视图
-          this.updateCache()
-        })
+        if (typeof request !== 'undefined') {
+          request.then(response => {
+            const { data } = response.data
+            data.is_edit = true // 保持编辑
+            data.is_add = false
+            this.list.splice(index, 1, data) // 更新视图
+            this.updateCache()
+          })
+        }
       }
     }
   }

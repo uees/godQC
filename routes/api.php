@@ -66,4 +66,8 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
         Route::delete('{testRecord}/{testRecordItem}', 'QCRecordItemController@destroy')->name('destroy');
     });
 
+    Route::prefix('statistics')->group(function () {
+        Route::get('total/{type}/{year}/{month}', 'StatisticsController@makeTestStatistics');
+        Route::get('failed/{type}/{year}/{month}', 'StatisticsController@makeDisqualificationStatistics');
+    });
 });

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Resources\DisqualificationStatisticsResource;
+use App\Http\Resources\TestStatisticsResource;
 use App\ProductBatch;
 use App\TestRecord;
 use App\Category;
@@ -13,7 +15,49 @@ use Illuminate\Http\Request;
 
 class StatisticsController extends Controller
 {
-    public function makeTestStatistics($type, $year, $month)
+    // 统计概览
+    public function showStatistics($year, $month, $type)
+    {
+        $totalStatistics = TestStatistics::with('category')
+            ->where('qc_type', $type)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->get();
+
+        $failedStatistics = DisqualificationStatistics::with('category')
+            ->where('qc_type', $type)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->get();
+
+        return $this->respond([
+            'data' => [
+                'totalStatistics' => TestStatisticsResource::collection($totalStatistics),
+                'failedStatistics' => DisqualificationStatisticsResource::collection($failedStatistics),
+            ]
+        ]);
+    }
+
+    // 不合格流水
+    public function showFailedAll($year, $month, $type)
+    {
+        // todo
+    }
+
+    // 不合格项走势（包含所有不合格项）
+    public function showFailedShape($year)
+    {
+        // todo
+    }
+
+    // 各种合格率走势
+    public function showStatisticsShape($year)
+    {
+        // todo
+    }
+
+    // 统计总体信息
+    public function makeTestStatistics($year, $month, $type)
     {
         // 清除旧数据
         TestStatistics::query()
@@ -51,7 +95,8 @@ class StatisticsController extends Controller
         return $this->message('success');
     }
 
-    public function makeDisqualificationStatistics($type, $year, $month)
+    // 统计不合格项目信息
+    public function makeDisqualificationStatistics($year, $month, $type)
     {
         // 获取所有不合格
         $failedRecords = TestRecord::with('items')

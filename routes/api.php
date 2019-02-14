@@ -67,7 +67,11 @@ Route::prefix('v1')->namespace('Api\V1')->group(function () {
     });
 
     Route::prefix('statistics')->group(function () {
-        Route::get('total/{type}/{year}/{month}', 'StatisticsController@makeTestStatistics');
-        Route::get('failed/{type}/{year}/{month}', 'StatisticsController@makeDisqualificationStatistics');
+        Route::post('total/{year}/{month}/{type}', 'StatisticsController@makeTestStatistics');
+        Route::post('failed/{year}/{month}/{type}', 'StatisticsController@makeDisqualificationStatistics');
+        Route::get('failed/{year}/{month}/{type}', 'StatisticsController@showFailedAll');
+        Route::get('shape-failed/{year}', 'StatisticsController@showFailedShape');
+        Route::get('shape/{year}', 'StatisticsController@showStatisticsShape');
+        Route::get('{year}/{month}/{type}', 'StatisticsController@showStatistics');
     });
 });

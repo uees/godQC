@@ -79,15 +79,8 @@ export default {
         this.__resizeHandler()
       }
     },
-    setOptions({ expectedData, actualData } = {}) {
+    setOptions({ values, rates } = {}) {
       this.chart.setOption({
-        xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-          boundaryGap: false,
-          axisTick: {
-            show: false
-          }
-        },
         grid: {
           left: 10,
           right: 10,
@@ -102,17 +95,40 @@ export default {
           },
           padding: [5, 10]
         },
-        yAxis: {
+        xAxis: {
+          type: 'category',
+          data: [...Array(12)].map((v, k) => ++k + '月'), // [1, 2, ..., 12]
+          boundaryGap: false,
           axisTick: {
             show: false
           }
         },
+        yAxis: [
+          {
+            type: 'value',
+            name: '数量',
+            axisLabel: {
+              formatter: '{value} 批'
+            }
+          },
+          {
+            type: 'value',
+            name: '比率',
+            min: 0,
+            max: 100,
+            position: 'right',
+            axisLabel: {
+              formatter: '{value} %'
+            }
+          }
+        ],
         legend: {
-          data: ['expected', 'actual']
+          data: ['数量', '比率']
         },
         series: [
           {
-            name: 'expected', itemStyle: {
+            name: '数量',
+            itemStyle: {
               normal: {
                 color: '#FF005A',
                 lineStyle: {
@@ -123,12 +139,12 @@ export default {
             },
             smooth: true,
             type: 'line',
-            data: expectedData,
+            data: values,
             animationDuration: 2800,
             animationEasing: 'cubicInOut'
           },
           {
-            name: 'actual',
+            name: '比率',
             smooth: true,
             type: 'line',
             itemStyle: {
@@ -143,7 +159,7 @@ export default {
                 }
               }
             },
-            data: actualData,
+            data: rates,
             animationDuration: 2800,
             animationEasing: 'quadraticOut'
           }]

@@ -21,11 +21,28 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    failedStatistics: {
+      type: Array,
+      required: true
+    },
+    type: {
+      type: String,
+      required: true
     }
   },
   data() {
     return {
       chart: null
+    }
+  },
+  watch: {
+    failedStatistics(val) {
+      this.chart.setOption({
+        series: [{
+          data: this.getPieData()
+        }]
+      })
     }
   },
   mounted() {
@@ -56,29 +73,24 @@ export default {
         },
         legend: {
           left: 'center',
-          bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          bottom: '10'
         },
         calculable: true,
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: '不合格分类',
             type: 'pie',
-            roseType: 'radius',
-            radius: [15, 95],
-            center: ['50%', '38%'],
-            data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
-            ],
-            animationEasing: 'cubicInOut',
-            animationDuration: 2600
+            radius: [0, 95],
+            center: ['50%', '45%'],
+            data: this.getPieData()
           }
         ]
       })
+    },
+    getPieData() {
+      return this.failedStatistics.filter(el => el.category_id === 0 && el.qc_type === this.type)
+        .map(el => Object.assign({}, {value: el.amount, name: el.item}))
+        .sort((a, b) => +a.value - +b.value)
     }
   }
 }

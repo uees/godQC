@@ -7,7 +7,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">检测数量</div>
-          <count-to :start-val="0" :end-val="102400" :duration="200" class="card-panel-num"/>
+          <count-to :start-val="0" :end-val="top.tests_num" :duration="200" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -17,8 +17,10 @@
           <svg-icon icon-class="bug" class-name="card-panel-icon"/>
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">一次不合格数量</div>
-          <count-to :start-val="0" :end-val="81212" :duration="20" class="card-panel-num"/>
+          <div class="card-panel-text">一次不合格</div>
+          <count-to :start-val="0" :end-val="top.once_disqualification_num" :duration="5" class="card-panel-num"/>
+          <span v-if="passRate > 95" style="color: green">一次合格率: {{ oncePassRate }}%</span>
+          <span v-else style="color: red">一次合格率: {{ oncePassRate }}%</span>
         </div>
       </div>
     </el-col>
@@ -28,8 +30,10 @@
           <svg-icon icon-class="bug" class-name="card-panel-icon"/>
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">不合格数量</div>
-          <count-to :start-val="0" :end-val="9280" :duration="10" class="card-panel-num"/>
+          <div class="card-panel-text">不合格</div>
+          <count-to :start-val="0" :end-val="top.disqualification_num" :duration="2" class="card-panel-num"/>
+          <span v-if="passRate > 99" style="color: green">合格率: {{ passRate }}%</span>
+          <span v-else style="color: red">合格率: {{ passRate }}%</span>
         </div>
       </div>
     </el-col>
@@ -39,8 +43,9 @@
           <svg-icon icon-class="people" class-name="card-panel-icon"/>
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">特采数量</div>
-          <count-to :start-val="0" :end-val="13600" :duration="10" class="card-panel-num"/>
+          <div class="card-panel-text">特采</div>
+          <count-to :start-val="0" :end-val="top.force_accept_num" :duration="2" class="card-panel-num"/>
+          <span style="color: #c26a3e">特采率: {{ forceRate }}%</span>
         </div>
       </div>
     </el-col>
@@ -54,9 +59,56 @@ export default {
   components: {
     CountTo
   },
+  props: {
+    totalStatistics: {
+      type: Array,
+      required: true
+    },
+    type: {
+      type: String,
+      required: true
+    }
+  },
+  data() {
+    return {
+
+    }
+  },
+  computed: {
+    top() {
+      const top = this.getTop()
+      if (top) {
+        return top
+      }
+      return {
+        tests_num: 0,
+        once_disqualification_num: 0,
+        disqualification_num: 0,
+        force_accept_num: 0
+      }
+    },
+    oncePassRate() {
+      if (this.top.tests_num === 0) return 100
+      const rate = 100 - this.top.once_disqualification_num / this.top.tests_num * 100
+      return +(rate.toFixed(2))
+    },
+    passRate() {
+      if (this.top.tests_num === 0) return 100
+      const rate = 100 - this.top.disqualification_num / this.top.tests_num * 100
+      return +(rate.toFixed(2))
+    },
+    forceRate() {
+      if (this.top.once_disqualification_num === 0) return 0
+      const rate = this.top.force_accept_num / this.top.once_disqualification_num * 100
+      return +(rate.toFixed(2))
+    }
+  },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
+    },
+    getTop() {
+      return this.totalStatistics.find(el => el.category_id === 0 && el.qc_type === this.type)
     }
   }
 }

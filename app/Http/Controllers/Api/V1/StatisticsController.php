@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Resources\DisqualificationStatisticsResource;
+use App\Http\Resources\TestRecordResource;
 use App\Http\Resources\TestStatisticsResource;
 use App\ProductBatch;
 use App\TestRecord;
@@ -41,19 +42,36 @@ class StatisticsController extends Controller
     // 不合格流水
     public function showFailedAll($year, $month, $type)
     {
-        // todo
+        // 获取所有不合格
+        $failedRecords = TestRecord::with(['items', 'batch', 'willDispose'])
+            ->whereHas('batch', function ($query) use ($type) {
+                $query->where('type', $type);
+            })->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->doesntHave('disposed')
+            ->where('conclusion', 'NG')->get();
+
+        return TestRecordResource::collection($failedRecords);
     }
 
     // 不合格项走势（包含所有不合格项）
     public function showFailedShape($year)
     {
-        // todo
+        $data = DisqualificationStatistics::with('category')
+            ->where('year', $year)
+            ->get();
+
+        return DisqualificationStatisticsResource::collection($data);
     }
 
     // 各种合格率走势
     public function showStatisticsShape($year)
     {
-        // todo
+        $data = TestStatistics::with('category')
+            ->where('year', $year)
+            ->get();
+
+        return TestStatisticsResource::collection($data);
     }
 
     // 统计总体信息
@@ -62,8 +80,8 @@ class StatisticsController extends Controller
         // 清除旧数据
         TestStatistics::query()
             ->where('qc_type', $type)
-            ->whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
+            ->where('year', $year)
+            ->where('month', $month)
             ->delete();
 
         $s = new TestStatistics([
@@ -123,8 +141,8 @@ class StatisticsController extends Controller
         // 清除旧数据
         DisqualificationStatistics::query()
             ->where('qc_type', $type)
-            ->whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
+            ->where('year', $year)
+            ->where('month', $month)
             ->delete();
 
         // 保持数据

@@ -23,11 +23,71 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    failedStatistics: {
+      type: Array,
+      required: true
+    },
+    type: {
+      type: String,
+      required: true
     }
   },
   data() {
     return {
       chart: null
+    }
+  },
+  computed: {
+    data() {
+      return this.failedStatistics.filter(el => el.category_id === 0 && el.qc_type === this.type)
+        .map(el => {
+          return { value: el.amount, name: el.item }
+        }).sort((a, b) => {
+          if (+a.value > +b.value) {
+            return -1
+          }
+          if (+a.value < +b.value) {
+            return 1
+          }
+          return 0
+        })
+    },
+    labelData() {
+      return this.data.map(el => el.name)
+    },
+    total() {
+      let total = 0
+      for (const el of this.data) {
+        total += el.value
+      }
+      return total
+    },
+    rateData() {
+      let totalRate = 0
+      if (this.total) {
+        return this.data.map(el => {
+          totalRate += +(el.value / this.total * 100).toFixed(2)
+          return totalRate
+        })
+      }
+      return []
+    }
+  },
+  watch: {
+    failedStatistics() {
+      this.chart.setOption({
+        xAxis: [{
+          data: this.labelData
+        }],
+        series: [{
+          name: '不合格项数量',
+          data: this.data
+        }, {
+          name: '累计百分比',
+          data: this.rateData
+        }]
+      })
     }
   },
   mounted() {
@@ -55,7 +115,7 @@ export default {
         tooltip: {
           trigger: 'axis',
           axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            type: 'cross'
           }
         },
         grid: {
@@ -65,40 +125,49 @@ export default {
           bottom: '3%',
           containLabel: true
         },
+        toolbox: {
+          feature: {
+            dataView: { show: true, readOnly: false },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
+        legend: {
+          data: ['不合格项数量', '累计百分比']
+        },
         xAxis: [{
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: [],
           axisTick: {
             alignWithLabel: true
           }
         }],
         yAxis: [{
           type: 'value',
-          axisTick: {
-            show: false
+          name: '不合格项数量',
+          axisLabel: {
+            formatter: '{value} 批'
+          }
+        }, {
+          type: 'value',
+          name: '累计百分比',
+          min: 0,
+          max: 100,
+          position: 'right',
+          axisLabel: {
+            formatter: '{value} %'
           }
         }],
         series: [{
-          name: 'pageA',
+          name: '不合格项数量',
           type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [79, 52, 200, 334, 390, 330, 220],
+          data: [],
           animationDuration
         }, {
-          name: 'pageB',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [80, 52, 200, 334, 390, 330, 220],
-          animationDuration
-        }, {
-          name: 'pageC',
-          type: 'bar',
-          stack: 'vistors',
-          barWidth: '60%',
-          data: [30, 52, 200, 334, 390, 330, 220],
-          animationDuration
+          name: '累计百分比',
+          type: 'line',
+          yAxisIndex: 1,
+          data: []
         }]
       })
     }

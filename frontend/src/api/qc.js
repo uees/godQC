@@ -80,3 +80,27 @@ export function getRecordItem(record_id, item_id) {
   return request.get(`qc-record-items/${record_id}/${item_id}`)
 }
 
+export function makeTestStatistics(year, month, type) {
+  return request.post(`statistics/total/${year}/${month}/${type}`)
+}
+
+export function makeDisqualificationStatistics(year, month, type) {
+  return request.post(`statistics/failed/${year}/${month}/${type}`)
+}
+
+export function showFailedAll(year, month, type) {
+  return request.get(`statistics/failed/${year}/${month}/${type}`)
+}
+
+export function showFailedShape(year) {
+  return request.get(`statistics/shape-failed/${year}`)
+}
+
+export function showStatisticsShape(year) {
+  return request.get(`statistics/shape/${year}`)
+}
+
+export function showStatistics(year, month, type) {
+  return request.get(`statistics/${year}/${month}/${type}`)
+}
+

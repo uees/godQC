@@ -1,56 +1,66 @@
 <template>
   <div class="dashboard-editor-container">
+    <div class="filter-container">
+      <el-select
+        v-model="type"
+        class="filter-item"
+        placeholder="类别"
+        @change="fetchData">
+        <el-option label="成品检测" value="FQC"/>
+        <el-option label="来料检测" value="IQC"/>
+      </el-select>
+      <el-date-picker
+        v-model="date"
+        type="month"
+        class="filter-item"
+        placeholder="选择月份"
+        @change="fetchData"
+      />
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-edit"
+        @click="handleCreate">生成
+      </el-button>
+    </div>
 
-    <github-corner style="position: absolute; top: 0; border: 0; right: 0;"/>
-
-    <panel-group @handleSetLineChartData="handleSetLineChartData"/>
+    <panel-group
+      :total-statistics="monthStatistics.totalStatistics"
+      :type="type"
+      @handleSetLineChartData="handleSetLineChartData"/>
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData"/>
     </el-row>
 
+    <category-disqualification
+      :total-statistics="monthStatistics.totalStatistics"
+      :type="type"/>
+
     <el-row :gutter="32">
-      <el-col :xs="24" :sm="24" :lg="8">
+      <h3 style="padding-left: 16px">不合格项目统计</h3>
+      <el-col :xs="24" :sm="24" :lg="16">
         <div class="chart-wrapper">
-          <raddar-chart/>
+          <bar-chart :failed-statistics="monthStatistics.failedStatistics" :type="type"/>
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <pie-chart/>
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <bar-chart/>
+          <pie-chart :failed-statistics="monthStatistics.failedStatistics" :type="type"/>
         </div>
       </el-col>
     </el-row>
 
     <el-row :gutter="8">
+      <h3 style="padding-left: 16px">不合格批次流水</h3>
       <el-col :xs="{span: 24}"
               :sm="{span: 24}"
               :md="{span: 24}"
-              :lg="{span: 12}"
-              :xl="{span: 12}"
+              :lg="{span: 24}"
+              :xl="{span: 24}"
               style="padding-right:8px;margin-bottom:30px;">
-        <transaction-table/>
-      </el-col>
-      <el-col :xs="{span: 24}"
-              :sm="{span: 12}"
-              :md="{span: 12}"
-              :lg="{span: 6}"
-              :xl="{span: 6}"
-              style="margin-bottom:30px;">
-        <todo-list/>
-      </el-col>
-      <el-col :xs="{span: 24}"
-              :sm="{span: 12}"
-              :md="{span: 12}"
-              :lg="{span: 6}"
-              :xl="{span: 6}"
-              style="margin-bottom:30px;">
-        <box-card/>
+        <disqualification-records :failed-records="monthFailedRecords" :type="type"/>
       </el-col>
     </el-row>
 
@@ -60,57 +70,112 @@
 <script>
 import GithubCorner from '@/components/GithubCorner'
 import PanelGroup from './components/PanelGroup'
+import CategoryDisqualification from './components/CategoryDisqualification'
 import LineChart from './components/LineChart'
-import RaddarChart from './components/RaddarChart'
 import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
-import TransactionTable from './components/TransactionTable'
-import TodoList from './components/TodoList'
-import BoxCard from './components/BoxCard'
-
-const lineChartData = {
-  tests_num: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
-  },
-  once_disqualification_num: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
-  },
-  disqualification_num: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
-  },
-  force_accept_num: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  }
-}
+import DisqualificationRecords from './components/DisqualificationRecords'
+import { showStatistics, showFailedAll, showStatisticsShape, makeTestStatistics, makeDisqualificationStatistics } from '@/api/qc'
 
 export default {
   name: 'DashboardAdmin',
   components: {
+    DisqualificationRecords,
+    CategoryDisqualification,
     GithubCorner,
     PanelGroup,
     LineChart,
-    RaddarChart,
     PieChart,
-    BarChart,
-    TransactionTable,
-    TodoList,
-    BoxCard
+    BarChart
   },
   data() {
     return {
-      lineChartData: lineChartData.tests_num
+      date: new Date(),
+      type: 'FQC',
+      monthStatistics: {
+        totalStatistics: [],
+        failedStatistics: []
+      },
+      monthFailedRecords: [],
+      statisticsShape: [],
+      lineChartData: {
+        values: [],
+        rates: []
+      }
     }
+  },
+  created() {
+    this.fetchData()
   },
   methods: {
     handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
+      const data = this.statisticsShape.filter(el => el.qc_type === this.type && !el.category_id)
+      if (type === 'tests_num') {
+        this.lineChartData.values = data.map(el => el.tests_num)
+      } else if (type === 'once_disqualification_num') {
+        this.lineChartData.values = data.map(el => el.once_disqualification_num)
+        this.lineChartData.rates = data.map(el => this.oncePassRate(el))
+      } else if (type === 'disqualification_num') {
+        this.lineChartData.values = data.map(el => el.disqualification_num)
+        this.lineChartData.rates = data.map(el => this.passRate(el))
+      } else if (type === 'force_accept_num') {
+        this.lineChartData.values = data.map(el => el.force_accept_num)
+        this.lineChartData.rates = data.map(el => this.forceRate(el))
+      }
+
+      this.lineChartData.values = this.lineChartData.values
+        .concat(Array(12 - this.lineChartData.values.length).fill(0))
+      this.lineChartData.rates = this.lineChartData.rates
+        .concat(Array(12 - this.lineChartData.rates.length).fill(0))
     },
     fetchData() {
-      // todo
+      const date = this.date ? this.date : new Date()
+      const year = date.getFullYear()
+      const month = date.getMonth() + 1
+      showStatistics(year, month, this.type).then(response => {
+        const { data } = response.data
+        this.monthStatistics = data
+      })
+      showFailedAll(year, month, this.type).then(response => {
+        const { data } = response.data
+        this.monthFailedRecords = data
+      })
+      showStatisticsShape(year).then(response => {
+        const { data } = response.data
+        this.statisticsShape = data
+        this.handleSetLineChartData('tests_num')
+      })
+    },
+    handleCreate() {
+      if (this.date) {
+        const year = this.date.getFullYear()
+        const month = this.date.getMonth() + 1
+        makeTestStatistics(year, month, this.type).then(() => {
+          this.$message({ type: 'success', message: '统计报表完成' })
+          makeDisqualificationStatistics(year, month, this.type).then(() => {
+            this.$message({ type: 'success', message: '统计不合格记录完成' })
+            this.fetchData()
+          })
+        })
+      }
+    },
+    oncePassRate(st) {
+      if (st.tests_num === 0) return 100
+      const rate = 100 - st.once_disqualification_num / st.tests_num * 100
+      return +rate.toFixed(2)
+    },
+    passRate(st) {
+      if (st.tests_num === 0) return 100
+      const rate = 100 - st.disqualification_num / st.tests_num * 100
+      return +rate.toFixed(2)
+    },
+    forceRate(st) {
+      if (st.once_disqualification_num === 0) return 0
+      const rate = st.force_accept_num / st.once_disqualification_num * 100
+      return +rate.toFixed(2)
+    },
+    dump(val) {
+      console.log(val)
     }
   }
 }

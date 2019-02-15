@@ -160,12 +160,12 @@ export default {
       }
     },
     oncePassRate(st) {
-      if (st.tests_num === 0) return 100
+      if (st.tests_num === 0) return 0
       const rate = 100 - st.once_disqualification_num / st.tests_num * 100
       return +rate.toFixed(2)
     },
     passRate(st) {
-      if (st.tests_num === 0) return 100
+      if (st.tests_num === 0) return 0
       const rate = 100 - st.disqualification_num / st.tests_num * 100
       return +rate.toFixed(2)
     },

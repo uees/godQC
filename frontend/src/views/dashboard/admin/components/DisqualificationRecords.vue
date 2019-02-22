@@ -1,5 +1,10 @@
 <template>
   <el-table :data="list" style="width: 100%; margin-bottom: 15px;">
+    <el-table-column sortable sort-by="created_at" label="取样时间" align="center">
+      <template slot-scope="scope">
+        {{ echoTime(scope.row.created_at) }}
+      </template>
+    </el-table-column>
     <el-table-column sortable sort-by="batch.product_name" label="品名">
       <template slot-scope="scope">
         <span v-if="scope.row.batch.product_name_suffix">{{ scope.row.batch.product_name + ' ' + scope.row.batch.product_name_suffix }}</span>
@@ -25,8 +30,13 @@
 </template>
 
 <script>
+import echoTimeMethod from '@/mixins/echoTimeMethod'
+
 export default {
   name: 'DisqualificationRecords',
+  mixins: [
+    echoTimeMethod
+  ],
   props: {
     failedRecords: {
       type: Array,

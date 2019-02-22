@@ -100,7 +100,8 @@ export default {
       statisticsShape: [],
       lineChartData: {
         values: [],
-        rates: []
+        rates: [],
+        type: ''
       }
     }
   },
@@ -112,6 +113,7 @@ export default {
       const data = this.statisticsShape.filter(el => el.qc_type === this.type && !el.category_id)
       if (type === 'tests_num') {
         this.lineChartData.values = data.map(el => el.tests_num)
+        this.lineChartData.rates = data.map(el => this.oncePassRate(el))
       } else if (type === 'once_disqualification_num') {
         this.lineChartData.values = data.map(el => el.once_disqualification_num)
         this.lineChartData.rates = data.map(el => this.oncePassRate(el))
@@ -127,6 +129,7 @@ export default {
         .concat(Array(12 - this.lineChartData.values.length).fill(0))
       this.lineChartData.rates = this.lineChartData.rates
         .concat(Array(12 - this.lineChartData.rates.length).fill(0))
+      this.lineChartData.type = type
     },
     fetchData() {
       const date = this.date ? this.date : new Date()

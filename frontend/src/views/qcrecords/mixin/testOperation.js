@@ -33,19 +33,24 @@ export default {
 
       return ''
     },
-    showReality(record) {
-      // 产品合格显示真实
-      if (record.conclusion === 'PASS') {
-        return true
-      }
-
+    showReality(record, item) {
       // 强制真实 或者 检测时 显示真实
       if (this.real || typeof this.real === 'undefined') {
         return true
       }
 
-      // 查找配置项
-      return record.show_reality
+      // 产品合格显示真实
+      if (record.conclusion === 'PASS') {
+        return true
+      }
+
+      if (record.show_reality) {
+        return true
+      }
+
+      if (item && item.conclusion === 'PASS') {
+        return true
+      }
     },
     excludeOnlyShow() {
       this.records = this.records.map(record => {

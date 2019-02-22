@@ -174,14 +174,14 @@
 
             <el-table-column label="结果">
               <template slot-scope="props">
-                <span v-if="showReality(scope.row)">{{ props.row.value }}</span>
+                <span v-if="showReality(scope.row, props.row)">{{ props.row.value }}</span>
                 <span v-else>{{ props.row.fake_value }}</span>
               </template>
             </el-table-column>
 
             <el-table-column label="结论">
               <template slot-scope="props">
-                {{ echoConclusion(showReality(scope.row) ? props.row.conclusion : 'PASS') }}
+                {{ echoConclusion(showReality(scope.row, props.row) ? props.row.conclusion : 'PASS') }}
               </template>
             </el-table-column>
 

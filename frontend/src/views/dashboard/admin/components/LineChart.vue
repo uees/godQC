@@ -79,7 +79,33 @@ export default {
         this.__resizeHandler()
       }
     },
-    setOptions({ values, rates } = {}) {
+    getYRateAxis(type) {
+      const y = {
+        type: 'value',
+        name: '比率',
+        min: 80,
+        max: 100,
+        position: 'right',
+        axisLabel: {
+          formatter: '{value} %'
+        }
+      }
+
+      if (type === 'tests_num' || type === 'once_disqualification_num') {
+        y.name = '一次合格率'
+        y.min = 90
+      } else if (type === 'disqualification_num') {
+        y.name = '合格率'
+        y.min = 95
+      } else if (type === 'force_accept_num') {
+        y.name = '特采率'
+        y.min = 0
+      }
+
+      return y
+    },
+    setOptions({ values, rates, type } = {}) {
+      const yRateAxis = this.getYRateAxis(type)
       this.chart.setOption({
         grid: {
           left: 10,
@@ -98,9 +124,8 @@ export default {
         xAxis: {
           type: 'category',
           data: [...Array(12)].map((v, k) => ++k + '月'), // [1, 2, ..., 12]
-          boundaryGap: false,
           axisTick: {
-            show: false
+            alignWithLabel: true
           }
         },
         yAxis: [
@@ -111,19 +136,10 @@ export default {
               formatter: '{value} 批'
             }
           },
-          {
-            type: 'value',
-            name: '比率',
-            min: 0,
-            max: 100,
-            position: 'right',
-            axisLabel: {
-              formatter: '{value} %'
-            }
-          }
+          yRateAxis
         ],
         legend: {
-          data: ['数量', '比率']
+          data: ['数量', yRateAxis.name]
         },
         series: [
           {
@@ -138,13 +154,14 @@ export default {
               }
             },
             smooth: true,
-            type: 'line',
+            type: 'bar',
             data: values,
             animationDuration: 2800,
             animationEasing: 'cubicInOut'
           },
           {
-            name: '比率',
+            name: yRateAxis.name,
+            yAxisIndex: 1,
             smooth: true,
             type: 'line',
             itemStyle: {

@@ -71,6 +71,13 @@
         <el-option label="不合格" value="NG"/>
       </el-select>
 
+      <el-checkbox
+        v-if="real"
+        v-model="queryParams.has_memo"
+        label="有备注"
+        border
+        @change="fetchData"/>
+
       <el-button
         :loading="downloadLoading"
         style="margin:0 0 20px 20px;"
@@ -257,7 +264,8 @@ export default {
         conclusion: '',
         category: '', // category id
         show_reality: '',
-        created_at: ''
+        created_at: '',
+        has_memo: ''
       },
       pageSizes: [20, 40, 100],
       pickerDate: null,

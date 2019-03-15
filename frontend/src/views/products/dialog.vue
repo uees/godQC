@@ -57,6 +57,10 @@
         <el-form-item label="粘度浮动">
           <el-input v-model="obj.viscosity_width"/>
         </el-form-item>
+
+        <el-form-item label="Metas">
+          <json-editor v-model="obj.metas"/>
+        </el-form-item>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
@@ -72,6 +76,7 @@
 import dialog from '@/mixins/dialog'
 import queryCategory from '@/mixins/queryCategory'
 import { productApi } from '@/api/basedata'
+import JsonEditor from '../../components/JsonEditor/index'
 
 export function newObj() {
   return {
@@ -106,6 +111,7 @@ export function newObj() {
 
 export default {
   name: 'Dialog',
+  components: { JsonEditor },
   mixins: [
     dialog,
     queryCategory

@@ -38,9 +38,19 @@ class ProductController extends Controller
     {
         $this->authorize('create', Product::class);
 
+        $metas = $request->get('metas');
+        // 格式化数据
+        if (!is_null($metas)) {
+            $metas = is_array($metas) ? $metas : json_decode($metas);
+        }
+
         $product = new Product();
 
-        $product->fill($request->all())->save();
+        $product->fill($request->except('metas'));
+
+        $product->metas = $metas;
+
+        $product->save();
 
         // 加载关系
         $this->loadRelByModel($product);
@@ -67,7 +77,17 @@ class ProductController extends Controller
 
         $this->authorize('update', $product);
 
-        $product->fill($request->all())->save();
+        $metas = $request->get('metas');
+        // 格式化数据
+        if (!is_null($metas)) {
+            $metas = is_array($metas) ? $metas : json_decode($metas);
+        }
+
+        $product->fill($request->except('metas'));
+
+        $product->metas = $metas;
+
+        $product->save();
 
         // 加载关系
         $this->loadRelByModel($product);

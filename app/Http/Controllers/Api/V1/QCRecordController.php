@@ -33,6 +33,10 @@ class QCRecordController extends Controller
             $query->whereNull('said_package_at');
         }
 
+        if (\request('has_memo') == 'true') {
+            $query->whereNotNull('memo');
+        }
+
         if (\request('testing') == '1') {
             $query->where('is_archived', 0);
         } elseif (\request('tested') == '1') {
@@ -108,7 +112,8 @@ class QCRecordController extends Controller
             ->where('id', $id)
             ->firstOrFail();
 
-        $this->authorize('update', $testRecord);
+        // 有时要修改备注信息, 所以不再设权限
+        // $this->authorize('update', $testRecord);
 
         if ($request->filled('batch')) {
             $batch = $request->get('batch');
@@ -134,7 +139,7 @@ class QCRecordController extends Controller
                     ]);
             }
 
-            $testRecord->items;  // 加载关系
+            $testRecord->load('items');  // 加载关系
         }
 
         if ($testRecord->update($request->all())) {
@@ -368,23 +373,82 @@ class QCRecordController extends Controller
     {
         // 处理粘度
         foreach ($items as $key => $item) {
-            if ($item['item'] == '粘度') {
-                $items[$key]['value'] = \request('niandu');
-            } elseif ($item['item'] == '6转粘度') {
-                $items[$key]['value'] = \request('niandu');
-            } elseif ($item['item'] == '60转粘度') {
-                $items[$key]['value'] = \request('niandu60');
+            if ($item['item'] == '60转粘度' || $item['item'] == '粘度' || $item['item'] == '6转粘度') {
+                if ($item['item'] == '60转粘度') {
+                    $items[$key]['value'] = \request('niandu60');
+                } else {
+                    $items[$key]['value'] = \request('niandu');
+                }
+
+                $items[$key]['conclusion'] = $this->makeConclusion($items[$key]);
             }
+        }
+    }
+
+    protected function makeConclusion($item)
+    {
+        $value = $item['value'];
+        // 对范围类型作结论
+        if ($item['spec']['value_type'] == 'RANGE') {
+            if (isset($item['spec']['data']['min']) && isset($item['spec']['data']['max'])) {
+                if ($value > $item['spec']['data']['min'] && $value < $item['spec']['data']['max']) {
+                    return 'PASS';
+                }
+            } elseif (isset($item['spec']['data']['min'])) {
+                if ($value > $item['spec']['data']['min']) {
+                    return 'PASS';
+                }
+            } elseif (isset($item['spec']['data']['max'])) {
+                if ($value < $item['spec']['data']['max']) {
+                    return 'PASS';
+                }
+            }
+
+            return 'NG';
         }
     }
 
     protected function makeTestWay(Product $product)
     {
+        // 获取类别的检测要求
         $category = $product->category;
         $test_way = $category->testWay ? $category->testWay->way : [];
 
+        // 合并产品的检测项目
         if ($product->testWay) {
             $test_way = $this->mergeTestWay($test_way, $product->testWay->way);
+        }
+
+        // 从产品获取粘度要求
+        $spec_viscosity = $product->meta('spec_viscosity');
+        if ($spec_viscosity) {
+            $spec = explode("-", $spec_viscosity);
+            if (count($spec) == 2) {
+                list($min, $max) = $spec;
+
+                $name = '粘度';
+                if ($this->hasItem($test_way, '6转粘度')) {
+                    $name = '6转粘度';
+                }
+
+                $way_viscosity = [
+                    'name' => $name,
+                    'method' => '',
+                    'method_id' => '',
+                    'spec' => [
+                        'is_show' => true,
+                        'required' => true,
+                        'value_type' => 'RANGE',
+                        'data' => [
+                            'min' => floatval($min),
+                            'max' => floatval($max),
+                            'value' => '',
+                        ],
+                    ],
+                ];
+
+                $this->mergeTestWay($test_way, [$way_viscosity]);
+            }
         }
 
         // 配油提示

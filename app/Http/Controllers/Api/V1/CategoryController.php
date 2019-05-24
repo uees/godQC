@@ -46,10 +46,20 @@ class CategoryController extends Controller
     {
         $this->authorize('create', Category::class);
 
-        $category = new Category();
+        $metas = $request->get('metas');
+        if (!is_null($metas)) {
+            $metas = is_array($metas) ? $metas : json_decode($metas, true);
+        } else {
+            $metas = [];
+        }
+        $metas = array_merge(['templates' => []], $metas);
 
-        $category->fill($request->only(['name', 'slug', 'memo']))
-            ->save();
+        $category = new Category();
+        $category->fill($request->only(['name', 'slug', 'memo']));
+
+        $category->metas = $metas;
+
+        $category->save();
 
         return CategoryResource::make($category);
     }
@@ -60,8 +70,19 @@ class CategoryController extends Controller
 
         $this->authorize('update', $category);
 
-        $category->fill($request->only(['name', 'slug', 'memo']))
-            ->save();
+        $metas = $request->get('metas');
+        if (!is_null($metas)) {
+            $metas = is_array($metas) ? $metas : json_decode($metas, true);
+        } else {
+            $metas = [];
+        }
+        $metas = array_merge(['templates' => []], $metas);
+
+        $category->fill($request->only(['name', 'slug', 'memo']));
+
+        $category->metas = $metas;
+
+        $category->save();
 
         $this->loadRelByModel($category);
 
@@ -123,7 +144,7 @@ class CategoryController extends Controller
 
         if (is_null($templates)) {
             // clear templates
-            $category->setMeta('templates', null);
+            $category->setMeta('templates', []);
         } else {
             // json-editor 会把数据转为 json 字符串
             $templates = is_array($templates) ? $templates : json_decode($templates);

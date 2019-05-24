@@ -93,7 +93,7 @@
         <template slot-scope="scope">
           <el-button v-if="scope.row.testWay" type="text" size="small" @click="clearWay(scope)">清除流程</el-button>
           <el-button
-            v-if="scope.row.metas && scope.row.metas.templates"
+            v-if="hasTemplates(scope)"
             type="text"
             size="small"
             @click="clearTemplates(scope)">
@@ -221,6 +221,19 @@ export default {
         result = templates.map(template => template.name).join(';')
       }
       return result
+    },
+    hasTemplates(scope) {
+      if (!scope.row.metas) {
+        return false
+      }
+      if (!scope.row.metas.templates) {
+        return false
+      }
+      if (Array.isArray(scope.row.metas.templates) && scope.row.metas.templates.length === 0) {
+        return false
+      }
+
+      return true
     }
   }
 }

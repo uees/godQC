@@ -41,8 +41,16 @@ class ProductController extends Controller
         $metas = $request->get('metas');
         // 格式化数据
         if (!is_null($metas)) {
-            $metas = is_array($metas) ? $metas : json_decode($metas);
+            $metas = is_array($metas) ? $metas : json_decode($metas, true);
+        } else {
+            $metas = [];
         }
+
+        $metas = array_merge([
+            'templates' => [],
+            'cancel_category_template' => false,
+            'spec_viscosity' => '',
+        ], $metas);
 
         $product = new Product();
 
@@ -80,8 +88,16 @@ class ProductController extends Controller
         $metas = $request->get('metas');
         // 格式化数据
         if (!is_null($metas)) {
-            $metas = is_array($metas) ? $metas : json_decode($metas);
+            $metas = is_array($metas) ? $metas : json_decode($metas, true);
+        } else {
+            $metas = [];
         }
+
+        $metas = array_merge([
+            'templates' => [],
+            'cancel_category_template' => false,
+            'spec_viscosity' => '',
+        ], $metas);
 
         $product->fill($request->except('metas'));
 
@@ -149,7 +165,7 @@ class ProductController extends Controller
 
         if (is_null($templates)) {
             // clear templates
-            $product->setMeta('templates', null);
+            $product->setMeta('templates', []);
             $product->setMeta('cancel_category_template', false);
         } else {
             $templates = is_array($templates) ? $templates : json_decode($templates);

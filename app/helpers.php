@@ -36,3 +36,18 @@ if (!function_exists('queryCondition')) {
         return $condition;
     }
 }
+
+if (!function_exists('object2array')) {
+    function object2array($array)
+    {
+        if (is_object($array)) {
+            $array = (array)$array;
+        }
+        if (is_array($array)) {
+            foreach ($array as $key => $value) {
+                $array[$key] = object2array($value);
+            }
+        }
+        return $array;
+    }
+}

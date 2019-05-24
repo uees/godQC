@@ -14,3 +14,4 @@
 // Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
+// Route::get('/update', 'HomeController@update_2019_05_24');

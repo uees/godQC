@@ -42,7 +42,9 @@ class ProductController extends Controller
         // 格式化数据
         if (!is_null($metas)) {
             $metas = is_array($metas) ? $metas : json_decode($metas, true);
-        } else {
+        }
+
+        if (!is_array($metas)){
             $metas = [];
         }
 
@@ -89,7 +91,9 @@ class ProductController extends Controller
         // 格式化数据
         if (!is_null($metas)) {
             $metas = is_array($metas) ? $metas : json_decode($metas, true);
-        } else {
+        }
+
+        if (!is_array($metas)){
             $metas = [];
         }
 

@@ -49,9 +49,12 @@ class CategoryController extends Controller
         $metas = $request->get('metas');
         if (!is_null($metas)) {
             $metas = is_array($metas) ? $metas : json_decode($metas, true);
-        } else {
+        }
+
+        if (!is_array($metas)){
             $metas = [];
         }
+
         $metas = array_merge(['templates' => []], $metas);
 
         $category = new Category();
@@ -73,9 +76,12 @@ class CategoryController extends Controller
         $metas = $request->get('metas');
         if (!is_null($metas)) {
             $metas = is_array($metas) ? $metas : json_decode($metas, true);
-        } else {
+        }
+
+        if (!is_array($metas)){
             $metas = [];
         }
+
         $metas = array_merge(['templates' => []], $metas);
 
         $category->fill($request->only(['name', 'slug', 'memo']));

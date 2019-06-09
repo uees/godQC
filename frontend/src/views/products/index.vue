@@ -70,7 +70,7 @@
       <el-table-column label="报告模板">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="showTemplateDialog(scope)">
-            <span v-if="scope.row.metas && scope.row.metas.templates">
+            <span v-if="hasTemplates(scope)">
               {{ displayTemplates(scope.row.metas.templates) }}
             </span>
             <span v-else>选择</span>

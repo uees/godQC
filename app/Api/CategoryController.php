@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Api;
 
 use App\Category;
 use App\TestWay;

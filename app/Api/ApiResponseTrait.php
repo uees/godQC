@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Api;
 
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Illuminate\Support\Facades\Response;

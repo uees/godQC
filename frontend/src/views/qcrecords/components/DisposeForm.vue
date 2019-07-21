@@ -1,15 +1,23 @@
 <template>
   <div>
-    <el-dialog :visible.sync="dialogFormVisible" title="处理方法" @close="close">
+    <el-dialog
+      :visible.sync="dialogFormVisible"
+      title="处理方法"
+      @close="close"
+    >
       <el-form
         ref="obj_form"
         :model="dispose"
         :rules="rules"
         class="small-space"
         label-position="right"
-        label-width="100px">
+        label-width="100px"
+      >
 
-        <el-form-item label="处理方法" prop="method">
+        <el-form-item
+          label="处理方法"
+          prop="method"
+        >
           <el-autocomplete
             v-model="dispose.method"
             :fetch-suggestions="queryMethods"
@@ -17,21 +25,41 @@
           />
         </el-form-item>
 
-        <el-form-item label="处理人" prop="author">
+        <el-form-item
+          label="处理人"
+          prop="author"
+        >
           <el-autocomplete
             v-model="dispose.author"
             :fetch-suggestions="queryAuthors"
-            value-key="name"/>
+            value-key="name"
+          />
         </el-form-item>
 
         <el-form-item label="备注">
-          <el-input v-model="dispose.memo" :rows="2" type="textarea" placeholder="请输入内容"/>
+          <el-input
+            v-model="dispose.memo"
+            :rows="2"
+            type="textarea"
+            placeholder="请输入内容"
+          />
         </el-form-item>
       </el-form>
 
-      <div slot="footer" class="dialog-footer">
-        <el-button v-if="action==='create'" type="primary" @click="create">确 定</el-button>
-        <el-button v-else type="primary" @click="update">确 定</el-button>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          v-if="action==='create'"
+          type="primary"
+          @click="create"
+        >确 定</el-button>
+        <el-button
+          v-else
+          type="primary"
+          @click="update"
+        >确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -76,7 +104,7 @@ export default {
   },
   mounted() {
     Bus.$on('show-dispose-form', (record) => {
-      productDisposeApi.list({ params: { from_record_id: record.id, all: 1 } }).then(response => {
+      productDisposeApi.list({ params: { from_record_id: record.id, all: 1 }}).then(response => {
         const { data } = response.data
         this.dialogFormVisible = true
         if (data.length && data.length > 0) {

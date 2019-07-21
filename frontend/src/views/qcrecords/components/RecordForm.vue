@@ -1,40 +1,58 @@
 <template>
   <div>
-    <el-dialog :visible.sync="visible" title="编辑样品" @close="close">
+    <el-dialog
+      :visible.sync="visible"
+      title="编辑样品"
+      @close="close"
+    >
       <el-form
         ref="obj_form"
         :model="record"
         :rules="rules"
         class="small-space"
         label-position="right"
-        label-width="70px">
+        label-width="70px"
+      >
 
         <el-form-item label="品名">
-          <el-input :disabled="true" :value="record.batch.product_name"/>
+          <el-input
+            :disabled="true"
+            :value="record.batch.product_name"
+          />
         </el-form-item>
 
         <el-form-item label="品名后缀">
           <el-autocomplete
             v-model="record.batch.product_name_suffix"
             :fetch-suggestions="querySearchSuffix"
-            placeholder="品名后缀"/>
+            placeholder="品名后缀"
+          />
         </el-form-item>
 
-        <el-form-item label="批号" prop="batch.batch_number">
-          <el-input v-model="record.batch.batch_number"/>
+        <el-form-item
+          label="批号"
+          prop="batch.batch_number"
+        >
+          <el-input v-model="record.batch.batch_number" />
         </el-form-item>
 
         <el-form-item label="备注">
-          <el-input v-model="record.memo"/>
+          <el-input v-model="record.memo" />
         </el-form-item>
 
         <el-form-item label="是否展示">
-          <el-switch v-model="record.show_reality"/>
+          <el-switch v-model="record.show_reality" />
         </el-form-item>
       </el-form>
 
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="update">确 定</el-button>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          @click="update"
+        >确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -43,7 +61,7 @@
 <script>
 import Bus from '@/store/bus'
 import { deepClone } from '@/utils'
-import suffixSuggests from '@/mixins/suffixSuggests'
+import suffixSuggests from '@/views/mixins/suffixSuggests'
 import { qcRecordApi } from '@/api/qc'
 
 export default {

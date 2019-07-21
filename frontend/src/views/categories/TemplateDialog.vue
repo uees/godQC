@@ -4,9 +4,16 @@
       :fullscreen="true"
       :visible.sync="visible"
       title="选择模板"
-      @close="close">
+      @close="close"
+    >
 
-      <el-table :data="templates" border fit highlight-current-row style="width: 100%">
+      <el-table
+        :data="templates"
+        border
+        fit
+        highlight-current-row
+        style="width: 100%"
+      >
         <el-table-column label="模板">
           <template slot-scope="scope">
             <el-autocomplete
@@ -19,28 +26,51 @@
 
         <el-table-column label="提示">
           <template slot-scope="scope">
-            <json-editor v-model="scope.row.tips"/>
+            <json-editor v-model="scope.row.tips" />
           </template>
         </el-table-column>
 
         <el-table-column label="选项">
           <template slot-scope="scope">
-            <json-editor v-model="scope.row.options"/>
+            <json-editor v-model="scope.row.options" />
           </template>
         </el-table-column>
 
-        <el-table-column align="center" label="操作" width="100" class-name="small-padding fixed-width">
+        <el-table-column
+          align="center"
+          label="操作"
+          width="100"
+          class-name="small-padding fixed-width"
+        >
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="insertTemplate(scope)">插入</el-button>
-            <el-button type="text" size="small" @click="deleteTemplate(scope)">删除</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="insertTemplate(scope)"
+            >插入</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="deleteTemplate(scope)"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="close">取 消</el-button>
-        <el-button type="primary" icon="el-icon-edit" @click="addTemplate">添加模板</el-button>
-        <el-button type="primary" @click="submit()">确 定</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-edit"
+          @click="addTemplate"
+        >添加模板</el-button>
+        <el-button
+          type="primary"
+          @click="submit()"
+        >确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -49,7 +79,7 @@
 <script>
 import JsonEditor from '../../components/JsonEditor/index'
 import Bus from '@/store/bus'
-import templatesSuggestions from '@/mixins/templatesSuggestions'
+import templatesSuggestions from '@/views/mixins/templatesSuggestions'
 import { deepClone } from '@/utils'
 import { categoryUpdateTemplates } from '@/api/qc'
 

@@ -6,7 +6,8 @@
         style="width: 250px;"
         class="filter-item"
         placeholder="搜索"
-        @keyup.enter.native="handleSearch"/>
+        @keyup.enter.native="handleSearch"
+      />
 
       <el-select
         v-model="listShowItems"
@@ -17,12 +18,14 @@
         default-first-option
         class="filter-item"
         style="margin-left: 10px;"
-        placeholder="请选择要列表展示的项目">
+        placeholder="请选择要列表展示的项目"
+      >
         <el-option
           v-for="item in testItemSuggestions"
           :key="item.value"
           :label="item.label"
-          :value="item.value"/>
+          :value="item.value"
+        />
       </el-select>
 
       <el-button
@@ -30,7 +33,8 @@
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-refresh"
-        @click="fetchData"/>
+        @click="fetchData"
+      />
     </div>
 
     <div class="filter-container">
@@ -55,9 +59,9 @@
       >
         <el-option
           v-for="category in categories"
+          :key="category.id"
           :label="category.name"
           :value="category.id"
-          :key="category.id"
         />
       </el-select>
 
@@ -67,8 +71,14 @@
         placeholder="结论"
         @change="selectConclusion"
       >
-        <el-option label="合格" value="PASS"/>
-        <el-option label="不合格" value="NG"/>
+        <el-option
+          label="合格"
+          value="PASS"
+        />
+        <el-option
+          label="不合格"
+          value="NG"
+        />
       </el-select>
 
       <el-checkbox
@@ -76,14 +86,16 @@
         v-model="queryParams.has_memo"
         label="有备注"
         border
-        @change="fetchData"/>
+        @change="fetchData"
+      />
 
       <el-button
         :loading="downloadLoading"
         style="margin:0 0 20px 20px;"
         type="primary"
         icon="document"
-        @click="handleDownload">
+        @click="handleDownload"
+      >
         {{ $t('excel.export') }} Excel
       </el-button>
     </div>
@@ -98,13 +110,19 @@
       stripe
       style="width: 100%"
     >
-      <el-table-column align="center" label="取样时间">
+      <el-table-column
+        align="center"
+        label="取样时间"
+      >
         <template slot-scope="scope">
           {{ echoTime(scope.row.created_at) }}
         </template>
       </el-table-column>
 
-      <el-table-column label="品名" align="center">
+      <el-table-column
+        label="品名"
+        align="center"
+      >
         <template slot-scope="scope">
           <span>
             {{ scope.row.batch.product_name }}
@@ -115,50 +133,92 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="batch.batch_number" align="center" label="批号"/>
+      <el-table-column
+        prop="batch.batch_number"
+        align="center"
+        label="批号"
+      />
 
-      <el-table-column v-for="name in listShowItems" :key="name" :label="name" align="center">
+      <el-table-column
+        v-for="name in listShowItems"
+        :key="name"
+        :label="name"
+        align="center"
+      >
         <template slot-scope="scope">
           <span>{{ echoItem(scope.row, name) }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="结论">
+      <el-table-column
+        align="center"
+        label="结论"
+      >
         <template slot-scope="scope">
           {{ echoConclusion(showReality(scope.row) ? scope.row.conclusion : 'PASS') }}
         </template>
       </el-table-column>
 
-      <el-table-column prop="testers" align="center" label="检测人"/>
+      <el-table-column
+        prop="testers"
+        align="center"
+        label="检测人"
+      />
 
-      <el-table-column align="center" label="写装时间">
+      <el-table-column
+        align="center"
+        label="写装时间"
+      >
         <template slot-scope="scope">
           {{ echoTime(scope.row.said_package_at) }}
         </template>
       </el-table-column>
 
-      <el-table-column prop="memo" align="center" label="备注"/>
+      <el-table-column
+        prop="memo"
+        align="center"
+        label="备注"
+      />
 
-      <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
+      <el-table-column
+        align="center"
+        label="操作"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <router-link
             v-if="real"
-            :to="{name: 'records.show-real', params: { id: scope.row.id }}">查看
+            :to="{name: 'records.show-real', params: { id: scope.row.id }}"
+          >查看
           </router-link>
           <router-link
             v-else
-            :to="{name: 'records.show', params: { id: scope.row.id }}">查看
+            :to="{name: 'records.show', params: { id: scope.row.id }}"
+          >查看
           </router-link>
           <el-button
             v-if="showReality(scope.row) && scope.row.conclusion === 'NG'"
             type="text"
             size="small"
-            @click="showDispose(scope.row)">处理办法
+            @click="showDispose(scope.row)"
+          >处理办法
           </el-button>
           <template v-if="real">
-            <el-button type="text" size="small" @click="handleCancelArchive(scope)">取消归档</el-button>
-            <el-button type="text" size="small" @click="handleShowRecordEditForm(scope)">编辑</el-button>
-            <el-button type="text" size="small" @click="handleDeleteRecord(scope)">删除</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="handleCancelArchive(scope)"
+            >取消归档</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="handleShowRecordEditForm(scope)"
+            >编辑</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="handleDeleteRecord(scope)"
+            >删除</el-button>
           </template>
         </template>
       </el-table-column>
@@ -172,7 +232,10 @@
             header-cell-class-name="table-header-th"
             style="width: 100%"
           >
-            <el-table-column prop="item" label="项目"/>
+            <el-table-column
+              prop="item"
+              label="项目"
+            />
             <el-table-column label="要求">
               <template slot-scope="props">
                 {{ echoSpec(props.row.spec) }}
@@ -192,15 +255,24 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="tester" label="检测员"/>
-            <el-table-column prop="memo" label="备注"/>
+            <el-table-column
+              prop="tester"
+              label="检测员"
+            />
+            <el-table-column
+              prop="memo"
+              label="备注"
+            />
           </el-table>
         </template>
       </el-table-column>
 
     </el-table>
 
-    <div v-show="!listLoading" class="pagination-container">
+    <div
+      v-show="!listLoading"
+      class="pagination-container"
+    >
       <el-pagination
         :total="total"
         :current-page.sync="queryParams.page"
@@ -208,22 +280,26 @@
         :page-size="queryParams.per_page"
         layout="total, sizes, prev, pager, next, jumper"
         @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"/>
+        @current-change="handleCurrentChange"
+      />
     </div>
 
-    <item-form @item-created="itemCreated" @item-updated="itemUpdated"/>
-    <record-form @record-updated="recordUpdated"/>
+    <item-form
+      @item-created="itemCreated"
+      @item-updated="itemUpdated"
+    />
+    <record-form @record-updated="recordUpdated" />
   </div>
 </template>
 
 <script>
 import { qcRecordApi } from '@/api/qc'
 import Bus from '@/store/bus'
-import echoSpecMethod from '@/mixins/echoSpecMethod'
-import echoTimeMethod from '@/mixins/echoTimeMethod'
-import testItemSuggestions from '@/mixins/testItemSuggestions'
-import pagination from '@/mixins/pagination'
-import queryCategory from '@/mixins/queryCategory'
+import echoSpecMethod from '@/views/mixins/echoSpecMethod'
+import echoTimeMethod from '@/views/mixins/echoTimeMethod'
+import testItemSuggestions from '@/views/mixins/testItemSuggestions'
+import pagination from '@/views/mixins/pagination'
+import queryCategory from '@/views/mixins/queryCategory'
 import commonMethods from './mixin/commonMethods'
 import testOperation from './mixin/testOperation'
 import ItemForm from './components/ItemForm'
@@ -299,7 +375,7 @@ export default {
     }
   },
   computed: {
-    filename: function () {
+    filename: function() {
       let fname = '检测流水'
       if (this.queryParams.q) {
         fname += '_' + cleanSpelChar(this.queryParams.q)
@@ -373,11 +449,11 @@ export default {
       this.fetchData()
     },
     showDispose(row) {
-      qcRecordApi.detail(row.id, { params: { with: 'willDispose' } }).then(response => {
+      qcRecordApi.detail(row.id, { params: { with: 'willDispose' }}).then(response => {
         const { data } = response.data // data is record
 
         if (data.willDispose) {
-          this.$router.push({ name: 'disposes.show', params: { id: data.willDispose.id } })
+          this.$router.push({ name: 'disposes.show', params: { id: data.willDispose.id }})
         } else {
           this.$message('无处理记录')
         }

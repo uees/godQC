@@ -6,33 +6,48 @@
         style="width: 250px;"
         class="filter-item"
         placeholder="搜索"
-        @keyup.enter.native="handleSearch"/>
+        @keyup.enter.native="handleSearch"
+      />
 
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-refresh"
-        @click="handleSearch"/>
+        @click="handleSearch"
+      />
 
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
-        @click="handleCreate">添加
+        @click="handleCreate"
+      >添加
       </el-button>
 
       <el-button
         class="filter-item"
         type="primary"
         icon="el-icon-document"
-        @click="handleDownload">导出
+        @click="handleDownload"
+      >导出
       </el-button>
     </div>
 
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="创建时间" width="100">
+    <el-table
+      v-loading="listLoading"
+      :data="list"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%"
+    >
+      <el-table-column
+        align="center"
+        label="创建时间"
+        width="100"
+      >
         <template slot-scope="scope">
           <span v-if="scope.row.created_at">
             {{ echoTime(scope.row.created_at) }}
@@ -40,7 +55,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="150" align="center" label="品名">
+      <el-table-column
+        width="150"
+        align="center"
+        label="品名"
+      >
         <template slot-scope="scope">
           <el-autocomplete
             v-if="scope.row.is_edit"
@@ -55,18 +74,25 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="批号">
+      <el-table-column
+        align="center"
+        label="批号"
+      >
         <template slot-scope="scope">
           <el-input
             v-if="scope.row.is_edit"
             v-model="scope.row.batch_number"
             placeholder="批号"
-            @blur="save(scope)"/>
+            @blur="save(scope)"
+          />
           <span v-else>{{ scope.row.batch_number }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="12小时显影">
+      <el-table-column
+        align="center"
+        label="12小时显影"
+      >
         <template slot-scope="scope">
           <el-autocomplete
             v-if="scope.row.is_edit"
@@ -81,7 +107,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="24小时显影">
+      <el-table-column
+        align="center"
+        label="24小时显影"
+      >
         <template slot-scope="scope">
           <el-autocomplete
             v-if="scope.row.is_edit"
@@ -96,7 +125,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="耐焊性">
+      <el-table-column
+        align="center"
+        label="耐焊性"
+      >
         <template slot-scope="scope">
           <el-autocomplete
             v-if="scope.row.is_edit"
@@ -111,7 +143,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="耐溶剂">
+      <el-table-column
+        align="center"
+        label="耐溶剂"
+      >
         <template slot-scope="scope">
           <el-autocomplete
             v-if="scope.row.is_edit"
@@ -126,7 +161,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="耐酸碱">
+      <el-table-column
+        align="center"
+        label="耐酸碱"
+      >
         <template slot-scope="scope">
           <el-autocomplete
             v-if="scope.row.is_edit"
@@ -141,7 +179,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="隔夜显影">
+      <el-table-column
+        align="center"
+        label="隔夜显影"
+      >
         <template slot-scope="scope">
           <el-autocomplete
             v-if="scope.row.is_edit"
@@ -156,7 +197,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="隔夜曝光">
+      <el-table-column
+        align="center"
+        label="隔夜曝光"
+      >
         <template slot-scope="scope">
           <el-autocomplete
             v-if="scope.row.is_edit"
@@ -171,7 +215,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="检测员">
+      <el-table-column
+        align="center"
+        label="检测员"
+      >
         <template slot-scope="scope">
           <el-autocomplete
             v-if="scope.row.is_edit"
@@ -187,27 +234,41 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="50" class-name="small-padding fixed-width">
+      <el-table-column
+        align="center"
+        label="操作"
+        width="50"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             v-if="!scope.row.is_edit"
             type="text"
             size="small"
-            @click="scope.row.is_edit = true">编辑
+            @click="scope.row.is_edit = true"
+          >编辑
           </el-button>
           <el-button
             v-else
             type="text"
             size="small"
-            @click="handleSave(scope)">保存
+            @click="handleSave(scope)"
+          >保存
           </el-button>
-          <el-button type="text" size="small" @click="handleDelete(scope)">删除</el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="handleDelete(scope)"
+          >删除</el-button>
         </template>
       </el-table-column>
 
     </el-table>
 
-    <div v-show="!listLoading" class="pagination-container">
+    <div
+      v-show="!listLoading"
+      class="pagination-container"
+    >
       <el-pagination
         :total="total"
         :current-page.sync="queryParams.page"
@@ -215,7 +276,8 @@
         :page-size="queryParams.per_page"
         layout="total, sizes, prev, pager, next, jumper"
         @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"/>
+        @current-change="handleCurrentChange"
+      />
     </div>
   </div>
 </template>
@@ -224,9 +286,9 @@
 import { deepClone } from '@/utils'
 import { productApi } from '@/api/basedata'
 import { patternTestApi } from '@/api/qc'
-import testersSuggestions from '@/mixins/testersSuggestions'
-import pagination from '@/mixins/pagination'
-import echoTimeMethod from '@/mixins/echoTimeMethod'
+import testersSuggestions from '@/views/mixins/testersSuggestions'
+import pagination from '@/views/mixins/pagination'
+import echoTimeMethod from '@/views/mixins/echoTimeMethod'
 
 export default {
   name: 'PatternTest',
@@ -248,7 +310,7 @@ export default {
     }
   },
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(function() {
       this.fetchData()
     })
   },
@@ -293,7 +355,7 @@ export default {
       this.cachedData = deepClone(this.list)
     },
     querySearchProducts(queryString, cb) {
-      productApi.list({ params: { q: queryString, sort_by: 'internal_name', order: 'asc' } }).then(response => {
+      productApi.list({ params: { q: queryString, sort_by: 'internal_name', order: 'asc' }}).then(response => {
         const { data } = response.data
         this.products = data
         cb(this.products)
@@ -385,6 +447,7 @@ export default {
         if (key === 'is_edit' || key === 'is_add') { // 跳过标志字段
           return false
         }
+        // eslint-disable-next-line
         return test[key] != this.cachedData[index][key]
       })
 
@@ -414,13 +477,13 @@ export default {
 </script>
 
 <style scoped>
-  .edit-input {
-    padding-right: 100px;
-  }
+.edit-input {
+  padding-right: 100px;
+}
 
-  .cancel-btn {
-    position: absolute;
-    right: 15px;
-    top: 10px;
-  }
+.cancel-btn {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+}
 </style>

@@ -33,7 +33,7 @@ export function customerAddProduct(customer_id, product_id) {
 }
 
 export function getBatchDispose(product_name, batch_number, type) {
-  return request.get('product-batches/disposes', { params: { product_name, batch_number, type } })
+  return request.get('product-batches/disposes', { params: { product_name, batch_number, type }})
 }
 
 export function qcSample(data) {

@@ -1,44 +1,46 @@
 <template>
   <div :class="computedClasses" class="material-input__component">
     <div :class="{iconClass:icon}">
-      <i v-if="icon" :class="['el-icon-' + icon]" class="el-input__icon material-input__icon"/>
+      <i v-if="icon" :class="['el-icon-' + icon]" class="el-input__icon material-input__icon" />
       <input
         v-if="type === 'email'"
+        v-model="currentValue"
         :name="name"
         :placeholder="fillPlaceHolder"
-        v-model="currentValue"
         :readonly="readonly"
         :disabled="disabled"
-        :autoComplete="autoComplete"
+        :autocomplete="autoComplete"
         :required="required"
         type="email"
         class="material-input"
         @focus="handleMdFocus"
         @blur="handleMdBlur"
-        @input="handleModelInput">
+        @input="handleModelInput"
+      >
       <input
         v-if="type === 'url'"
+        v-model="currentValue"
         :name="name"
         :placeholder="fillPlaceHolder"
-        v-model="currentValue"
         :readonly="readonly"
         :disabled="disabled"
-        :autoComplete="autoComplete"
+        :autocomplete="autoComplete"
         :required="required"
         type="url"
         class="material-input"
         @focus="handleMdFocus"
         @blur="handleMdBlur"
-        @input="handleModelInput">
+        @input="handleModelInput"
+      >
       <input
         v-if="type === 'number'"
+        v-model="currentValue"
         :name="name"
         :placeholder="fillPlaceHolder"
-        v-model="currentValue"
         :step="step"
         :readonly="readonly"
         :disabled="disabled"
-        :autoComplete="autoComplete"
+        :autocomplete="autoComplete"
         :max="max"
         :min="min"
         :minlength="minlength"
@@ -48,15 +50,16 @@
         class="material-input"
         @focus="handleMdFocus"
         @blur="handleMdBlur"
-        @input="handleModelInput">
+        @input="handleModelInput"
+      >
       <input
         v-if="type === 'password'"
+        v-model="currentValue"
         :name="name"
         :placeholder="fillPlaceHolder"
-        v-model="currentValue"
         :readonly="readonly"
         :disabled="disabled"
-        :autoComplete="autoComplete"
+        :autocomplete="autoComplete"
         :max="max"
         :min="min"
         :required="required"
@@ -64,29 +67,31 @@
         class="material-input"
         @focus="handleMdFocus"
         @blur="handleMdBlur"
-        @input="handleModelInput">
+        @input="handleModelInput"
+      >
       <input
         v-if="type === 'tel'"
+        v-model="currentValue"
         :name="name"
         :placeholder="fillPlaceHolder"
-        v-model="currentValue"
         :readonly="readonly"
         :disabled="disabled"
-        :autoComplete="autoComplete"
+        :autocomplete="autoComplete"
         :required="required"
         type="tel"
         class="material-input"
         @focus="handleMdFocus"
         @blur="handleMdBlur"
-        @input="handleModelInput">
+        @input="handleModelInput"
+      >
       <input
         v-if="type === 'text'"
+        v-model="currentValue"
         :name="name"
         :placeholder="fillPlaceHolder"
-        v-model="currentValue"
         :readonly="readonly"
         :disabled="disabled"
-        :autoComplete="autoComplete"
+        :autocomplete="autoComplete"
         :minlength="minlength"
         :maxlength="maxlength"
         :required="required"
@@ -94,10 +99,11 @@
         class="material-input"
         @focus="handleMdFocus"
         @blur="handleMdBlur"
-        @input="handleModelInput">
-      <span class="material-input-bar"/>
+        @input="handleModelInput"
+      >
+      <span class="material-input-bar" />
       <label class="material-label">
-        <slot/>
+        <slot />
       </label>
     </div>
   </div>
@@ -191,7 +197,7 @@ export default {
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   // Fonts:
   $font-size-base: 16px;
   $font-size-small: 18px;
@@ -233,11 +239,9 @@ export default {
   .material-input__component {
     margin-top: 36px;
     position: relative;
-
     * {
       box-sizing: border-box;
     }
-
     .iconClass {
       .material-input__icon {
         position: absolute;
@@ -251,16 +255,13 @@ export default {
         font-weight: $font-weight-normal;
         pointer-events: none;
       }
-
       .material-label {
         left: $index-has-icon;
       }
-
       .material-input {
         text-indent: $index-has-icon;
       }
     }
-
     .material-input {
       font-size: $font-size-base;
       padding: $spacer $spacer $spacer - $apixel * 10 $spacer / 2;
@@ -269,14 +270,12 @@ export default {
       border: none;
       line-height: 1;
       border-radius: 0;
-
       &:focus {
         outline: none;
         border: none;
         border-bottom: 1px solid transparent; // fixes the height issue
       }
     }
-
     .material-label {
       font-weight: $font-weight-normal;
       position: absolute;
@@ -286,37 +285,31 @@ export default {
       transition: $transition;
       font-size: $font-size-small;
     }
-
     .material-input-bar {
       position: relative;
       display: block;
       width: 100%;
-
       &:before {
         @extend %base-bar-pseudo;
         left: 50%;
       }
-
       &:after {
         @extend %base-bar-pseudo;
         right: 50%;
       }
     }
-
     // Disabled state:
     &.material--disabled {
       .material-input {
         border-bottom-style: dashed;
       }
     }
-
     // Raised state:
     &.material--raised {
       .material-label {
         @include slided-top();
       }
     }
-
     // Active state:
     &.material--active {
       .material-input-bar {
@@ -330,38 +323,32 @@ export default {
 
   .material-input__component {
     background: $color-white;
-
     .material-input {
       background: none;
       color: $color-black;
       text-indent: $index;
       border-bottom: 1px solid $color-grey-light;
     }
-
     .material-label {
       color: $color-grey;
     }
-
     .material-input-bar {
       &:before,
       &:after {
         background: $color-blue;
       }
     }
-
     // Active state:
     &.material--active {
       .material-label {
         color: $color-blue;
       }
     }
-
     // Errors:
     &.material--has-errors {
       &.material--active .material-label {
         color: $color-red;
       }
-
       .material-input-bar {
         &:before,
         &:after {

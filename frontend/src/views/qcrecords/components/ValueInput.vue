@@ -51,7 +51,7 @@ export default {
     })
   },
   watch: {
-    value: function (val) {
+    value: function(val) {
       this.$emit('input', val)
     }
   },
@@ -64,7 +64,7 @@ export default {
   },
   mounted() {
     this.value = this.dataValue
-    this.$nextTick(function () {
+    this.$nextTick(function() {
       this.fetchTestItems()
     })
   },

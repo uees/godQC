@@ -5,7 +5,8 @@
         class="filter-item"
         type="danger"
         icon="el-icon-plus"
-        @click="handleSample">取样
+        @click="handleSample"
+      >取样
       </el-button>
 
       <el-input
@@ -13,7 +14,8 @@
         style="width: 250px; margin-left: 10px;"
         class="filter-item"
         placeholder="搜索"
-        @keyup.enter.native="handleSearch"/>
+        @keyup.enter.native="handleSearch"
+      />
 
       <el-select
         v-model="listShowItems"
@@ -23,12 +25,14 @@
         clearable
         default-first-option
         class="filter-item"
-        placeholder="请选择要列表展示的项目">
+        placeholder="请选择要列表展示的项目"
+      >
         <el-option
           v-for="item in testItemSuggestions"
           :key="item.value"
           :label="item.label"
-          :value="item.value"/>
+          :value="item.value"
+        />
       </el-select>
 
       <el-select
@@ -39,8 +43,14 @@
         @change="fetchData"
         @clear="fetchData"
       >
-        <el-option label="写装" value="1"/>
-        <el-option label="未写装" value="0"/>
+        <el-option
+          label="写装"
+          value="1"
+        />
+        <el-option
+          label="未写装"
+          value="0"
+        />
       </el-select>
 
       <el-button
@@ -48,7 +58,8 @@
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-refresh"
-        @click="fetchData"/>
+        @click="fetchData"
+      />
     </div>
 
     <el-table
@@ -60,13 +71,19 @@
       row-key="id"
       style="width: 100%;"
     >
-      <el-table-column label="取样时间" align="center">
+      <el-table-column
+        label="取样时间"
+        align="center"
+      >
         <template slot-scope="scope">
           {{ echoTime(scope.row.created_at) }}
         </template>
       </el-table-column>
 
-      <el-table-column label="品名" align="center">
+      <el-table-column
+        label="品名"
+        align="center"
+      >
         <template slot-scope="scope">
           <span>
             {{ scope.row.batch.product_name }}
@@ -77,54 +94,104 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="batch.batch_number" label="批号" align="center"/>
+      <el-table-column
+        prop="batch.batch_number"
+        label="批号"
+        align="center"
+      />
 
-      <el-table-column v-for="name in listShowItems" :key="name" :label="name" align="center">
+      <el-table-column
+        v-for="name in listShowItems"
+        :key="name"
+        :label="name"
+        align="center"
+      >
         <template slot-scope="scope">
           <span>{{ echoItem(scope.row, name) }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="结论" align="center">
+      <el-table-column
+        label="结论"
+        align="center"
+      >
         <template slot-scope="scope">
           <span>{{ echoConclusion(scope.row.conclusion) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="testers" label="检测人" align="center"/>
+      <el-table-column
+        prop="testers"
+        label="检测人"
+        align="center"
+      />
 
-      <el-table-column label="备注" align="center">
+      <el-table-column
+        label="备注"
+        align="center"
+      >
         <template slot-scope="scope">
           <el-input
             v-model="scope.row.memo"
             :rows="2"
             type="textarea"
             placeholder="备注"
-            @blur="onRecordMemoBlur(scope)"/>
+            @blur="onRecordMemoBlur(scope)"
+          />
         </template>
       </el-table-column>
 
-      <el-table-column label="注意事项" align="center">
+      <el-table-column
+        label="注意事项"
+        align="center"
+      >
         <template slot-scope="scope">
           <span>{{ echoRequire(scope.row) }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" class-name="small-padding fixed-width">
+      <el-table-column
+        align="center"
+        label="操作"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             v-if="scope.row.conclusion === 'NG'"
             type="text"
             size="small"
             style="color: red"
-            @click="handleMakeDispose(scope.row)">处理意见
+            @click="handleMakeDispose(scope.row)"
+          >处理意见
           </el-button>
-          <el-button v-if="scope.row.said_package_at" type="text" size="small" @click="handleCancelSayPackage(scope)">
+          <el-button
+            v-if="scope.row.said_package_at"
+            type="text"
+            size="small"
+            @click="handleCancelSayPackage(scope)"
+          >
             取消写装
           </el-button>
-          <el-button v-else type="text" size="small" @click="handleSayPackage(scope)">写装</el-button>
-          <el-button type="text" size="small" @click="handleArchive(scope)">归档</el-button>
-          <el-button type="text" size="small" @click="handleShowRecordEditForm(scope)">编辑</el-button>
-          <el-button type="text" size="small" @click="handleDeleteRecord(scope)">删除</el-button>
+          <el-button
+            v-else
+            type="text"
+            size="small"
+            @click="handleSayPackage(scope)"
+          >写装</el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="handleArchive(scope)"
+          >归档</el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="handleShowRecordEditForm(scope)"
+          >编辑</el-button>
+          <el-button
+            type="text"
+            size="small"
+            @click="handleDeleteRecord(scope)"
+          >删除</el-button>
         </template>
       </el-table-column>
 
@@ -133,13 +200,15 @@
           <el-button
             type="primary"
             style="margin-bottom: 10px"
-            @click="handleShowItemForm(scope)">添加项目
+            @click="handleShowItemForm(scope)"
+          >添加项目
           </el-button>
 
           <el-button
             type="primary"
             style="margin-bottom: 10px; margin-left: 10px"
-            @click="handleSave(scope)">手动保存
+            @click="handleSave(scope)"
+          >手动保存
           </el-button>
 
           <el-table
@@ -149,7 +218,10 @@
             header-cell-class-name="table-header-th"
             style="width: 100%;"
           >
-            <el-table-column prop="item" label="项目"/>
+            <el-table-column
+              prop="item"
+              label="项目"
+            />
             <el-table-column label="要求">
               <template slot-scope="props">
                 {{ echoSpec(props.row.spec) }}
@@ -159,10 +231,11 @@
             <el-table-column label="结果">
               <template slot-scope="props">
                 <value-input
+                  :key="props.row.id"
                   v-model="props.row.value"
                   :item="props.row.item"
-                  :key="props.row.id"
-                  @blur="onItemValueBlur(scope, props)"/>
+                  @blur="onItemValueBlur(scope, props)"
+                />
               </template>
             </el-table-column>
 
@@ -177,7 +250,8 @@
                     v-for="item in conclusions"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.value"/>
+                    :value="item.value"
+                  />
                 </el-select>
                 <span v-else>{{ echoConclusion(props.row.conclusion) }}</span>
               </template>
@@ -190,7 +264,8 @@
                   :fetch-suggestions="querySearchTesters"
                   value-key="name"
                   placeholder="检测员"
-                  @select="onItemUserBlur(scope, props)"/>
+                  @select="onItemUserBlur(scope, props)"
+                />
               </template>
             </el-table-column>
 
@@ -203,10 +278,23 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" label="操作" width="100" class-name="small-padding fixed-width">
+            <el-table-column
+              align="center"
+              label="操作"
+              width="100"
+              class-name="small-padding fixed-width"
+            >
               <template slot-scope="props">
-                <el-button type="text" size="small" @click="handleShowItemForm(scope, props)">编辑</el-button>
-                <el-button type="text" size="small" @click="handleDeleteRecordItem(scope, props)">删除</el-button>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="handleShowItemForm(scope, props)"
+                >编辑</el-button>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="handleDeleteRecordItem(scope, props)"
+                >删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -215,20 +303,23 @@
 
     </el-table>
 
-    <qc-sample/>
-    <dispose-form/>
-    <item-form @item-created="itemCreated" @item-updated="itemUpdated"/>
-    <record-form @record-updated="recordUpdated"/>
+    <qc-sample />
+    <dispose-form />
+    <item-form
+      @item-created="itemCreated"
+      @item-updated="itemUpdated"
+    />
+    <record-form @record-updated="recordUpdated" />
   </div>
 </template>
 
 <script>
 import { qcRecordApi } from '@/api/qc'
 import Bus from '@/store/bus'
-import echoSpecMethod from '@/mixins/echoSpecMethod'
-import echoTimeMethod from '@/mixins/echoTimeMethod'
-import testersSuggestions from '@/mixins/testersSuggestions'
-import testItemSuggestions from '@/mixins/testItemSuggestions'
+import echoSpecMethod from '@/views/mixins/echoSpecMethod'
+import echoTimeMethod from '@/views/mixins/echoTimeMethod'
+import testersSuggestions from '@/views/mixins/testersSuggestions'
+import testItemSuggestions from '@/views/mixins/testItemSuggestions'
 import commonMethods from './mixin/commonMethods'
 import testOperation from './mixin/testOperation'
 import QcSample from './components/QcSample'
@@ -342,40 +433,41 @@ export default {
 </script>
 
 <style lang="scss">
-  .el-table th.table-header-th {
-    color: blue;
-  }
+.el-table th.table-header-th {
+  color: blue;
+}
 
-  .el-table td.ng-value input {
+.el-table td.ng-value input {
+  border-color: red;
+}
+
+.el-table td.ng-conclusion {
+  color: red;
+
+  input {
     border-color: red;
   }
+}
 
-  .el-table td.ng-conclusion {
-    color: red;
+.el-table tr.expanded.border td {
+  border-bottom: none;
+  background-color: #fcf8e3;
+}
 
-    input {
-      border-color: red;
-    }
-  }
+.el-table tr.expanded.light-row {
+  background-color: #f7f7f7;
+}
 
-  .el-table tr.expanded.border td {
-    border-bottom: none;
-    background-color: #fcf8e3;
-  }
+.el-table tr.expanded.light-row + tr {
+  // + 选择同级相邻元素
+  background-color: #f7f7f7;
 
-  .el-table tr.expanded.light-row {
-    background-color: #f7f7f7;
-  }
-
-  .el-table tr.expanded.light-row + tr { // + 选择同级相邻元素
+  td.el-table__expanded-cell {
     background-color: #f7f7f7;
 
-    td.el-table__expanded-cell {
+    .el-table {
       background-color: #f7f7f7;
-
-      .el-table {
-        background-color: #f7f7f7;
-      }
     }
   }
+}
 </style>

@@ -1,21 +1,36 @@
 <template>
   <div>
-    <el-dialog :title="dialogTitleMap[action]" :visible.sync="dialogFormVisible" @close="close">
+    <el-dialog
+      :title="dialogTitleMap[action]"
+      :visible.sync="dialogFormVisible"
+      @close="close"
+    >
       <el-form
         ref="obj_form"
         :model="obj"
         :rules="objRules"
         class="small-space"
         label-position="right"
-        label-width="70px">
+        label-width="70px"
+      >
 
-        <el-form-item label="名称" prop="name">  <!--prop 属性设置为需校验的字段名-->
-          <el-input v-model="obj.name"/>
+        <el-form-item
+          label="名称"
+          prop="name"
+        >
+          <!--prop 属性设置为需校验的字段名-->
+          <el-input v-model="obj.name" />
         </el-form-item>
 
-        <el-form-item label="型号" prop="父级">
+        <el-form-item
+          label="型号"
+          prop="父级"
+        >
           <el-select v-model="obj.parent_id">
-            <el-option :value="0" label="无父类"/>
+            <el-option
+              :value="0"
+              label="无父类"
+            />
             <el-option
               v-for="item in topSuggests"
               :key="item.id"
@@ -26,18 +41,29 @@
         </el-form-item>
 
         <el-form-item label="数据">
-          <json-editor v-model="obj.data"/>
+          <json-editor v-model="obj.data" />
         </el-form-item>
 
         <el-form-item label="备注">
-          <el-input v-model="obj.memo"/>
+          <el-input v-model="obj.memo" />
         </el-form-item>
       </el-form>
 
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="close">取 消</el-button>
-        <el-button v-if="action==='create'" type="primary" @click="create()">确 定</el-button>
-        <el-button v-else type="primary" @click="update()">确 定</el-button>
+        <el-button
+          v-if="action==='create'"
+          type="primary"
+          @click="create()"
+        >确 定</el-button>
+        <el-button
+          v-else
+          type="primary"
+          @click="update()"
+        >确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -45,7 +71,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import dialog from '@/mixins/dialog'
+import dialog from '@/views/mixins/dialog'
 import { suggestApi } from '@/api/basedata'
 import JsonEditor from '../../components/JsonEditor/index'
 
@@ -110,5 +136,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

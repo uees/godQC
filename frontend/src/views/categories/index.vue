@@ -6,39 +6,45 @@
         style="width: 200px;"
         class="filter-item"
         placeholder="搜索"
-        @keyup.enter.native="handleSearch"/>
+        @keyup.enter.native="handleSearch"
+      />
       <el-button
         class="filter-item"
         type="primary"
         icon="el-icon-refresh"
-        @click="handleSearch">搜索
+        @click="handleSearch"
+      >搜索
       </el-button>
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
-        @click="handleCreate">添加
+        @click="handleCreate"
+      >添加
       </el-button>
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-refresh"
-        @click="fetchData">刷新
+        @click="fetchData"
+      >刷新
       </el-button>
       <el-button
         class="filter-item"
         type="primary"
         icon="el-icon-document"
-        @click="handleDownload">导出
+        @click="handleDownload"
+      >导出
       </el-button>
     </div>
 
     <el-table
       v-loading.body="listLoading"
       :data="tableData"
-      style="width: 100%">
+      style="width: 100%"
+    >
 
       <el-table-column label="创建时间">
         <template slot-scope="scope">
@@ -46,13 +52,28 @@
         </template>
       </el-table-column>
 
-      <el-table-column :sortable="true" prop="name" label="名称"/>
-      <el-table-column :sortable="true" prop="slug" label="型号"/>
-      <el-table-column prop="memo" label="备注"/>
+      <el-table-column
+        :sortable="true"
+        prop="name"
+        label="名称"
+      />
+      <el-table-column
+        :sortable="true"
+        prop="slug"
+        label="型号"
+      />
+      <el-table-column
+        prop="memo"
+        label="备注"
+      />
 
       <el-table-column label="报告模板">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="showTemplateDialog(scope)">
+          <el-button
+            type="text"
+            size="small"
+            @click="showTemplateDialog(scope)"
+          >
             <span v-if="scope.row.metas && scope.row.metas.templates">
               {{ displayTemplates(scope.row.metas.templates) }}
             </span>
@@ -63,7 +84,11 @@
 
       <el-table-column label="检测流程">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="showSelectWay(scope)">
+          <el-button
+            type="text"
+            size="small"
+            @click="showSelectWay(scope)"
+          >
             <span v-if="scope.row.testWay && scope.row.testWay.name">
               {{ scope.row.testWay.name }}
             </span>
@@ -72,31 +97,40 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="180" class-name="small-padding fixed-width">
+      <el-table-column
+        align="center"
+        label="操作"
+        width="180"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             v-if="scope.row.testWay"
             type="text"
             size="small"
-            @click="clearWay(scope)">
+            @click="clearWay(scope)"
+          >
             清除流程
           </el-button>
           <el-button
             v-if="hasTemplates(scope)"
             type="text"
             size="small"
-            @click="clearTemplates(scope)">
+            @click="clearTemplates(scope)"
+          >
             清除模板
           </el-button>
           <el-button
             type="text"
             size="small"
-            @click="handleUpdate(scope.row)">编辑
+            @click="handleUpdate(scope.row)"
+          >编辑
           </el-button>
           <el-button
             type="text"
             size="small"
-            @click="handleDelete(scope.row)">删除
+            @click="handleDelete(scope.row)"
+          >删除
           </el-button>
         </template>
       </el-table-column>
@@ -107,23 +141,24 @@
       :action.sync="action"
       :prop-obj.sync="propObj"
       @createDone="createDone"
-      @updateDone="updateDone"/>
+      @updateDone="updateDone"
+    />
 
-    <select-way @test-way-updated="testWayUpdated"/>
+    <select-way @test-way-updated="testWayUpdated" />
 
-    <template-dialog @template-updated="templateUpdated"/>
+    <template-dialog @template-updated="templateUpdated" />
   </div>
 </template>
 
 <script>
-import list from '@/mixins/list'
+import list from '@/views/mixins/list'
 import { categoryApi } from '@/api/basedata'
 import { categorySelectTestWay, categoryUpdateTemplates } from '@/api/qc'
 import FormDialog from './dialog'
 import SelectWay from './SelectWay'
 import TemplateDialog from './TemplateDialog'
 import Bus from '@/store/bus'
-import echoTimeMethod from '@/mixins/echoTimeMethod'
+import echoTimeMethod from '@/views/mixins/echoTimeMethod'
 
 export default {
   name: 'Categories',

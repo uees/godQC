@@ -3,7 +3,8 @@ import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'
-import Cookies from 'js-cookie'
+import { getToken } from '@/utils/auth' // get token from cookie
+import getPageTitle from '@/utils/getPageTitle'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -18,54 +19,71 @@ function hasPermission(roles, permissionRoles) {
   })
 }
 
-const whiteList = ['/login', '/auth-redirect']// no redirect whitelist
+const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   NProgress.start() // start progress bar
+
+  // set page title
+  document.title = getPageTitle(to.meta.title)
 
   // 初始化 store state
   if (store.state.basedata.suggests.length === 0) {
-    store.dispatch('basedata/FetchSuggest').then(() => {
-      next({ ...to, replace: true })
-    }).catch(err => {
+    try {
+      await store.dispatch('basedata/FetchSuggest')
+    } catch (err) {
       Message.error(err || '网络错误')
       NProgress.done()
-    })
-  } else if (store.state.basedata.categories.length === 0) {
-    store.dispatch('basedata/FetchCategory').then(() => {
-      next({ ...to, replace: true })
-    }).catch(err => {
+    }
+  }
+
+  if (store.state.basedata.categories.length === 0) {
+    try {
+      await store.dispatch('basedata/FetchCategory')
+    } catch (err) {
       Message.error(err || '网络错误')
       NProgress.done()
-    })
-  } else if (Cookies.get('access-token')) { // determine if there has token
-    /* has token*/
+    }
+  }
+
+  // determine whether the user has logged in
+  const hasToken = getToken()
+
+  if (hasToken) {
     if (to.path === '/login') {
+      // if is logged in, redirect to the home page
       next({ path: '/' })
-      NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
+      NProgress.done()
     } else {
-      if (store.getters.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
-        store.dispatch('GetUserInfo').then(res => { // 拉取user_info
-          const { data } = res.data
-          const roles = data.roles // note: roles must be a array!
-          store.dispatch('GenerateRoutes', { roles }).then(() => { // 根据roles权限生成可访问的路由表
-            router.addRoutes(store.getters.addedRouters) // 动态添加可访问路由表
-            next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
-          })
-        }).catch((err) => {
-          store.dispatch('FedLogOut').then(() => {
-            Message.error(err || 'Verification failed, please login again')
-            next({ path: '/' })
-          })
-        })
-      } else {
-        // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
+      // determine whether the user has obtained his permission roles through getInfo
+      const hasRoles = store.getters.roles && store.getters.roles.length > 0
+      if (hasRoles) {
+        // 没有动态改变权限的需求可直接 next()
         if (hasPermission(store.getters.roles, to.meta.roles)) {
           next()
         } else {
-          next({ path: '/401', replace: true, query: { noGoBack: true } })
+          next({ path: '/401', replace: true, query: { noGoBack: true }})
         }
-        // 可删 ↑
+      } else {
+        try {
+          // note: roles must be a array!
+          const { roles } = store.dispatch('user/GetUserInfo')
+          // generate accessible routes map based on roles
+          const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+
+          // dynamically add accessible routes
+          router.addRoutes(accessRoutes)
+
+          // hack method to ensure that addRoutes is complete
+          // set the replace: true, so the navigation will not leave a history record
+          next({ ...to, replace: true })
+        } catch (err) {
+          // remove token and go to login page to re-login
+          await store.dispatch('user/resetToken')
+          Message.error(err || 'Has Error')
+          next(`/login?redirect=${to.path}`)
+          NProgress.done()
+        }
       }
     }
   } else {
@@ -74,7 +92,7 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
-      NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
+      NProgress.done()
     }
   }
 })

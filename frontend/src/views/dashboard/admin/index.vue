@@ -5,9 +5,16 @@
         v-model="type"
         class="filter-item"
         placeholder="类别"
-        @change="fetchData">
-        <el-option label="成品检测" value="FQC"/>
-        <el-option label="来料检测" value="IQC"/>
+        @change="fetchData"
+      >
+        <el-option
+          label="成品检测"
+          value="FQC"
+        />
+        <el-option
+          label="来料检测"
+          value="IQC"
+        />
       </el-select>
       <el-date-picker
         v-model="date"
@@ -21,46 +28,68 @@
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
-        @click="handleCreate">生成
+        @click="handleCreate"
+      >生成
       </el-button>
     </div>
 
     <panel-group
       :total-statistics="monthStatistics.totalStatistics"
       :type="type"
-      @handleSetLineChartData="handleSetLineChartData"/>
+      @handleSetLineChartData="handleSetLineChartData"
+    />
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData"/>
+      <line-chart :chart-data="lineChartData" />
     </el-row>
 
     <category-disqualification
       :total-statistics="monthStatistics.totalStatistics"
-      :type="type"/>
+      :type="type"
+    />
 
     <el-row :gutter="32">
       <h3 style="padding-left: 16px">不合格项目统计</h3>
-      <el-col :xs="24" :sm="24" :lg="16">
+      <el-col
+        :xs="24"
+        :sm="24"
+        :lg="16"
+      >
         <div class="chart-wrapper">
-          <bar-chart :failed-statistics="monthStatistics.failedStatistics" :type="type"/>
+          <bar-chart
+            :failed-statistics="monthStatistics.failedStatistics"
+            :type="type"
+          />
         </div>
       </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
+      <el-col
+        :xs="24"
+        :sm="24"
+        :lg="8"
+      >
         <div class="chart-wrapper">
-          <pie-chart :failed-statistics="monthStatistics.failedStatistics" :type="type"/>
+          <pie-chart
+            :failed-statistics="monthStatistics.failedStatistics"
+            :type="type"
+          />
         </div>
       </el-col>
     </el-row>
 
     <el-row :gutter="8">
       <h3 style="padding-left: 16px">不合格批次流水</h3>
-      <el-col :xs="{span: 24}"
-              :sm="{span: 24}"
-              :md="{span: 24}"
-              :lg="{span: 24}"
-              :xl="{span: 24}"
-              style="padding-right:8px;margin-bottom:30px;">
-        <disqualification-records :failed-records="monthFailedRecords" :type="type"/>
+      <el-col
+        :xs="{span: 24}"
+        :sm="{span: 24}"
+        :md="{span: 24}"
+        :lg="{span: 24}"
+        :xl="{span: 24}"
+        style="padding-right:8px;margin-bottom:30px;"
+      >
+        <disqualification-records
+          :failed-records="monthFailedRecords"
+          :type="type"
+        />
       </el-col>
     </el-row>
 
@@ -68,7 +97,6 @@
 </template>
 
 <script>
-import GithubCorner from '@/components/GithubCorner'
 import PanelGroup from './components/PanelGroup'
 import CategoryDisqualification from './components/CategoryDisqualification'
 import LineChart from './components/LineChart'
@@ -82,7 +110,6 @@ export default {
   components: {
     DisqualificationRecords,
     CategoryDisqualification,
-    GithubCorner,
     PanelGroup,
     LineChart,
     PieChart,
@@ -185,14 +212,14 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .dashboard-editor-container {
-    padding: 32px;
-    background-color: rgb(240, 242, 245);
+.dashboard-editor-container {
+  padding: 32px;
+  background-color: rgb(240, 242, 245);
 
-    .chart-wrapper {
-      background: #fff;
-      padding: 16px 16px 0;
-      margin-bottom: 32px;
-    }
+  .chart-wrapper {
+    background: #fff;
+    padding: 16px 16px 0;
+    margin-bottom: 32px;
   }
+}
 </style>

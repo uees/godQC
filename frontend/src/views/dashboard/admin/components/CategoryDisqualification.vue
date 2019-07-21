@@ -1,15 +1,38 @@
 <template>
   <div class="category-disqualification">
     <h3>按产品类别统计的一次检验合格率</h3>
-    <el-table :data="list" style="width: 100%; margin-bottom: 15px;">
-      <el-table-column sortable sort-by="category.name" label="类别" min-width="150">
+    <el-table
+      :data="list"
+      style="width: 100%; margin-bottom: 15px;"
+    >
+      <el-table-column
+        sortable
+        sort-by="category.name"
+        label="类别"
+        min-width="150"
+      >
         <template slot-scope="scope">
           {{ scope.row.category.name }}
         </template>
       </el-table-column>
-      <el-table-column prop="tests_num" sortable label="检测数" align="center"/>
-      <el-table-column prop="once_disqualification_num" sortable label="一次不合格" align="center"/>
-      <el-table-column :sort-method="sortRate" sortable label="一次合格率" align="center">
+      <el-table-column
+        prop="tests_num"
+        sortable
+        label="检测数"
+        align="center"
+      />
+      <el-table-column
+        prop="once_disqualification_num"
+        sortable
+        label="一次不合格"
+        align="center"
+      />
+      <el-table-column
+        :sort-method="sortRate"
+        sortable
+        label="一次合格率"
+        align="center"
+      >
         <template slot-scope="scope">
           <el-tag :type="oncePassRate(scope.row) | statusFilter">
             {{ oncePassRate(scope.row) }}%

@@ -1,5 +1,8 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}"/>
+  <div
+    :class="className"
+    :style="{height:height,width:width}"
+  />
 </template>
 
 <script>
@@ -89,7 +92,7 @@ export default {
     },
     getPieData() {
       return this.failedStatistics.filter(el => el.category_id === 0 && el.qc_type === this.type)
-        .map(el => Object.assign({}, {value: el.amount, name: el.item}))
+        .map(el => Object.assign({}, { value: el.amount, name: el.item }))
         .sort((a, b) => +a.value - +b.value)
     }
   }

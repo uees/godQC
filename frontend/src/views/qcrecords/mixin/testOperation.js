@@ -93,6 +93,7 @@ export default {
           isPass = +item.value <= +item.spec.data.max
         }
       } else if (item.spec.value_type === 'VALUE') {
+        // eslint-disable-next-line
         isPass = item.value == item.spec.data.value
       } else if (item.spec.value_type === 'INFO') {
         if (item.value && item.value.toUpperCase() === 'PASS') {
@@ -132,7 +133,7 @@ export default {
 
       // 获取所有项目的检测员
       let testers = []
-      record.items.forEach(function (item) {
+      record.items.forEach(function(item) {
         if (item.tester) {
           testers.push(item.tester)
         }

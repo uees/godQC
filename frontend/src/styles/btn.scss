@@ -2,6 +2,7 @@
 
 @mixin colorBtn($color) {
   background: $color;
+
   &:hover {
     color: $color;
 
@@ -96,4 +97,3 @@
   font-size: 14px;
   border-radius: 4px;
 }
-

@@ -6,15 +6,20 @@
         style="margin:0 0 20px 20px;"
         type="primary"
         icon="document"
-        @click="handleDownload">
+        @click="handleDownload"
+      >
         {{ $t('excel.export') }} Excel
       </el-button>
 
-      <div v-if="real && record.disposed" class="link-div">
+      <div
+        v-if="real && record.disposed"
+        class="link-div"
+      >
         被
         <router-link
           :to="{name: 'disposes.show', params: {id: record.disposed.id }}"
-          class="link">
+          class="link"
+        >
           处理
         </router-link>
         后的检测记录
@@ -55,16 +60,28 @@
         element-loading-text="拼命加载中"
         border
         fit
-        highlight-current-row>
-        <el-table-column prop="item" label="项目"/>
+        highlight-current-row
+      >
+        <el-table-column
+          prop="item"
+          label="项目"
+        />
         <el-table-column label="要求">
           <template slot-scope="props">
             {{ echoSpec(props.row.spec) }}
           </template>
         </el-table-column>
 
-        <el-table-column v-if="showReality(record)" prop="value" label="结果"/>
-        <el-table-column v-else prop="fake_value" label="结果"/>
+        <el-table-column
+          v-if="showReality(record)"
+          prop="value"
+          label="结果"
+        />
+        <el-table-column
+          v-else
+          prop="fake_value"
+          label="结果"
+        />
 
         <el-table-column label="结论">
           <template slot-scope="props">
@@ -72,14 +89,24 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="tester" label="检测员"/>
-        <el-table-column prop="memo" label="备注"/>
+        <el-table-column
+          prop="tester"
+          label="检测员"
+        />
+        <el-table-column
+          prop="memo"
+          label="备注"
+        />
       </el-table>
 
-      <div v-if="showReality(record) && record.willDispose" class="link-div">
+      <div
+        v-if="showReality(record) && record.willDispose"
+        class="link-div"
+      >
         <router-link
           :to="{name: 'disposes.show', params: {id: record.willDispose.id }}"
-          class="link">
+          class="link"
+        >
           处理办法
         </router-link>
       </div>
@@ -88,8 +115,8 @@
 </template>
 
 <script>
-import echoTimeMethod from '@/mixins/echoTimeMethod'
-import echoSpecMethod from '@/mixins/echoSpecMethod'
+import echoTimeMethod from '@/views/mixins/echoTimeMethod'
+import echoSpecMethod from '@/views/mixins/echoSpecMethod'
 import { qcRecordApi } from '@/api/qc'
 
 export default {
@@ -115,10 +142,10 @@ export default {
     }
   },
   computed: {
-    filename: function () {
+    filename: function() {
       return this.productName + '_' + this.record.batch.batch_number
     },
-    productName: function () {
+    productName: function() {
       let product_name = this.record.batch.product_name
       if (this.record.batch.product_name_suffix) {
         product_name = product_name + '_' + this.record.batch.product_name_suffix
@@ -276,36 +303,38 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .record-table {
+.record-table {
+  width: 100%;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+  background: #fcf8e3;
+
+  thead,
+  tbody {
     width: 100%;
-    margin-bottom: 20px;
+  }
+
+  td,
+  th {
     border: 1px solid #eee;
-    background: #fcf8e3;
-
-    thead, tbody {
-      width: 100%;
-    }
-
-    td, th {
-      border: 1px solid #eee;
-      padding: 10px;
-      text-align: center;
-      color: #666;
-    }
-  }
-
-  .main-context {
-    padding: 20px 15px;
-  }
-
-  .link-div {
-    color: #666;
     padding: 10px;
-    margin: 20px 0;
+    text-align: center;
+    color: #666;
   }
+}
 
-  .link {
-    text-decoration: underline;
-    color: blue;
-  }
+.main-context {
+  padding: 20px 15px;
+}
+
+.link-div {
+  color: #666;
+  padding: 10px;
+  margin: 20px 0;
+}
+
+.link {
+  text-decoration: underline;
+  color: blue;
+}
 </style>

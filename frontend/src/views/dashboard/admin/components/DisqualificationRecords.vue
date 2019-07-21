@@ -1,27 +1,52 @@
 <template>
-  <el-table :data="list" style="width: 100%; margin-bottom: 15px;">
-    <el-table-column sortable sort-by="created_at" label="取样时间" align="center">
+  <el-table
+    :data="list"
+    style="width: 100%; margin-bottom: 15px;"
+  >
+    <el-table-column
+      sortable
+      sort-by="created_at"
+      label="取样时间"
+      align="center"
+    >
       <template slot-scope="scope">
         {{ echoTime(scope.row.created_at) }}
       </template>
     </el-table-column>
-    <el-table-column sortable sort-by="batch.product_name" label="品名">
+    <el-table-column
+      sortable
+      sort-by="batch.product_name"
+      label="品名"
+    >
       <template slot-scope="scope">
         <span v-if="scope.row.batch.product_name_suffix">{{ scope.row.batch.product_name + ' ' + scope.row.batch.product_name_suffix }}</span>
         <span v-else>{{ scope.row.batch.product_name }}</span>
       </template>
     </el-table-column>
-    <el-table-column sortable sort-by="batch.batch_number" label="批号" align="center">
+    <el-table-column
+      sortable
+      sort-by="batch.batch_number"
+      label="批号"
+      align="center"
+    >
       <template slot-scope="scope">
         {{ scope.row.batch.batch_number }}
       </template>
     </el-table-column>
-    <el-table-column :sort-method="sortItem" sortable label="一次不合格项" align="center">
+    <el-table-column
+      :sort-method="sortItem"
+      sortable
+      label="一次不合格项"
+      align="center"
+    >
       <template slot-scope="scope">
         {{ showFailedItems(scope.row) }}
       </template>
     </el-table-column>
-    <el-table-column label="处理意见" align="center">
+    <el-table-column
+      label="处理意见"
+      align="center"
+    >
       <template slot-scope="scope">
         {{ showWillDispose(scope.row) }}
       </template>
@@ -30,7 +55,7 @@
 </template>
 
 <script>
-import echoTimeMethod from '@/mixins/echoTimeMethod'
+import echoTimeMethod from '@/views/mixins/echoTimeMethod'
 
 export default {
   name: 'DisqualificationRecords',
@@ -58,7 +83,7 @@ export default {
     showFailedItems(record) {
       const result = []
       if (Array.isArray(record.items)) {
-        record.items.forEach(function (item) {
+        record.items.forEach(function(item) {
           if (item.conclusion === 'NG') {
             result.push(item.item + '(' + item.value + ')')
           }
@@ -74,7 +99,7 @@ export default {
     getFailedItems(record) {
       const result = []
       if (Array.isArray(record.items)) {
-        record.items.forEach(function (item) {
+        record.items.forEach(function(item) {
           if (item.conclusion === 'NG') {
             result.push(item.item)
           }

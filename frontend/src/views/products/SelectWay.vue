@@ -1,12 +1,17 @@
 <template>
   <div class="select-way-dialog">
-    <el-dialog :visible.sync="dialogFormVisible" title="选择检测流程" @close="close">
+    <el-dialog
+      :visible.sync="dialogFormVisible"
+      title="选择检测流程"
+      @close="close"
+    >
       <el-form
         ref="obj_form"
         :model="testWay"
         class="small-space"
         label-position="right"
-        label-width="70px">
+        label-width="70px"
+      >
 
         <el-form-item label="检测流程">
           <el-autocomplete
@@ -19,9 +24,21 @@
             @select="handleSelect"
           />
         </el-form-item>
-        <el-button type="primary" @click="submit">确定</el-button>
-        <el-button v-if="testWay.id" type="success" icon="el-icon-edit" @click="handleEditWay">编辑</el-button>
-        <el-button v-else type="warning" @click="handleCreateWay">创建</el-button>
+        <el-button
+          type="primary"
+          @click="submit"
+        >确定</el-button>
+        <el-button
+          v-if="testWay.id"
+          type="success"
+          icon="el-icon-edit"
+          @click="handleEditWay"
+        >编辑</el-button>
+        <el-button
+          v-else
+          type="warning"
+          @click="handleCreateWay"
+        >创建</el-button>
       </el-form>
     </el-dialog>
 
@@ -91,7 +108,7 @@ export default {
       this.testWay = this.newWay()
     },
     queryWays(queryString, cb) {
-      qcWayApi.list({ params: { q: queryString } }).then(response => {
+      qcWayApi.list({ params: { q: queryString }}).then(response => {
         const { data } = response.data
         // 调用 callback 返回建议列表的数据
         cb(data)

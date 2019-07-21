@@ -6,63 +6,93 @@
         style="width: 200px;"
         class="filter-item"
         placeholder="搜索"
-        @keyup.enter.native="handleSearch"/>
+        @keyup.enter.native="handleSearch"
+      />
       <el-button
         class="filter-item"
         type="primary"
         icon="el-icon-search"
-        @click="handleSearch">搜索
+        @click="handleSearch"
+      >搜索
       </el-button>
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-edit"
-        @click="handleCreate">添加
+        @click="handleCreate"
+      >添加
       </el-button>
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-refresh"
-        @click="fetchData">刷新
+        @click="fetchData"
+      >刷新
       </el-button>
       <el-button
         class="filter-item"
         type="primary"
         icon="el-icon-document"
-        @click="handleDownload">导出
+        @click="handleDownload"
+      >导出
       </el-button>
     </div>
 
     <el-table
       v-loading.body="listLoading"
       :data="tableData"
-      style="width: 100%">
+      style="width: 100%"
+    >
 
-      <el-table-column :sortable="true" prop="name" label="名称"/>
-      <el-table-column :sortable="true" prop="address" label="地址"/>
-      <el-table-column prop="contacts" label="联系人"/>
-      <el-table-column prop="tel" label="电话"/>
+      <el-table-column
+        :sortable="true"
+        prop="name"
+        label="名称"
+      />
+      <el-table-column
+        :sortable="true"
+        prop="address"
+        label="地址"
+      />
+      <el-table-column
+        prop="contacts"
+        label="联系人"
+      />
+      <el-table-column
+        prop="tel"
+        label="电话"
+      />
 
-      <el-table-column align="center" label="操作" width="100" class-name="small-padding fixed-width">
+      <el-table-column
+        align="center"
+        label="操作"
+        width="100"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             type="text"
             size="small"
-            @click="handleUpdate(scope.row)">编辑
+            @click="handleUpdate(scope.row)"
+          >编辑
           </el-button>
           <el-button
             type="text"
             size="small"
-            @click="handleDelete(scope.row)">删除
+            @click="handleDelete(scope.row)"
+          >删除
           </el-button>
         </template>
       </el-table-column>
 
     </el-table>
 
-    <div v-show="!listLoading" class="pagination-container">
+    <div
+      v-show="!listLoading"
+      class="pagination-container"
+    >
       <el-pagination
         :total="total"
         :current-page.sync="queryParams.page"
@@ -70,20 +100,22 @@
         :page-size="queryParams.per_page"
         layout="total, sizes, prev, pager, next, jumper"
         @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"/>
+        @current-change="handleCurrentChange"
+      />
     </div>
 
     <form-dialog
       :action.sync="action"
       :prop-obj.sync="propObj"
       @createDone="createDone"
-      @updateDone="updateDone"/>
+      @updateDone="updateDone"
+    />
   </div>
 </template>
 
 <script>
-import list from '@/mixins/list'
-import pagination from '@/mixins/pagination'
+import list from '@/views/mixins/list'
+import pagination from '@/views/mixins/pagination'
 import { customerApi } from '@/api/basedata'
 import FormDialog from './dialog'
 
@@ -104,5 +136,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

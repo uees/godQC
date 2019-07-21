@@ -1,12 +1,17 @@
 <template>
   <div class="select-way-dialog">
-    <el-dialog :visible.sync="dialogFormVisible" title="选择检测流程" @close="close">
+    <el-dialog
+      :visible.sync="dialogFormVisible"
+      title="选择检测流程"
+      @close="close"
+    >
       <el-form
         ref="obj_form"
         :model="testWay"
         class="small-space"
         label-position="right"
-        label-width="70px">
+        label-width="70px"
+      >
 
         <el-form-item label="检测流程">
           <el-autocomplete
@@ -21,8 +26,14 @@
         </el-form-item>
       </el-form>
 
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submit">确 定</el-button>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          @click="submit"
+        >确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -77,7 +88,7 @@ export default {
       this.testWay = this.newWay()
     },
     queryWays(queryString, cb) {
-      qcWayApi.list({ params: { q: queryString } }).then(response => {
+      qcWayApi.list({ params: { q: queryString }}).then(response => {
         const { data } = response.data
         // 调用 callback 返回建议列表的数据
         cb(data)

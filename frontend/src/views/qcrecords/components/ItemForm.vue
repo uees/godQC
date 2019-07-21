@@ -1,14 +1,22 @@
 <template>
   <div>
-    <el-dialog :title="titleMap[action]" :visible.sync="visible" @close="close">
+    <el-dialog
+      :title="titleMap[action]"
+      :visible.sync="visible"
+      @close="close"
+    >
       <el-form
         ref="obj_form"
         :model="item"
         :rules="rules"
         label-position="right"
-        label-width="100px">
+        label-width="100px"
+      >
 
-        <el-form-item label="检测项目" prop="item">
+        <el-form-item
+          label="检测项目"
+          prop="item"
+        >
           <el-autocomplete
             v-model="item.item"
             :fetch-suggestions="querySearchItems"
@@ -17,45 +25,89 @@
           />
         </el-form-item>
 
-        <el-form-item label="值类型" prop="spec.value_type">
-          <el-select v-model="item.spec.value_type" placeholder="请选择">
+        <el-form-item
+          label="值类型"
+          prop="spec.value_type"
+        >
+          <el-select
+            v-model="item.spec.value_type"
+            placeholder="请选择"
+          >
             <el-option
-              v-for="item in valueTypes"
-              :key="item.code"
-              :label="item.name"
-              :value="item.code">
-              <span style="float: left">{{ item.name }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
+              v-for="_item in valueTypes"
+              :key="_item.code"
+              :label="_item.name"
+              :value="_item.code"
+            >
+              <span style="float: left">{{ _item.name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ _item.code }}</span>
             </el-option>
           </el-select>
         </el-form-item>
 
-        <el-form-item label="要求" prop="spec.data.value">
+        <el-form-item
+          label="要求"
+          prop="spec.data.value"
+        >
           <template v-if="item.spec.value_type === 'RANGE'">
             <el-row :gutter="20">
               <el-col :span="12">
-                <el-tooltip class="item" effect="dark" content="最小值, 留空为无下限" placement="top-start">
-                  <el-input-number v-model="item.spec.data.min" :precision="2" :step="0.1" size="mini"/>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="最小值, 留空为无下限"
+                  placement="top-start"
+                >
+                  <el-input-number
+                    v-model="item.spec.data.min"
+                    :precision="2"
+                    :step="0.1"
+                    size="mini"
+                  />
                 </el-tooltip>
               </el-col>
               <el-col :span="12">
-                <el-tooltip class="item" effect="dark" content="最大值, 留空为无上限" placement="top-start">
-                  <el-input-number v-model="item.spec.data.max" :precision="2" :step="0.1" size="mini"/>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="最大值, 留空为无上限"
+                  placement="top-start"
+                >
+                  <el-input-number
+                    v-model="item.spec.data.max"
+                    :precision="2"
+                    :step="0.1"
+                    size="mini"
+                  />
                 </el-tooltip>
               </el-col>
             </el-row>
           </template>
-          <el-input v-else v-model="item.spec.data.value"/>
+          <el-input
+            v-else
+            v-model="item.spec.data.value"
+          />
         </el-form-item>
 
         <el-form-item label="是否展示">
-          <el-switch v-model="item.spec.is_show"/>
+          <el-switch v-model="item.spec.is_show" />
         </el-form-item>
       </el-form>
 
-      <div slot="footer" class="dialog-footer">
-        <el-button v-if="action==='create'" type="primary" @click="create">确 定</el-button>
-        <el-button v-else type="primary" @click="update">确 定</el-button>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          v-if="action==='create'"
+          type="primary"
+          @click="create"
+        >确 定</el-button>
+        <el-button
+          v-else
+          type="primary"
+          @click="update"
+        >确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -64,8 +116,8 @@
 <script>
 import Bus from '@/store/bus'
 import { deepClone } from '@/utils'
-import { valueTypes } from '@/mixins/const'
-import testItemSuggestions from '@/mixins/testItemSuggestions'
+import { valueTypes } from '@/views/mixins/const'
+import testItemSuggestions from '@/views/mixins/testItemSuggestions'
 import { updateRecordItem, addRecordItem } from '@/api/qc'
 
 export default {

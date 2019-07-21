@@ -1,12 +1,12 @@
-import restApi from '../utils/restapi'
+import RestApi from '../utils/restapi'
 import request from '../utils/request'
 
-export const qcMethodApi = restApi('qc-methods')
-export const qcRecordApi = restApi('qc-records')
-export const qcWayApi = restApi('qc-ways')
-export const productDisposeApi = restApi('product-disposes')
-export const productBatchApi = restApi('product-batches')
-export const patternTestApi = restApi('pattern-tests')
+export const qcMethodApi = new RestApi({ url: 'qc-methods' })
+export const qcRecordApi = new RestApi({ url: 'qc-records' })
+export const qcWayApi = new RestApi({ url: 'qc-ways' })
+export const productDisposeApi = new RestApi({ url: 'product-disposes' })
+export const productBatchApi = new RestApi({ url: 'product-batches' })
+export const patternTestApi = new RestApi({ url: 'pattern-tests' })
 
 export function categorySelectTestWay(category_id, test_way_id) {
   return request.post(`categories/${category_id}/qc-ways`, { test_way_id })

@@ -27,29 +27,19 @@ router.beforeEach(async(to, from, next) => {
   // set page title
   document.title = getPageTitle(to.meta.title)
 
-  // 初始化 store state
-  if (store.state.basedata.suggests.length === 0) {
-    try {
-      await store.dispatch('basedata/FetchSuggest')
-    } catch (err) {
-      Message.error(err || '网络错误')
-      NProgress.done()
-    }
-  }
-
-  if (store.state.basedata.categories.length === 0) {
-    try {
-      await store.dispatch('basedata/FetchCategory')
-    } catch (err) {
-      Message.error(err || '网络错误')
-      NProgress.done()
-    }
-  }
-
   // determine whether the user has logged in
   const hasToken = getToken()
 
   if (hasToken) {
+    // 初始化 store state
+    if (store.state.basedata.suggests.length === 0) {
+      await store.dispatch('basedata/fetchSuggest')
+    }
+
+    if (store.state.basedata.categories.length === 0) {
+      await store.dispatch('basedata/fetchCategory')
+    }
+
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({ path: '/' })
@@ -67,7 +57,7 @@ router.beforeEach(async(to, from, next) => {
       } else {
         try {
           // note: roles must be a array!
-          const { roles } = store.dispatch('user/GetUserInfo')
+          const { roles } = store.dispatch('user/getInfo')
           // generate accessible routes map based on roles
           const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
 

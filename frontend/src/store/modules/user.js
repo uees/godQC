@@ -1,5 +1,5 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { login, logout, logoutEverywhere, refresh, getUserInfo } from '@/api/login'
+import { login, logout, refresh, getUserInfo } from '@/api/login'
 import router, { resetRouter } from '@/router'
 
 const state = {
@@ -9,8 +9,7 @@ const state = {
   avatar: '',
   metas: null,
   roles: [],
-  accessToken: getToken('access-token'),
-  refreshToken: getToken('refresh-token')
+  token: getToken()
 }
 
 const mutations = {
@@ -33,10 +32,8 @@ const mutations = {
     state.roles = roles
   },
   SET_TOKEN: (state, data) => {
-    state.accessToken = data.access_token
-    state.refreshToken = data.refresh_token
-    setToken(data.access_token, 'access-token', data.expires_in)
-    setToken(data.refresh_token, 'refresh-token', data.expires_in)
+    state.token = data.token
+    setToken(data.token, data.expires_in)
   }
 }
 
@@ -48,8 +45,8 @@ const actions = {
   },
 
   // 刷新 token
-  async refreshToken({ commit, state }) {
-    const { data } = await refresh(state.refreshToken)
+  async refreshToken({ commit }) {
+    const { data } = await refresh()
     commit('SET_TOKEN', data)
   },
 
@@ -76,48 +73,25 @@ const actions = {
   async logout({ commit }) {
     await logout()
     commit('SET_TOKEN', {
-      access_token: '',
-      refresh_token: '',
+      token: '',
       expires_in: 0
     })
     commit('SET_ROLES', [])
-    removeToken('access-token')
-    removeToken('refresh-token')
+    removeToken()
     resetRouter()
   },
 
-  async logoutEverywhere({ commit }) {
-    await logoutEverywhere()
-    commit('SET_TOKEN', {
-      access_token: '',
-      refresh_token: '',
-      expires_in: 0
-    })
-    commit('SET_ROLES', [])
-    removeToken('access-token')
-    removeToken('refresh-token')
-    resetRouter()
-  },
-
-  // 前端 登出
   async resetToken({ commit }) {
     commit('SET_TOKEN', {
-      access_token: '',
-      refresh_token: '',
+      token: '',
       expires_in: 0
     })
     commit('SET_ROLES', [])
-    removeToken('access-token')
-    removeToken('refresh-token')
+    removeToken()
   },
 
   // dynamically modify permissions
-  async changeRoles({ commit, dispatch }, role) {
-    const token = role + '-token'
-
-    commit('SET_TOKEN', token)
-    setToken(token)
-
+  async updateRoles({ dispatch }) {
     const { roles } = await dispatch('getInfo')
 
     resetRouter()

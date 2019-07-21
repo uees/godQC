@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function login(username, password) {
+export function login(email, password) {
   const data = {
-    username,
+    email,
     password
   }
   return request({
@@ -19,17 +19,8 @@ export function logout() {
   })
 }
 
-export function logoutEverywhere() {
-  return request({
-    url: 'auth/logout-everywhere',
-    method: 'post'
-  })
-}
-
-export function refresh(refresh_token) {
-  return request.post('auth/refresh', {
-    refresh_token
-  })
+export function refresh() {
+  return request.post('auth/refresh')
 }
 
 export function getUserInfo() {

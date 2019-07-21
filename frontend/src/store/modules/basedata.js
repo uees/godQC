@@ -32,7 +32,7 @@ const basedata = {
   },
 
   actions: {
-    FetchCategory({ commit, state }) {
+    fetchCategory({ commit, state }) {
       return new Promise((resolve, reject) => {
         categoryApi.list({ notAuth: true }).then(response => {
           // 无分页，全部加载
@@ -44,7 +44,7 @@ const basedata = {
         })
       })
     },
-    FetchSuggest({ commit, state }) {
+    fetchSuggest({ commit, state }) {
       return new Promise((resolve, reject) => {
         // 无分页，全部加载
         suggestApi.list({ params: { all: 1 }, notAuth: true }).then(response => {

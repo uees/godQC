@@ -13,13 +13,13 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::prefix('v1')->namespace('Api\V1')->group(function () {
-    Route::post('auth/login', 'AuthController@login');
+Route::post('auth/login', 'AuthController@login');
+
+// jwt.refresh 会做验证和必要时刷新 token
+Route::middleware('jwt.refresh')->group(function () {
+    Route::get('auth/me', 'AuthController@me');
     Route::post('auth/refresh', 'AuthController@refresh');
     Route::post('auth/logout', 'AuthController@logout');
-    Route::post('auth/logout-everywhere', 'AuthController@logoutEverywhere');
-
-    Route::get('users/me', 'AuthController@me');
 
     Route::post('categories/{category}/qc-ways', 'CategoryController@selectTestWay');
     Route::post('categories/{category}/templates', 'CategoryController@updateTemplates');

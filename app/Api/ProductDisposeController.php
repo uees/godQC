@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Api;
 
 use App\Events\QCSampled;
 use App\Http\Controllers\Controller;

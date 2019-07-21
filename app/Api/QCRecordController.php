@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Api;
 
 use App\Events\QCSampled;
 use App\Events\RecordDeleted;
@@ -455,15 +455,15 @@ class QCRecordController extends Controller
         $mixinTips = '';
         if ($category->slug == 'H-8100' || $category->slug == 'H-9100') {
             if (!$this->hasItem($test_way, '固化剂') && !$this->hasItem($test_way, '配油')) {
-                $mixinTips = $product->part_b ? $product->part_b . '; ' . $product->ratio : 'HD2; 3:1';
+                $mixinTips = $product->part_b ? $product->part_b . '; ' . $product->ab_ratio : 'HD2; 3:1';
             }
         } elseif ($category->slug == 'H-8100 SP' || $category->slug == 'H-9100 SP') {
             if (!$this->hasItem($test_way, '固化剂') && !$this->hasItem($test_way, '配油')) {
-                $mixinTips = $product->part_b ? $product->part_b . '; ' . $product->ratio : 'HD12; 3:1';
+                $mixinTips = $product->part_b ? $product->part_b . '; ' . $product->ab_ratio : 'HD12; 3:1';
             }
         } elseif ($category->slug == 'H-8100B/H-9100B') {
             if (!$this->hasItem($test_way, '主剂') && !$this->hasItem($test_way, '配油')) {
-                $mixinTips = $product->part_a ? $product->part_a . '; ' . $product->ratio : '8G; 3:1';
+                $mixinTips = $product->part_a ? $product->part_a . '; ' . $product->ab_ratio : '8G; 3:1';
             }
         }
 

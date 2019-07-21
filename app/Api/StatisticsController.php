@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Api;
 
 use App\Http\Resources\DisqualificationStatisticsResource;
 use App\Http\Resources\TestRecordResource;

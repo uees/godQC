@@ -7,11 +7,6 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api')->except('login');
-    }
-
     public function login(Request $request)
     {
         $this->validate($request, [
@@ -57,9 +52,10 @@ class AuthController extends Controller
     protected function respondWithToken($token)
     {
         return response()->json([
-            'access_token' => $token,
+            'token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => config('jwt.ttl') * 60,
+            'refresh_expires_in' => config('jwt.refresh_ttl') * 60,
         ]);
     }
 }

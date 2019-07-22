@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 Route::post('auth/login', 'AuthController@login');
 
 // jwt.refresh 会做验证和必要时刷新 token
-Route::middleware('jwt.refresh')->group(function () {
+Route::middleware('jwt.auth')->group(function () {
     Route::get('auth/me', 'AuthController@me');
     Route::post('auth/refresh', 'AuthController@refresh');
     Route::post('auth/logout', 'AuthController@logout');

@@ -2,7 +2,6 @@
 
 namespace App\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\SuggestRequest;
 use App\Http\Resources\SuggestResource;
 use App\Suggest;
@@ -84,9 +83,9 @@ class SuggestController extends Controller
         $this->authorize('delete', $suggest);
 
         if ($suggest->delete()) {
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 }

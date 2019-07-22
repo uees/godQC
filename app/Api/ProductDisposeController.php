@@ -3,7 +3,6 @@
 namespace App\Api;
 
 use App\Events\QCSampled;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductBatchRequest;
 use App\Http\Requests\ProductDisposeRequest;
 use App\Http\Resources\ProductDisposeResource;
@@ -105,10 +104,10 @@ class ProductDisposeController extends Controller
         $this->authorize('delete', $productDispose);
 
         if ($productDispose->delete()) {
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
     // 查找指定批次的处理记录
@@ -130,7 +129,7 @@ class ProductDisposeController extends Controller
             return ProductDisposeResource::make($dispose);
         }
 
-        return $this->message('无处理记录');
+        return $this->response()->message('无处理记录');
     }
 
     public function sample(ProductDispose $productDispose)

@@ -2,7 +2,6 @@
 
 namespace App\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductBatchRequest;
 use App\Http\Resources\ProductBatchResource;
 use App\ProductBatch;
@@ -70,9 +69,9 @@ class ProductBatchController extends Controller
         $this->authorize('delete', $productBatch);
 
         if ($productBatch->delete()) {
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 }

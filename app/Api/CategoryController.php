@@ -4,7 +4,6 @@ namespace App\Api;
 
 use App\Category;
 use App\TestWay;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Http\Resources\CategoryResource;
 
@@ -102,10 +101,10 @@ class CategoryController extends Controller
         $this->authorize('delete', $category);
 
         if ($category->delete()) {
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
     public function selectTestWay(Category $category)
@@ -128,7 +127,7 @@ class CategoryController extends Controller
                 }
             }
 
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
         // update way
@@ -136,10 +135,10 @@ class CategoryController extends Controller
             $category->testWay()->associate($testWayId);
             $category->save();
 
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
     public function updateTemplates(Category $category)
@@ -159,6 +158,6 @@ class CategoryController extends Controller
 
         $category->save();
 
-        return $this->noContent();
+        return $this->response()->noContent();
     }
 }

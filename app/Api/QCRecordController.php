@@ -4,7 +4,6 @@ namespace App\Api;
 
 use App\Events\QCSampled;
 use App\Events\RecordDeleted;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductBatchRequest;
 use App\Http\Resources\TestRecordResource;
 use App\Category;
@@ -146,7 +145,7 @@ class QCRecordController extends Controller
             return TestRecordResource::make($testRecord);
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
 
@@ -161,10 +160,10 @@ class QCRecordController extends Controller
 
             event(new RecordDeleted($testRecord->batch));
 
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
 
@@ -268,7 +267,7 @@ class QCRecordController extends Controller
         $this->authorize('update', $testRecord);
 
         if (empty($testRecord->testers)) {
-            return $this->failed('请输入检测员');
+            return $this->response()->failed('请输入检测员');
         }
 
         $allowEmptyItems = ['主剂', '固化剂', '配油'];
@@ -283,7 +282,7 @@ class QCRecordController extends Controller
             }
 
             if (is_null($item->value) || $item->value == '') {
-                return $this->failed("检测项目 '{$item['item']}' 的值未填写， 不能归档");
+                return $this->response()->failed("检测项目 '{$item['item']}' 的值未填写， 不能归档");
             }
         }
 
@@ -292,7 +291,7 @@ class QCRecordController extends Controller
         }
 
         if ($testRecord->conclusion == 'NG' && is_null($testRecord->willDispose)) {
-            return $this->failed('此批次不合格，并且还未提交处理意见，不能归档');
+            return $this->response()->failed('此批次不合格，并且还未提交处理意见，不能归档');
         }
 
         // 留空就表示合格, 这里帮忙填入PASS
@@ -306,7 +305,7 @@ class QCRecordController extends Controller
             return TestRecordResource::make($testRecord);
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
     public function sayPackage(TestRecord $testRecord)
@@ -314,11 +313,11 @@ class QCRecordController extends Controller
         $this->authorize('update', $testRecord);
 
         if (empty($testRecord->testers)) {
-            return $this->failed('请输入检测员');
+            return $this->response()->failed('请输入检测员');
         }
 
         if ($testRecord->conclusion == 'NG' && is_null($testRecord->willDispose)) {
-            return $this->failed('此批次不合格，并且还未提交处理意见，不能写装');
+            return $this->response()->failed('此批次不合格，并且还未提交处理意见，不能写装');
         }
 
         $testRecord->said_package_at = now();
@@ -327,7 +326,7 @@ class QCRecordController extends Controller
             return TestRecordResource::make($testRecord);
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
     public function cancelArchived(TestRecord $testRecord)
@@ -340,7 +339,7 @@ class QCRecordController extends Controller
             return TestRecordResource::make($testRecord);
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
     public function cancelSayPackage(TestRecord $testRecord)
@@ -353,7 +352,7 @@ class QCRecordController extends Controller
             return TestRecordResource::make($testRecord);
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
     public function testDone(TestRecord $testRecord)
@@ -366,7 +365,7 @@ class QCRecordController extends Controller
             return TestRecordResource::make($testRecord);
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
     protected function modifyNiandu(array &$items)

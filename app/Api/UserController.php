@@ -2,7 +2,6 @@
 
 namespace App\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\User;
@@ -71,9 +70,9 @@ class UserController extends Controller
         $this->authorize('delete', $user);
 
         if ($user->delete()) {
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 }

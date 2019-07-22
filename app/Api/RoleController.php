@@ -2,7 +2,6 @@
 
 namespace App\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\RoleRequest;
 use App\Http\Resources\RoleResource;
 use App\Role;
@@ -62,9 +61,9 @@ class RoleController extends Controller
         $this->authorize('delete', $role);
 
         if ($role->delete()) {
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Api;
 
 use App\CustomerRequirement;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerRequirementRequest;
 use App\Http\Resources\CustomerRequirementResource;
 
@@ -38,9 +37,9 @@ class CustomerRequirementController extends Controller
         $this->authorize('create', \App\Customer::class);
 
         if (CustomerRequirement::destroy($id)) {
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 }

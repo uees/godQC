@@ -11,7 +11,46 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests, ApiResponseTrait;
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    /**
+     * @var ApiResponse
+     */
+    protected $_response;
+
+    /**
+     * @return ApiResponse
+     */
+    protected function response()
+    {
+        if (is_null($this->_response)) {
+            $this->_response = new ApiResponse;
+        }
+
+        return $this->_response;
+    }
+
+    /**
+     * sql 语句黑名单检测机制检测机制
+     *
+     * @param $query
+     * @param int $limit
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function checkBlacklist($query, $limit = 40)
+    {
+        if (is_null(request('per_page')) || (int)request('per_page') > $limit) {
+            $key = 'sql:' . $query->toSql();
+            if (\Cache::has($key)) {
+                return $this->response()->tooLarge();
+            }
+
+            if ($query->count() > $limit) {
+                \Cache::forever($key, date('Y-m-d H:i:s'));
+                return $this->response()->tooLarge();
+            }
+        }
+    }
 
     /**
      * @return int

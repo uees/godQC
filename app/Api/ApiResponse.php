@@ -3,51 +3,31 @@
 namespace App\Api;
 
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Cache;
+use Response;
 
-trait ApiResponseTrait
+class ApiResponse
 {
-    /**
-     * @var int
-     */
     protected $statusCode = HttpResponse::HTTP_OK;
+    protected $status = 'success';
+
+    /**
+     * @param int $statusCode
+     * @return $this
+     */
+    public function setStatusCode(int $statusCode)
+    {
+        $this->statusCode = $statusCode;
+
+        return $this;
+    }
 
     /**
      * @param string $status
-     * @param array $data
-     * @param int $code
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function status($status, array $data, $code = null)
-    {
-        if (!is_null($code)) {
-            $this->setStatusCode($code);
-        }
-
-        $response_data = array_merge([
-            'status' => $status,
-            'code' => $this->statusCode
-        ], compact('data'));
-
-        return $this->respond($response_data);
-    }
-
-    /**
-     * @return int
-     */
-    public function getStatusCode()
-    {
-        return $this->statusCode;
-    }
-
-    /**
-     * @param $statusCode
      * @return $this
      */
-    public function setStatusCode($statusCode)
+    public function setStatus(string $status)
     {
-        $this->statusCode = $statusCode;
+        $this->status = $status;
 
         return $this;
     }
@@ -59,7 +39,30 @@ trait ApiResponseTrait
      */
     public function respond($data, $headers = [])
     {
-        return Response::json($data, $this->getStatusCode(), $headers);
+        return Response::json($data, $this->statusCode, $headers);
+    }
+
+    /**
+     * @param string $status
+     * @param array $data
+     * @param int $code
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function status($status, array $data, $code = null)
+    {
+        $this->setStatus($status);
+
+        if (!is_null($code)) {
+            $this->setStatusCode($code);
+        }
+
+        $response_data = [
+            'status' => $this->status,
+            'code' => $this->statusCode,
+            'data' => $data,
+        ];
+
+        return $this->respond($response_data);
     }
 
     /**
@@ -156,27 +159,5 @@ trait ApiResponseTrait
     public function unauthorized($message = '401 Unauthorized!')
     {
         return $this->failed($message, HttpResponse::HTTP_UNAUTHORIZED);
-    }
-
-    /**
-     * sql 语句黑名单检测机制检测机制
-     *
-     * @param $query
-     * @param int $limit
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function checkBlacklist($query, $limit = 40)
-    {
-        if (is_null(request('per_page')) || (int)request('per_page') > $limit) {
-            $key = 'sql:' . $query->toSql();
-            if (Cache::has($key)) {
-                return $this->tooLarge();
-            }
-
-            if ($query->count() > $limit) {
-                Cache::forever($key, date('Y-m-d H:i:s'));
-                return $this->tooLarge();
-            }
-        }
     }
 }

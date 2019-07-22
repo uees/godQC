@@ -10,7 +10,6 @@ use App\TestRecord;
 use App\Category;
 use App\TestStatistics;
 use App\DisqualificationStatistics;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 
@@ -31,7 +30,7 @@ class StatisticsController extends Controller
             ->where('month', $month)
             ->get();
 
-        return $this->respond([
+        return $this->response()->respond([
             'data' => [
                 'totalStatistics' => TestStatisticsResource::collection($totalStatistics),
                 'failedStatistics' => DisqualificationStatisticsResource::collection($failedStatistics),
@@ -110,7 +109,7 @@ class StatisticsController extends Controller
             $s->save();
         }
 
-        return $this->message('success');
+        return $this->response()->message('success');
     }
 
     // 统计不合格项目信息
@@ -149,7 +148,7 @@ class StatisticsController extends Controller
         $statistics = $this->toStatistics($data, $year, $month, $type);
         \DB::table('disqualification_statistics')->insert($statistics);
 
-        return $this->message('success');
+        return $this->response()->message('success');
     }
 
     protected function toStatistics($data, $year, $month, $type)

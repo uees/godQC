@@ -2,7 +2,6 @@
 
 namespace App\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\QCWayRequest;
 use App\Http\Resources\TestWayResource;
 use App\TestWay;
@@ -65,9 +64,9 @@ class QCWayController extends Controller
         $this->authorize('delete', $testWay);
 
         if ($testWay->delete()) {
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 }

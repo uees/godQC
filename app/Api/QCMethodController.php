@@ -2,7 +2,6 @@
 
 namespace App\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\QCMethodRequest;
 use App\Http\Resources\TestMethodResource;
 use App\TestMethod;
@@ -70,9 +69,9 @@ class QCMethodController extends Controller
         $this->authorize('delete', $testMethod);
 
         if ($testMethod->delete()) {
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 }

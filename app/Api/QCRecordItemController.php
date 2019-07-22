@@ -4,7 +4,6 @@ namespace App\Api;
 
 use App\Http\Requests\QCRecordItemRequest;
 use App\Http\Resources\TestRecordItemResource;
-use App\Http\Controllers\Controller;
 use App\TestRecordItem;
 use App\TestRecord;
 
@@ -78,10 +77,10 @@ class QCRecordItemController extends Controller
 
         if ($testRecord->items->contains($testRecordItem)) {
             if (TestRecordItem::destroy($testRecordItem->id)) {
-                return $this->noContent();
+                return $this->response()->noContent();
             }
 
-            return $this->failed('操作失败');
+            return $this->response()->failed('操作失败');
         }
 
         abort(404);

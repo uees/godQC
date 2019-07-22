@@ -2,7 +2,6 @@
 
 namespace App\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Resources\PatternTestResource;
 use App\PatternTest;
 use Illuminate\Http\Request;
@@ -71,9 +70,9 @@ class PatternTestController extends Controller
         $this->authorize('delete', $patternTest);
 
         if ($patternTest->delete()) {
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 }

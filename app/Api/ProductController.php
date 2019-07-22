@@ -4,7 +4,6 @@ namespace App\Api;
 
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
-use App\Http\Controllers\Controller;
 use App\Product;
 use App\TestWay;
 
@@ -123,10 +122,10 @@ class ProductController extends Controller
         $this->authorize('delete', $product);
 
         if ($product->delete()) {
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
     public function selectTestWay(Product $product)
@@ -147,17 +146,17 @@ class ProductController extends Controller
                 }
             }
 
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
         if (TestWay::where('id', $testWayId)->exists()) {
             $product->testWay()->associate($testWayId);
             $product->save();
 
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
     public function updateTemplates(Product $product)
@@ -179,6 +178,6 @@ class ProductController extends Controller
 
         $product->save();
 
-        return $this->noContent();
+        return $this->response()->noContent();
     }
 }

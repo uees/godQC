@@ -2,7 +2,6 @@
 
 namespace App\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 
@@ -23,7 +22,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         // 验证失败返回401
         if (!$token = \Auth::attempt($credentials)) {
-            $this->unauthorized("登录失败");
+            $this->response()->unauthorized("登录失败");
         }
 
         return $this->respondWithToken($token);
@@ -38,7 +37,7 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return $this->message('退出登录成功');
+        return $this->response()->message('退出登录成功');
     }
 
     public function me()

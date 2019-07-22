@@ -3,7 +3,6 @@
 namespace App\Api;
 
 use App\Customer;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerRequest;
 use App\Http\Resources\CustomerResource;
 
@@ -70,10 +69,10 @@ class CustomerController extends Controller
         $this->authorize('delete', $customer);
 
         if ($customer->delete()) {
-            return $this->noContent();
+            return $this->response()->noContent();
         }
 
-        return $this->failed('操作失败');
+        return $this->response()->failed('操作失败');
     }
 
     public function selectProducts(Customer $customer)
@@ -85,7 +84,7 @@ class CustomerController extends Controller
 
         $customer->products()->sync($product_ids);
 
-        return $this->noContent();
+        return $this->response()->noContent();
     }
 
     public function selectProduct(Customer $customer)
@@ -96,6 +95,6 @@ class CustomerController extends Controller
             $customer->products()->attach(request('product_id'));
         }
 
-        return $this->noContent();
+        return $this->response()->noContent();
     }
 }

@@ -4,9 +4,9 @@ const qcRouter = {
   path: '/test',
   component: Layout,
   redirect: 'noredirect',
-  name: '检测系统',
+  name: 'Test',
   meta: {
-    title: 'Table',
+    title: '检测系统',
     icon: 'table'
   },
   children: [

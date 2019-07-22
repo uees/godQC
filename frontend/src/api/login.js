@@ -24,9 +24,6 @@ export function refresh() {
 }
 
 export function getUserInfo() {
-  return request({
-    url: 'users/me',
-    method: 'get'
-  })
+  return request.get('auth/me')
 }
 

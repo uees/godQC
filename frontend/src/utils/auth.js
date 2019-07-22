@@ -7,10 +7,11 @@ export function getToken() {
 }
 
 export function setToken(token, expires_in) {
-  const options = {}
+  const options = {
+    expires: 14 // default 2 weeks
+  }
   if (expires_in) {
-    // expires 单位为天 （秒转天）
-    options.expires = expires_in / (60 * 60 * 24)
+    options.expires = expires_in / (60 * 60 * 24) // 秒转天
   }
   return Cookies.set(TokenKey, token, options)
 }

@@ -33,7 +33,7 @@ const mutations = {
   },
   SET_TOKEN: (state, data) => {
     state.token = data.token
-    setToken(data.token, data.expires_in)
+    setToken(data.token, data.refresh_expires_in)
   }
 }
 
@@ -74,7 +74,8 @@ const actions = {
     await logout()
     commit('SET_TOKEN', {
       token: '',
-      expires_in: 0
+      expires_in: 0,
+      refresh_expires_in: 0
     })
     commit('SET_ROLES', [])
     removeToken()
@@ -84,7 +85,8 @@ const actions = {
   async resetToken({ commit }) {
     commit('SET_TOKEN', {
       token: '',
-      expires_in: 0
+      expires_in: 0,
+      refresh_expires_in: 0
     })
     commit('SET_ROLES', [])
     removeToken()

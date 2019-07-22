@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import dialog from '@/views/mixins/dialog'
+import dialog from '@/views/mixins/DataFormDialog'
 import { customerApi } from '@/api/basedata'
 
 export function newObj() {

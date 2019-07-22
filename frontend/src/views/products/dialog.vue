@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import dialog from '@/views/mixins/dialog'
+import dialog from '@/views/mixins/DataFormDialog'
 import queryCategory from '@/views/mixins/queryCategory'
 import { productApi } from '@/api/basedata'
 import JsonEditor from '../../components/JsonEditor/index'

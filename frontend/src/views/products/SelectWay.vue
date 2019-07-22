@@ -43,10 +43,10 @@
     </el-dialog>
 
     <way-form
-      :action.sync="WayFormAction"
-      :prop-obj.sync="WayFormObj"
-      @create-done="createWayDone"
-      @update-done="updateWayDone"
+      :action="WayFormAction"
+      :form-data="WayFormObj"
+      @action-done="createWayDone"
+      @close="updateWayDone"
     />
   </div>
 </template>

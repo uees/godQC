@@ -6,13 +6,13 @@
         style="width: 200px;"
         class="filter-item"
         placeholder="搜索"
-        @keyup.enter.native="handleSearch"
+        @keyup.enter.native="handleFilter"
       />
       <el-button
         class="filter-item"
         type="primary"
         icon="el-icon-search"
-        @click="handleSearch"
+        @click="handleFilter"
       >搜索
       </el-button>
       <el-button
@@ -105,17 +105,17 @@
     </div>
 
     <form-dialog
-      :action.sync="action"
-      :prop-obj.sync="propObj"
-      @createDone="createDone"
-      @updateDone="updateDone"
+      :action="formAction"
+      :form-data="formData"
+      @actionDone="actionDone"
+      @close="formDialogClose"
     />
   </div>
 </template>
 
 <script>
-import list from '@/views/mixins/list'
-import pagination from '@/views/mixins/pagination'
+import list from '@/views/mixins/DataList'
+import pagination from '@/views/mixins/Pagination'
 import { qcMethodApi } from '@/api/qc'
 import FormDialog from './dialog'
 import echoTimeMethod from '@/views/mixins/echoTimeMethod'

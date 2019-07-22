@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import dialog from '@/views/mixins/dialog'
+import dialog from '@/views/mixins/DataFormDialog'
 import { qcMethodApi } from '@/api/qc'
 
 export function newObj() {

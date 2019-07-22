@@ -287,7 +287,7 @@ import { deepClone } from '@/utils'
 import { productApi } from '@/api/basedata'
 import { patternTestApi } from '@/api/qc'
 import testersSuggestions from '@/views/mixins/testersSuggestions'
-import pagination from '@/views/mixins/pagination'
+import pagination from '@/views/mixins/Pagination'
 import echoTimeMethod from '@/views/mixins/echoTimeMethod'
 
 export default {

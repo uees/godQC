@@ -6,7 +6,7 @@
         style="width: 200px;"
         class="filter-item"
         placeholder="搜索"
-        @keyup.enter.native="handleSearch"
+        @keyup.enter.native="handleFilter"
       />
       <el-select
         v-model="queryParams.category_id"
@@ -26,7 +26,7 @@
         class="filter-item"
         type="primary"
         icon="el-icon-search"
-        @click="handleSearch"
+        @click="handleFilter"
       />
       <el-button
         class="filter-item"
@@ -163,10 +163,10 @@
     </div>
 
     <form-dialog
-      :action.sync="action"
-      :prop-obj.sync="propObj"
-      @createDone="createDone"
-      @updateDone="updateDone"
+      :action="formAction"
+      :form-data="formData"
+      @actionDone="actionDone"
+      @close="formDialogClose"
     />
 
     <select-way @test-way-updated="testWayUpdated" />
@@ -175,8 +175,8 @@
 </template>
 
 <script>
-import list from '@/views/mixins/list'
-import pagination from '@/views/mixins/pagination'
+import list from '@/views/mixins/DataList'
+import pagination from '@/views/mixins/Pagination'
 import queryCategory from '@/views/mixins/queryCategory'
 import { productApi } from '@/api/basedata'
 import FormDialog from './dialog'

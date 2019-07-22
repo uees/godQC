@@ -197,7 +197,7 @@
 </template>
 
 <script>
-import dialog from '@/views/mixins/dialog'
+import dialog from '@/views/mixins/DataFormDialog'
 import testItemSuggestions from '@/views/mixins/testItemSuggestions'
 import testMethodSuggestions from '@/views/mixins/testMethodSuggestions'
 import { qcWayApi } from '@/api/qc'

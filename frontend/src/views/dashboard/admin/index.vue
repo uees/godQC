@@ -106,7 +106,7 @@ import DisqualificationRecords from './components/DisqualificationRecords'
 import { showStatistics, showFailedAll, showStatisticsShape, makeTestStatistics, makeDisqualificationStatistics } from '@/api/qc'
 
 export default {
-  name: 'DashboardAdmin',
+  name: 'AdminDashboard',
   components: {
     DisqualificationRecords,
     CategoryDisqualification,

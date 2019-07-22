@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import JsonEditor from '../../components/JsonEditor/index'
+import JsonEditor from '@/components/JsonEditor/index'
 import Bus from '@/store/bus'
 import templatesSuggestions from '@/views/mixins/templatesSuggestions'
 import { deepClone } from '@/utils'

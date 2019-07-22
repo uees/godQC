@@ -71,7 +71,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import dialog from '@/views/mixins/dialog'
+import dialog from '@/views/mixins/DataFormDialog'
 import { suggestApi } from '@/api/basedata'
 import JsonEditor from '../../components/JsonEditor/index'
 

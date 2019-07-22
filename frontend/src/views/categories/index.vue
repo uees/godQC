@@ -6,13 +6,13 @@
         style="width: 200px;"
         class="filter-item"
         placeholder="搜索"
-        @keyup.enter.native="handleSearch"
+        @keyup.enter.native="handleFilter"
       />
       <el-button
         class="filter-item"
         type="primary"
         icon="el-icon-refresh"
-        @click="handleSearch"
+        @click="handleFilter"
       >搜索
       </el-button>
       <el-button
@@ -138,10 +138,10 @@
     </el-table>
 
     <form-dialog
-      :action.sync="action"
-      :prop-obj.sync="propObj"
-      @createDone="createDone"
-      @updateDone="updateDone"
+      :action="formAction"
+      :form-data="formData"
+      @actionDone="actionDone"
+      @close="formDialogClose"
     />
 
     <select-way @test-way-updated="testWayUpdated" />
@@ -151,7 +151,7 @@
 </template>
 
 <script>
-import list from '@/views/mixins/list'
+import list from '@/views/mixins/DataList'
 import { categoryApi } from '@/api/basedata'
 import { categorySelectTestWay, categoryUpdateTemplates } from '@/api/qc'
 import FormDialog from './dialog'

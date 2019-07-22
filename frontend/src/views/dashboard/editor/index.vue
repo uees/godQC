@@ -4,17 +4,17 @@
       <pan-thumb
         :image="user.avatar"
         style="float: left"
-      > Your roles:
+      > 你的角色:
         <span
           v-for="item in roles"
           :key="item.name"
           class="pan-info-roles"
         >{{ item.display_name }}({{ item.name }})</span>
       </pan-thumb>
-      <github-corner style="position: absolute; top: 0; border: 0; right: 0;" />
+      <!-- <github-corner style="position: absolute; top: 0; border: 0; right: 0;" /> -->
       <div class="info-container">
         <span class="display_name">{{ user.name }}</span>
-        <span style="font-size:20px;padding-top:20px;display:inline-block;">Editor's Dashboard</span>
+        <span style="font-size:20px;padding-top:20px;display:inline-block;">你好！</span>
       </div>
     </div>
     <div>
@@ -29,14 +29,14 @@
 <script>
 import { mapGetters } from 'vuex'
 import PanThumb from '@/components/PanThumb'
-import GithubCorner from '@/components/GithubCorner'
+// import GithubCorner from '@/components/GithubCorner'
 
 export default {
-  name: 'DashboardEditor',
-  components: { PanThumb, GithubCorner },
+  name: 'EditorDashboard',
+  components: { PanThumb },
   data() {
     return {
-      emptyGif: 'https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3'
+      emptyGif: '/static/img/hello-world.gif'
     }
   },
   computed: {

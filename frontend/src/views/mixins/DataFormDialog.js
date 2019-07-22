@@ -1,12 +1,13 @@
 import { mapGetters } from 'vuex'
+import { deepClone } from '@/utils'
 
 export default {
   props: {
     action: {
-      type: String,
+      types: [String, undefined],
       required: true
     },
-    propObj: {
+    formData: {
       types: [Object, undefined],
       required: true
     }
@@ -31,12 +32,12 @@ export default {
   },
 
   watch: {
-    propObj: function(val) {
+    formData(val) {
       if (val) {
-        this.obj = Object.assign({}, val)
+        this.obj = deepClone(val)
       }
     },
-    action: function(val) {
+    action(val) {
       if (val === 'create' || val === 'update') {
         this.dialogFormVisible = true
       } else {
@@ -46,48 +47,40 @@ export default {
   },
 
   methods: {
-    newObj() { // createObj 需要继承者实现
+    newObj() { // newObj 需要继承者实现
       return {}
     },
     resetObj() {
       this.obj = this.newObj()
     },
-    create() {
-      this.$refs['obj_form'].validate(valid => {
+    async create() {
+      this.$refs['obj_form'].validate(async valid => {
         if (valid) {
-          this.obj.user_id = this.user.id
-          this.api.add(this.obj).then(response => {
-            const { data } = response.data
-            this.obj = data // 灰常重要！！！
-            this.done()
-          })
-        } else {
-          return false
+          const formData = this.obj
+          formData.user_id = this.user.id
+          const response = await this.api.store(formData)
+          const { data } = response.data
+          this.obj = data // 灰常重要！！！
+          this.done(data)
         }
       })
     },
-    update() {
-      this.$refs['obj_form'].validate(valid => {
+    async update() {
+      this.$refs['obj_form'].validate(async valid => {
         if (valid) {
-          this.obj.modified_user_id = this.user.id
-          this.api.update(this.obj.id, this.obj).then(response => {
-            const { data } = response.data
-            this.obj = data // 灰常重要！！！
-            this.done()
-          })
-        } else {
-          return false
+          const formData = this.obj
+          formData.modified_user_id = this.user.id
+          const response = await this.api.update(formData.id, formData)
+          const { data } = response.data
+          this.obj = data // 灰常重要！！！
+          this.done(data)
         }
       })
     },
     done() {
       // 当一个子组件改变了一个带 .sync 的 prop 的值时，这个变化也会同步到父组件中所绑定的值
-      this.$emit('update:propObj', this.obj) // <comp :obj.sync="obj"></comp>
-      if (this.action === 'create') {
-        this.$emit('createDone')
-      } else if (this.action === 'update') {
-        this.$emit('updateDone')
-      }
+      // this.$emit('update:formData', this.obj) // <comp :obj.sync="obj"></comp>
+      this.$emit('action-done', this.obj)
       this.$notify({
         title: '成功',
         message: '操作成功',
@@ -97,8 +90,8 @@ export default {
       this.close()
     },
     close() {
+      this.$emit('close')
       this.dialogFormVisible = false
-      this.$emit('update:action', '')
       this.resetObj()
     }
   }

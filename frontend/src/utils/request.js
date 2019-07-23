@@ -55,8 +55,8 @@ service.interceptors.response.use(
 
       if (error.response.status === 401) {
         await store.dispatch('user/resetToken')
-        await store.dispatch('user/updateRoles')
-        // location.reload()
+        // await store.dispatch('user/updateRoles')
+        location.reload()
       }
     }
 

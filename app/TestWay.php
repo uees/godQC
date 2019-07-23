@@ -30,6 +30,8 @@ class TestWay extends Model
                     'min' => 0,
                     'max' => 0,
                     'value' => '',
+                    'memo' => '',
+                    'unit' => '',
                 ],
             ],
         ];

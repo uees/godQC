@@ -11,7 +11,7 @@ const qcRouter = {
   },
   children: [
     {
-      path: '/disposes/:id',
+      path: 'disposes/:id',
       component: () => import('@/views/qcrecords/dispose'),
       hidden: true,
       props: true,
@@ -19,7 +19,7 @@ const qcRouter = {
       meta: { title: '处理意见' }
     },
     {
-      path: '/records/:id',
+      path: 'records/:id',
       component: () => import('@/views/qcrecords/show'),
       hidden: true,
       props: true,
@@ -27,7 +27,7 @@ const qcRouter = {
       meta: { title: '检测记录', name: 'ShowRecord' }
     },
     {
-      path: '/records/:id/real',
+      path: 'records/:id/real',
       component: () => import('@/views/qcrecords/show'),
       hidden: true,
       props: true,
@@ -35,7 +35,8 @@ const qcRouter = {
       meta: { title: '检测记录(真)', name: 'ShowRecord' }
     },
     {
-      path: '/fqc',
+      path: 'fqc',
+      component: () => import('@/views/nested'),
       name: 'FQC',
       meta: {
         roles: ['admin', 'fqc'],
@@ -45,27 +46,27 @@ const qcRouter = {
       children: [
         {
           path: 'testing',
-          component: () => import('@/views/qcrecords/testing'),
+          component: () => import('@/views/fqc/Testing'),
           name: 'FQCTesting',
           meta: { title: '在检产品', icon: 'example' }
         },
         {
           path: 'index',
-          component: () => import('@/views/qcrecords/index'),
+          component: () => import('@/views/fqc/index'),
           name: 'FQCIndex',
           meta: { title: '产品检测记录', icon: 'guide' }
         },
         {
           path: 'index/real',
-          component: () => import('@/views/qcrecords/index'),
+          component: () => import('@/views/fqc/RealIndex'),
           hidden: true,
-          name: 'FQCIndexReal',
+          name: 'FQCRealIndex',
           meta: { title: '产品检测记录(真)' }
         }
       ]
     },
     {
-      path: '/iqc',
+      path: 'iqc',
       name: 'IQC',
       meta: {
         roles: ['admin', 'iqc'],
@@ -95,7 +96,8 @@ const qcRouter = {
       ]
     },
     {
-      path: '/patterns',
+      path: 'patterns',
+      component: () => import('@/views/nested'), // Parent router-view
       children: [
         {
           path: 'index',
@@ -106,13 +108,13 @@ const qcRouter = {
       ]
     },
     {
-      path: '/methods',
+      path: 'methods',
       component: () => import('@/views/qcmethods/index'),
       name: 'TestMethods',
       meta: { title: '检测方法', icon: 'table' }
     },
     {
-      path: '/ways',
+      path: 'ways',
       component: () => import('@/views/qcways/index'),
       name: 'TestWays',
       meta: { roles: ['admin'], title: '检测流程', icon: 'size' }

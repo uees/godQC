@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-dialog
-      :visible.sync="dialogFormVisible"
+      :visible="disposeForm.visable"
       title="处理方法"
       @close="close"
     >
       <el-form
         ref="obj_form"
-        :model="dispose"
+        :model="disposeForm.formData"
         :rules="rules"
         class="small-space"
         label-position="right"
@@ -19,7 +19,7 @@
           prop="method"
         >
           <el-autocomplete
-            v-model="dispose.method"
+            v-model="disposeForm.formData.method"
             :fetch-suggestions="queryMethods"
             placeholder="请输入内容"
           />
@@ -30,7 +30,7 @@
           prop="author"
         >
           <el-autocomplete
-            v-model="dispose.author"
+            v-model="disposeForm.formData.author"
             :fetch-suggestions="queryAuthors"
             value-key="name"
           />
@@ -38,7 +38,7 @@
 
         <el-form-item label="备注">
           <el-input
-            v-model="dispose.memo"
+            v-model="disposeForm.formData.memo"
             :rows="2"
             type="textarea"
             placeholder="请输入内容"
@@ -51,14 +51,8 @@
         class="dialog-footer"
       >
         <el-button
-          v-if="action==='create'"
           type="primary"
-          @click="create"
-        >确 定</el-button>
-        <el-button
-          v-else
-          type="primary"
-          @click="update"
+          @click="disposeForm.action==='create' ? create : update"
         >确 定</el-button>
       </div>
     </el-dialog>
@@ -72,53 +66,37 @@ import { productDisposeApi } from '@/api/qc'
 
 export default {
   name: 'DisposeForm',
+  props: {
+    recordScope: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
-      action: 'create',
-      dispose: this.newDispose(),
       loading: false,
       authors: [],
       methods: [],
       rules: {
         method: { required: true, message: '必填项', trigger: 'blur' },
         author: { required: true, message: '必填项', trigger: 'blur' }
-      },
-      dialogFormVisible: false
+      }
     }
   },
   computed: {
     ...mapState('basedata', { // namespaced module
       suggests: state => state.suggests
+    }),
+    ...mapState('qc', {
+      disposeForm: state => state.fqcDisposeForm
     })
   },
-  created() {
+  async created() {
     if (this.suggests.length === 0) {
-      this.$store.dispatch('basedata/FetchSuggest').then(() => {
-        this.initAuthors()
-        this.initMethods()
-      })
-    } else {
-      this.initAuthors()
-      this.initMethods()
+      await this.$store.dispatch('basedata/FetchSuggest')
     }
-  },
-  mounted() {
-    Bus.$on('show-dispose-form', (record) => {
-      productDisposeApi.list({ params: { from_record_id: record.id, all: 1 }}).then(response => {
-        const { data } = response.data
-        this.dialogFormVisible = true
-        if (data.length && data.length > 0) {
-          this.action = 'update'
-          this.dispose = data[0]
-        } else {
-          this.action = 'create'
-          this.dispose.from_record_id = record.id
-          this.dispose.product_batch_id = record.batch ? record.batch.id : null
-        }
-      }).catch(() => {
-        this.close()
-      })
-    })
+    this.initAuthors()
+    this.initMethods()
   },
   methods: {
     newDispose() {
@@ -170,7 +148,7 @@ export default {
       cb(results)
     },
     create() {
-      productDisposeApi.add(this.dispose).then(response => {
+      productDisposeApi.store(this.dispose).then(response => {
         Bus.$emit('dispose-created', this.dispose)
         this.close()
       })

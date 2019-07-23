@@ -14,11 +14,12 @@ import { deepClone } from '@/utils'
 export default {
   data() {
     return {
+      real: false,
       listShowItems: ['粘度']
     }
   },
   methods: {
-    echoItem(record, name) {
+    itemValue(record, name) {
       const item = record.items.find(item => {
         if (name === '粘度') {
           return item.item === '粘度' || item.item === '6转粘度'
@@ -33,8 +34,7 @@ export default {
       return ''
     },
     showReality(record, item) {
-      // 强制真实 或者 检测时 显示真实
-      if (this.real || typeof this.real === 'undefined') {
+      if (this.real) {
         return true
       }
 
@@ -50,6 +50,8 @@ export default {
       if (item && item.conclusion === 'PASS') {
         return true
       }
+
+      return false
     },
     setOriginal(row) {
       // js 对象是引用传值，所以这里会直接修改原始值
@@ -73,107 +75,48 @@ export default {
         return record
       })
     },
-    onRecordMemoBlur(scope) {
-      // scope is {row: {}, column: {}, $index: 0, store: {}}
-      const record = scope.row
-      if (record.memo !== record._original.memo) {
-        this.updateRecord(scope)
-      }
-    },
-    onItemValueBlur(scope, item_scope) {
-      const record = scope.row
-      const item = item_scope.row
-
-      let isPass
-      if (item.spec.value_type === 'RANGE') {
-        if (item.spec.data.min) {
-          isPass = +item.value >= +item.spec.data.min
-
-          if (isPass && item.spec.data.max) {
-            isPass = +item.value <= +item.spec.data.max
-          }
-        } else if (item.spec.data.max) {
-          isPass = +item.value <= +item.spec.data.max
-        }
-      } else if (item.spec.value_type === 'VALUE') {
-        // eslint-disable-next-line
-        isPass = item.value == item.spec.data.value
-      } else if (item.spec.value_type === 'INFO') {
-        if (item.value && item.value.toUpperCase() === 'PASS') {
-          isPass = true
-        }
-      }
-
-      if (typeof isPass === 'undefined') {
-        // pass
-      } else if (isPass && item.conclusion !== 'PASS') {
-        item.conclusion = 'PASS'
-      } else if (!isPass && item.conclusion !== 'NG') {
-        item.conclusion = 'NG'
-      }
-
-      const cached_item = this.cacheRecords[scope.$index].items[item_scope.$index]
-      if (cached_item.value !== item.value || cached_item.conclusion !== item.conclusion) {
-        this.updateRecordItem(scope, item_scope)
-        this.checkDone(scope)
-        this.updateCache()
-      }
-    },
-    onItemConclusionChanged(scope, props) {
-      const item = props.row
-      const cached_item = this.cacheRecords[scope.$index].items[props.$index]
-      if (cached_item.conclusion !== item.conclusion) {
-        this.updateRecordItem(scope, props)
-        this.checkDone(scope)
-        this.updateCache()
-      }
-    },
-    onItemUserBlur(scope, props) {
-      const record = scope.row
-      const item = props.row
-      const cached_record = this.cacheRecords[scope.$index]
-      const cached_item = cached_record.items[props.$index]
-
-      // 获取所有项目的检测员
-      let testers = []
-      record.items.forEach(function(item) {
-        if (item.tester) {
-          testers.push(item.tester)
-        }
-      })
-
-      // 利用集合去除重复项
-      testers = new Set(testers)
-      testers = Array.from(testers).sort() // 集合转为数组，并排序
-
-      record.testers = testers.join(',')
-
-      if (cached_item.tester !== item.tester) {
-        this.updateRecordItem(scope, props)
-
-        if (cached_record.testers !== record.testers) {
-          this.updateRecord(scope)
-        }
-
-        this.updateCache()
-      }
-    },
-    onItemMemoBlur(scope, props) {
-      const item = props.row
-      const cached_record = this.cacheRecords[scope.$index]
-      const cached_item = cached_record.items[props.$index]
-
-      if (item.memo !== cached_item.memo) {
-        this.updateRecordItem(scope, props)
-        this.updateCache()
-      }
-    },
     handleSearch() {
       this.fetchData()
     },
     handleMakeDispose(record) {
       // show dispose form
       Bus.$emit('show-dispose-form', record)
+    },
+    handleShowRecordEditForm(scope) {
+      Bus.$emit('show-update-record-form', scope)
+    },
+    handleSample() {
+      Bus.$emit('show-record-sample-form', this.queryParams.type)
+    },
+    handleShowItemForm(scope, props) {
+      Bus.$emit('show-item-form', scope, props)
+    },
+    checkDone(scope) {
+      const record = scope.row
+      // 如果必检项目没有值，则表示检测未完成
+      const notDone = record.items.some(item => {
+        if (typeof item.spec.required === 'undefined' || item.spec.required) {
+          return !item.value
+        }
+        return false
+      })
+      const isNG = record.items.some(item => item.conclusion === 'NG')
+
+      if (notDone) {
+        record.conclusion = isNG ? 'NG' : null // 下结论
+      } else {
+        record.conclusion = isNG ? 'NG' : 'PASS' // 检测完了才下合格结论
+
+        if (!record.completed_at) {
+          this.testDone(scope)
+        }
+      }
+
+      const cached_record = this.cacheRecords[scope.$index]
+
+      if (record.conclusion !== cached_record.conclusion) {
+        this.updateRecord(scope)
+      }
     },
     async archive(scope) {
       const record = scope.row
@@ -228,57 +171,6 @@ export default {
       this.setOriginal(data)
       this.records.splice(index, 1, data)
       this.$message({ type: 'success', message: '已标记为"未写装"' })
-    },
-    handleShowRecordEditForm(scope) {
-      Bus.$emit('show-update-record-form', scope)
-    },
-    handleSample() {
-      Bus.$emit('show-record-sample-form', this.queryParams.type)
-    },
-    handleShowItemForm(scope, props) {
-      Bus.$emit('show-item-form', scope, props)
-    },
-    itemCreated(record, recordIndex, item) {
-      // event callback
-      this.setOriginal(record)
-      this.records.splice(recordIndex, 1, record)
-    },
-    itemUpdated(record, recordIndex, item, itemIndex) {
-      // event callback
-      this.setOriginal(record)
-      this.records.splice(recordIndex, 1, record)
-    },
-    recordUpdated(record, index) {
-      // event callback
-      this.setOriginal(record)
-      this.records.splice(index, 1, record)
-    },
-    checkDone(scope) {
-      const record = scope.row
-      // 如果必检项目没有值，则表示检测未完成
-      const notDone = record.items.some(item => {
-        if (typeof item.spec.required === 'undefined' || item.spec.required) {
-          return !item.value
-        }
-        return false
-      })
-      const isNG = record.items.some(item => item.conclusion === 'NG')
-
-      if (notDone) {
-        record.conclusion = isNG ? 'NG' : null // 下结论
-      } else {
-        record.conclusion = isNG ? 'NG' : 'PASS' // 检测完了才下合格结论
-
-        if (!record.completed_at) {
-          this.testDone(scope)
-        }
-      }
-
-      const cached_record = this.cacheRecords[scope.$index]
-
-      if (record.conclusion !== cached_record.conclusion) {
-        this.updateRecord(scope)
-      }
     },
     async testDone(scope) {
       // api request
@@ -351,6 +243,111 @@ export default {
       await qcRecordApi.destroy(record.id)
       this.records.splice(index, 1)
       this.$message({ type: 'success', message: '删除成功!' })
+    },
+    onRecordMemoBlur(scope) {
+      // scope is {row: {}, column: {}, $index: 0, store: {}}
+      const record = scope.row
+      if (record.memo !== record._original.memo) {
+        this.updateRecord(scope)
+      }
+    },
+    onItemValueBlur(scope, item_scope) {
+      const record = scope.row
+      const item = item_scope.row
+
+      let isPass
+      if (item.spec.value_type === 'RANGE') {
+        if (item.spec.data.min) {
+          isPass = +item.value >= +item.spec.data.min
+
+          if (isPass && item.spec.data.max) {
+            isPass = +item.value <= +item.spec.data.max
+          }
+        } else if (item.spec.data.max) {
+          isPass = +item.value <= +item.spec.data.max
+        }
+      } else if (item.spec.value_type === 'VALUE') {
+        // eslint-disable-next-line
+        isPass = item.value == item.spec.data.value
+      } else if (item.spec.value_type === 'INFO') {
+        if (item.value && item.value.toUpperCase() === 'PASS') {
+          isPass = true
+        }
+      }
+
+      if (typeof isPass === 'undefined') {
+        // pass
+      } else if (isPass && item.conclusion !== 'PASS') {
+        item.conclusion = 'PASS'
+      } else if (!isPass && item.conclusion !== 'NG') {
+        item.conclusion = 'NG'
+      }
+
+      const cached_item = record._original.items[item_scope.$index]
+      if (cached_item.value !== item.value || cached_item.conclusion !== item.conclusion) {
+        this.updateRecordItem(scope, item_scope)
+        this.checkDone(scope)
+      }
+    },
+    onItemConclusionChanged(scope, item_scope) {
+      const record = scope.row
+      const item = item_scope.row
+      const cached_item = record._original.items[item_scope.$index]
+      if (cached_item.conclusion !== item.conclusion) {
+        this.updateRecordItem(scope, item_scope)
+        this.checkDone(scope)
+      }
+    },
+    onItemUserBlur(scope, item_scope) {
+      const record = scope.row
+      const item = item_scope.row
+      const cached_record = record._original
+      const cached_item = cached_record.items[item_scope.$index]
+
+      // 获取所有项目的检测员
+      let testers = []
+      record.items.forEach(item => {
+        if (item.tester) {
+          testers.push(item.tester)
+        }
+      })
+
+      // 利用集合去除重复项, 并排序
+      testers = Array.from(new Set(testers)).sort()
+      record.testers = testers.join(',')
+
+      if (cached_item.tester !== item.tester) {
+        this.updateRecordItem(scope, item_scope)
+
+        if (cached_record.testers !== record.testers) {
+          this.updateRecord(scope)
+        }
+      }
+    },
+    onItemMemoBlur(scope, item_scope) {
+      const record = scope.row
+      const item = item_scope.row
+      const cached_record = record._original
+      const cached_item = cached_record.items[item_scope.$index]
+
+      if (item.memo !== cached_item.memo) {
+        this.updateRecordItem(scope, item_scope)
+      }
+    },
+    itemCreated(record, recordIndex, item) {
+      // event callback
+      this.setOriginal(record)
+      this.records.splice(recordIndex, 1, record)
+    },
+    itemUpdated(record, recordIndex, item, itemIndex) {
+      // event callback
+      this.setOriginal(record)
+      this.records.splice(recordIndex, 1, record)
+    },
+    recordUpdated(record, index) {
+      // event callback
+      this.setOriginal(record)
+      this.records.splice(index, 1, record)
     }
   }
 }

@@ -7,6 +7,7 @@ import tagsView from './modules/tagsView'
 import user from './modules/user'
 import basedata from './modules/basedata'
 import settings from './modules/settings'
+import qc from './modules/qc'
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -19,7 +20,8 @@ const store = new Vuex.Store({
     tagsView,
     user,
     basedata,
-    settings
+    settings,
+    qc
   },
   getters
 })

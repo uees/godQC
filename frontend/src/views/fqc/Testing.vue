@@ -19,7 +19,7 @@
 
       <el-select
         v-model="listShowItems"
-        :multiple-limit="3"
+        :multiple-limit="5"
         multiple
         filterable
         clearable
@@ -76,7 +76,7 @@
         align="center"
       >
         <template slot-scope="scope">
-          {{ echoTime(scope.row.created_at) }}
+          {{ scope.row.created_at | parseTime }}
         </template>
       </el-table-column>
 
@@ -314,16 +314,16 @@
 </template>
 
 <script>
-import { qcRecordApi } from '@/api/qc'
-import { deepClone } from '@/utils'
-import Bus from '@/store/bus'
+import { qcRecordApi, productDisposeApi } from '@/api/qc'
+// import { deepClone } from '@/utils'
 import { CONCLUSIONS } from '@/defines/consts'
-import echoSpecMethod from '@/views/mixins/echoSpecMethod'
-import echoTimeMethod from '@/views/mixins/echoTimeMethod'
+import { ProductDispose } from '@/defines/models'
+import { qcspec, parseTime } from '@/filters/erp'
+import Bus from '@/store/bus'
 import testersSuggestions from '@/views/mixins/testersSuggestions'
 import testItemSuggestions from '@/views/mixins/testItemSuggestions'
-import commonMethods from '@/views/qcrecords/mixin/commonMethods'
-import testOperation from '@/views/qcrecords/mixin/testOperation'
+import RecordTableStyle from '@/views/mixins/RecordTableStyle'
+import QCOperation from '@/views/mixins/QCOperation'
 import QcSample from '@/views/qcrecords/components/QcSample'
 import DisposeForm from '@/views/qcrecords/components/DisposeForm'
 import ItemForm from '@/views/qcrecords/components/ItemForm'
@@ -332,6 +332,7 @@ import RecordForm from '@/views/qcrecords/components/RecordForm'
 
 export default {
   name: 'FQCTesting',
+  filters: { qcspec, parseTime },
   components: {
     ItemForm,
     QcSample,
@@ -340,10 +341,8 @@ export default {
     RecordForm
   },
   mixins: [
-    echoSpecMethod,
-    echoTimeMethod,
-    testOperation,
-    commonMethods,
+    RecordTableStyle,
+    QCOperation,
     testItemSuggestions,
     testersSuggestions
   ],
@@ -395,26 +394,26 @@ export default {
       })
       this.listLoading = false
     },
-    setOriginal(row) {
-      // js 对象是引用传值，所以这里会直接修改原始值
-      row._original = deepClone(row)
-    },
-    restore(row) {
-      // 恢复
-      const { _original } = row
-      for (const key of Object.keys(_original)) {
-        if (!key.startsWith('_')) {
-          row[key] = _original[key]
-        }
+    async handleMakeDispose(scope) {
+      const response = await productDisposeApi.list({ params: {
+        from_record_id: scope.row.id,
+        all: 1
+      }})
+      const { data } = response.data
+      let action
+      let dispose = ProductDispose()
+      if (data.length && data.length > 0) {
+        action = 'update'
+        dispose = data[0]
+      } else {
+        action = 'create'
+        dispose.from_record_id = scope.row.id
+        dispose.product_batch_id = scope.row.batch ? scope.row.batch.id : null
       }
-    },
-    excludeWithOnlyShow(records) {
-      return records.map(record => {
-        record.items = record.items.filter(item => {
-          return item.spec.value_type !== 'ONLY_SHOW'
-        })
-
-        return record
+      this.$store.commit('qc/SET_FQC_DISPOSE_FORM', {
+        action,
+        formData: dispose,
+        visable: true
       })
     },
     handleSave(scope) {

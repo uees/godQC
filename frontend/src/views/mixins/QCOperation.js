@@ -1,5 +1,6 @@
 import {
   qcRecordApi,
+  productDisposeApi,
   updateRecordItem,
   deleteRecordItem,
   testDone,
@@ -8,14 +9,38 @@ import {
   sayPackage,
   cancelSayPackage
 } from '@/api/qc'
-import Bus from '@/store/bus'
+import { ProductDispose, TestRecord, TestRecordItem } from '@/defines/models'
 import { deepClone } from '@/utils'
 
 export default {
   data() {
     return {
       real: false,
-      listShowItems: ['粘度']
+      listShowItems: ['粘度'],
+      disposeFormInfo: {
+        index: -1,
+        action: '',
+        formData: ProductDispose(),
+        visible: false
+      },
+      sampleFormInfo: {
+        type: 'FQC',
+        formData: undefined,
+        visible: false
+      },
+      recordFormInfo: {
+        index: -1,
+        formData: TestRecord(),
+        visible: false
+      },
+      recordItemFormInfo: {
+        recordIndex: -1,
+        itemIndex: -1,
+        action: '',
+        record: undefined,
+        formData: TestRecordItem(),
+        visible: false
+      }
     }
   },
   methods: {
@@ -76,20 +101,40 @@ export default {
       })
     },
     handleSearch() {
+      this.queryParams.page = 1
       this.fetchData()
     },
-    handleMakeDispose(record) {
-      // show dispose form
-      Bus.$emit('show-dispose-form', record)
+    handleMakeDispose(scope) {
+      this.queryDisposeFormInfo(scope).then(info => {
+        this.disposeFormInfo = info
+      })
     },
-    handleShowRecordEditForm(scope) {
-      Bus.$emit('show-update-record-form', scope)
+    handleEditRecordForm(scope) {
+      this.recordFormInfo = {
+        index: scope.$index,
+        formData: deepClone(scope.row),
+        visible: true
+      }
     },
-    handleSample() {
-      Bus.$emit('show-record-sample-form', this.queryParams.type)
+    handleCreateRecordItem(scope) {
+      this.recordItemFormInfo = {
+        action: 'create',
+        record: scope.row,
+        recordIndex: scope.$index,
+        itemIndex: -1,
+        formData: TestRecordItem(),
+        visible: true
+      }
     },
-    handleShowItemForm(scope, props) {
-      Bus.$emit('show-item-form', scope, props)
+    handleEditRecordItem(scope, item_scope) {
+      this.recordItemFormInfo = {
+        action: 'update',
+        record: scope.row,
+        recordIndex: scope.$index,
+        itemIndex: item_scope.$index,
+        formData: deepClone(item_scope.row),
+        visible: true
+      }
     },
     checkDone(scope) {
       const record = scope.row
@@ -116,6 +161,32 @@ export default {
 
       if (record.conclusion !== cached_record.conclusion) {
         this.updateRecord(scope)
+      }
+    },
+    async queryDisposeFormInfo(scope) {
+      const response = await productDisposeApi.list({
+        params: {
+          from_record_id: scope.row.id,
+          all: 1
+        }
+      })
+      const { data } = response.data
+      let action
+      let dispose = ProductDispose()
+      if (data.length && data.length > 0) {
+        action = 'update'
+        dispose = deepClone(data[0])
+      } else {
+        action = 'create'
+        dispose.from_record_id = scope.row.id
+        dispose.product_batch_id = scope.row.batch ? scope.row.batch.id : null
+      }
+
+      return {
+        action,
+        index: scope.$index,
+        formData: dispose,
+        visible: true
       }
     },
     async archive(scope) {
@@ -334,20 +405,22 @@ export default {
         this.updateRecordItem(scope, item_scope)
       }
     },
-    itemCreated(record, recordIndex, item) {
+    itemChanged(record, recordIndex, item, itemIndex) {
       // event callback
       this.setOriginal(record)
-      this.records.splice(recordIndex, 1, record)
-    },
-    itemUpdated(record, recordIndex, item, itemIndex) {
-      // event callback
-      this.setOriginal(record)
-      this.records.splice(recordIndex, 1, record)
+      // this.records.splice(recordIndex, 1, record)
     },
     recordUpdated(record, index) {
       // event callback
       this.setOriginal(record)
       this.records.splice(index, 1, record)
+    },
+    recordSampled(record) {
+      record.items = record.items.filter(item => {
+        return item.spec.value_type !== 'ONLY_SHOW'
+      })
+      this.setOriginal(record)
+      this.records.unshift(record)
     }
   }
 }

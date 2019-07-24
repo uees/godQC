@@ -68,3 +68,38 @@ export function conclusionLabel(conclusion) {
   }
   return conclusion
 }
+
+// 输出注意事项
+export function noteMatters(record) {
+  let result = ''
+
+  for (const item of record.items) {
+    if (item.item === '桥线' && item.spec.data) {
+      if ((item.spec.data.value && item.spec.data.value !== '做记录') || item.spec.data.max) {
+        result += '桥线,'
+      }
+    } else if (item.item === '表面张力') {
+      result += '测表面张力,'
+    } else if (item.item === '混合粘度') {
+      result += '测混合粘度,'
+    } else if (item.item === '黑点') {
+      result += '测黑点,'
+    } else if (item.item === '重检粘度') {
+      result += '重检粘度,'
+    } else if (item.item === '注意事项' && item.spec.data) {
+      result += item.spec.data.value
+    }
+  }
+
+  return result
+}
+
+// 输出配比要求
+export function mixinTips(record) {
+  const item = record.items.find(item => item.item === '配油')
+  if (item && item.spec && item.spec.data) {
+    return item.spec.data.value
+  }
+
+  return ''
+}

@@ -59,54 +59,54 @@
 </template>
 
 <script>
-import Bus from '@/store/bus'
 import { deepClone } from '@/utils'
+import { TestRecord } from '@/defines/models'
 import suffixSuggests from '@/views/mixins/suffixSuggests'
 import { qcRecordApi } from '@/api/qc'
 
 export default {
   name: 'RecordForm',
   mixins: [suffixSuggests],
+  props: {
+    formInfo: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
-      record: this.newRecord(),
       cachedItems: [],
       loading: false,
-      index: -1,
       rules: {
         'batch.batch_number': { required: true, min: 5, message: '请填入完整的批号', trigger: 'blur' }
       },
+      index: -1,
+      record: TestRecord(),
       visible: false
     }
   },
-  mounted() {
-    Bus.$on('show-update-record-form', (scope) => {
-      this.visible = true
-      this.record = deepClone(scope.row)
+  watch: {
+    formInfo(val) {
+      this.visible = val.visible
+      this.record = val.formData
       this.cachedItems = this.record.items
-      this.index = scope.$index
-    })
+      this.index = val.index
+    }
   },
   methods: {
     newRecord() {
-      return {
-        id: 0,
-        product_batch_id: 0,
-        test_times: 0,
-        conclusion: '',
-        testers: '',
-        completed_at: null,
-        said_package_at: null,
-        memo: '',
-        show_reality: false,
-        items: [],
-        batch: {
-          id: 0,
-          product_name: '',
-          product_name_suffix: '',
-          batch_number: '',
-          type: '',
-          memo: ''
+      return TestRecord()
+    },
+    setOriginal(row) {
+      // js 对象是引用传值，所以这里会直接修改原始值
+      row._original = deepClone(row)
+    },
+    restore(row) {
+      // 恢复
+      const { _original } = row
+      for (const key of Object.keys(_original)) {
+        if (!key.startsWith('_')) {
+          row[key] = _original[key]
         }
       }
     },
@@ -122,8 +122,6 @@ export default {
             this.$notify({ title: '成功', message: '操作成功', type: 'success', duration: 2000 })
             this.close()
           })
-        } else {
-          return false
         }
       })
     },

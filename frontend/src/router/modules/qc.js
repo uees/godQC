@@ -3,7 +3,7 @@ import Layout from '@/layout'
 const qcRouter = {
   path: '/test',
   component: Layout,
-  redirect: 'noredirect',
+  redirect: '/test/methods',
   name: 'Test',
   meta: {
     title: '检测系统',
@@ -37,6 +37,7 @@ const qcRouter = {
     {
       path: 'fqc',
       component: () => import('@/views/nested'),
+      redirect: 'testing',
       name: 'FQC',
       meta: {
         roles: ['admin', 'fqc'],

@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-dialog
-      :visible="disposeForm.visable"
+      :visible="visible"
       title="处理方法"
       @close="close"
     >
       <el-form
         ref="obj_form"
-        :model="disposeForm.formData"
+        :model="formData"
         :rules="rules"
         class="small-space"
         label-position="right"
@@ -19,7 +19,7 @@
           prop="method"
         >
           <el-autocomplete
-            v-model="disposeForm.formData.method"
+            v-model="formData.method"
             :fetch-suggestions="queryMethods"
             placeholder="请输入内容"
           />
@@ -30,7 +30,7 @@
           prop="author"
         >
           <el-autocomplete
-            v-model="disposeForm.formData.author"
+            v-model="formData.author"
             :fetch-suggestions="queryAuthors"
             value-key="name"
           />
@@ -38,7 +38,7 @@
 
         <el-form-item label="备注">
           <el-input
-            v-model="disposeForm.formData.memo"
+            v-model="formData.memo"
             :rows="2"
             type="textarea"
             placeholder="请输入内容"
@@ -52,7 +52,7 @@
       >
         <el-button
           type="primary"
-          @click="disposeForm.action==='create' ? create : update"
+          @click="disposeForm.action==='create' ? create() : update()"
         >确 定</el-button>
       </div>
     </el-dialog>
@@ -61,15 +61,15 @@
 
 <script>
 import { mapState } from 'vuex'
-import Bus from '@/store/bus'
+import { ProductDispose } from '@/defines/models'
 import { productDisposeApi } from '@/api/qc'
 
 export default {
   name: 'DisposeForm',
   props: {
-    recordScope: {
-      type: Object,
-      required: true
+    formInfo: {
+      required: true,
+      type: Object
     }
   },
   data() {
@@ -80,16 +80,25 @@ export default {
       rules: {
         method: { required: true, message: '必填项', trigger: 'blur' },
         author: { required: true, message: '必填项', trigger: 'blur' }
-      }
+      },
+      recordIndex: -1,
+      visible: false,
+      formData: ProductDispose(),
+      action: ''
     }
   },
   computed: {
     ...mapState('basedata', { // namespaced module
       suggests: state => state.suggests
-    }),
-    ...mapState('qc', {
-      disposeForm: state => state.fqcDisposeForm
     })
+  },
+  watch: {
+    formInfo(val) {
+      this.recordIndex = val.index
+      this.visible = val.visible
+      this.formData = val.formData
+      this.action = val.action
+    }
   },
   async created() {
     if (this.suggests.length === 0) {
@@ -100,16 +109,7 @@ export default {
   },
   methods: {
     newDispose() {
-      return {
-        id: null,
-        product_batch_id: null,
-        from_record_id: null,
-        to_record_id: null,
-        method: '',
-        author: '',
-        memo: '',
-        is_done: false
-      }
+      return ProductDispose()
     },
     initAuthors() {
       const suggest = this.suggests.find(suggest => {
@@ -149,19 +149,18 @@ export default {
     },
     create() {
       productDisposeApi.store(this.dispose).then(response => {
-        Bus.$emit('dispose-created', this.dispose)
+        this.$emit('action-done', this.dispose, this.index)
         this.close()
       })
     },
     update() {
       productDisposeApi.update(this.dispose.id, this.dispose).then(response => {
-        Bus.$emit('dispose-updated', this.dispose)
+        this.$emit('action-done', this.dispose, this.index)
         this.close()
       })
     },
     close() {
-      this.dialogFormVisible = false
-      this.dispose = this.newDispose()
+      this.visible = false
     }
   }
 }

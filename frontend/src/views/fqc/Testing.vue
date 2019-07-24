@@ -40,8 +40,6 @@
         clearable
         class="filter-item"
         placeholder="是否写装"
-        @change="fetchData"
-        @clear="fetchData"
       >
         <el-option
           label="写装"
@@ -58,7 +56,7 @@
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-refresh"
-        @click="fetchData"
+        @click="handleSearch"
       />
     </div>
 
@@ -75,8 +73,8 @@
         label="取样时间"
         align="center"
       >
-        <template slot-scope="scope">
-          {{ scope.row.created_at | parseTime }}
+        <template slot-scope="{row}">
+          {{ row.created_at | parseTime }}
         </template>
       </el-table-column>
 
@@ -84,11 +82,11 @@
         label="品名"
         align="center"
       >
-        <template slot-scope="scope">
+        <template slot-scope="{row}">
           <span>
-            {{ scope.row.batch.product_name }}
-            <i v-if="scope.row.batch.product_name_suffix">
-              『{{ scope.row.batch.product_name_suffix }}』
+            {{ row.batch.product_name }}
+            <i v-if="row.batch.product_name_suffix">
+              『{{ row.batch.product_name_suffix }}』
             </i>
           </span>
         </template>
@@ -101,13 +99,31 @@
       />
 
       <el-table-column
+        label="配油"
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <span>{{ row | mixinTips }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        label="注意事项"
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <span>{{ row | noteMatters }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column
         v-for="name in listShowItems"
         :key="name"
         :label="name"
         align="center"
       >
-        <template slot-scope="scope">
-          <span>{{ echoItem(scope.row, name) }}</span>
+        <template slot-scope="{row}">
+          <span>{{ itemValue(row, name) }}</span>
         </template>
       </el-table-column>
 
@@ -115,10 +131,11 @@
         label="结论"
         align="center"
       >
-        <template slot-scope="scope">
-          <span>{{ echoConclusion(scope.row.conclusion) }}</span>
+        <template slot-scope="{row}">
+          <span>{{ echoConclusion(row) }}</span>
         </template>
       </el-table-column>
+
       <el-table-column
         prop="testers"
         label="检测人"
@@ -141,15 +158,6 @@
       </el-table-column>
 
       <el-table-column
-        label="注意事项"
-        align="center"
-      >
-        <template slot-scope="scope">
-          <span>{{ echoRequire(scope.row) }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column
         align="center"
         label="操作"
         class-name="small-padding fixed-width"
@@ -160,14 +168,14 @@
             type="text"
             size="small"
             style="color: red"
-            @click="handleMakeDispose(scope.row)"
+            @click="handleMakeDispose(scope)"
           >处理意见
           </el-button>
           <el-button
             v-if="scope.row.said_package_at"
             type="text"
             size="small"
-            @click="handleCancelSayPackage(scope)"
+            @click="cancelSayPackage(scope)"
           >
             取消写装
           </el-button>
@@ -175,22 +183,22 @@
             v-else
             type="text"
             size="small"
-            @click="handleSayPackage(scope)"
+            @click="sayPackage(scope)"
           >写装</el-button>
           <el-button
             type="text"
             size="small"
-            @click="handleArchive(scope)"
+            @click="archive(scope)"
           >归档</el-button>
           <el-button
             type="text"
             size="small"
-            @click="handleShowRecordEditForm(scope)"
+            @click="handleEditRecordForm(scope)"
           >编辑</el-button>
           <el-button
             type="text"
             size="small"
-            @click="handleDeleteRecord(scope)"
+            @click="deleteRecord(scope)"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -200,7 +208,7 @@
           <el-button
             type="primary"
             style="margin-bottom: 10px"
-            @click="handleShowItemForm(scope)"
+            @click="handleCreateRecordItem(scope)"
           >添加项目
           </el-button>
 
@@ -223,8 +231,8 @@
               label="项目"
             />
             <el-table-column label="要求">
-              <template slot-scope="props">
-                {{ echoSpec(props.row.spec) }}
+              <template slot-scope="{row}">
+                {{ row.spec | qcspec }}
               </template>
             </el-table-column>
 
@@ -253,7 +261,7 @@
                     :value="item.value"
                   />
                 </el-select>
-                <span v-else>{{ echoConclusion(props.row.conclusion) }}</span>
+                <span v-else>{{ props.row.conclusion | conclusionLabel }}</span>
               </template>
             </el-table-column>
 
@@ -288,12 +296,12 @@
                 <el-button
                   type="text"
                   size="small"
-                  @click="handleShowItemForm(scope, props)"
+                  @click="handleEditRecordItem(scope, props)"
                 >编辑</el-button>
                 <el-button
                   type="text"
                   size="small"
-                  @click="handleDeleteRecordItem(scope, props)"
+                  @click="deleteRecordItem(scope, props)"
                 >删除</el-button>
               </template>
             </el-table-column>
@@ -303,23 +311,27 @@
 
     </el-table>
 
-    <qc-sample />
-    <dispose-form />
-    <item-form
-      @item-created="itemCreated"
-      @item-updated="itemUpdated"
+    <qc-sample
+      :form-info="sampleFormInfo"
+      @record-sampled="recordSampled"
     />
-    <record-form @record-updated="recordUpdated" />
+    <record-form
+      :form-info="recordFormInfo"
+      @record-updated="recordUpdated"
+    />
+    <dispose-form :form-info="disposeFormInfo" />
+    <item-form
+      :form-info="recordItemFormInfo"
+      @item-changed="itemChanged"
+    />
   </div>
 </template>
 
 <script>
-import { qcRecordApi, productDisposeApi } from '@/api/qc'
-// import { deepClone } from '@/utils'
+import { qcRecordApi } from '@/api/qc'
 import { CONCLUSIONS } from '@/defines/consts'
-import { ProductDispose } from '@/defines/models'
-import { qcspec, parseTime } from '@/filters/erp'
-import Bus from '@/store/bus'
+import { TestRecord } from '@/defines/models'
+import { qcspec, parseTime, conclusionLabel, noteMatters, mixinTips } from '@/filters/erp'
 import testersSuggestions from '@/views/mixins/testersSuggestions'
 import testItemSuggestions from '@/views/mixins/testItemSuggestions'
 import RecordTableStyle from '@/views/mixins/RecordTableStyle'
@@ -332,7 +344,7 @@ import RecordForm from '@/views/qcrecords/components/RecordForm'
 
 export default {
   name: 'FQCTesting',
-  filters: { qcspec, parseTime },
+  filters: { qcspec, parseTime, conclusionLabel, noteMatters, mixinTips },
   components: {
     ItemForm,
     QcSample,
@@ -365,22 +377,6 @@ export default {
   created() {
     this.fetchData()
   },
-  mounted() {
-    Bus.$on('record-sampled', (record) => {
-      // fix ONLY_SHOW
-      record.items = record.items.filter(item => {
-        return item.spec.value_type !== 'ONLY_SHOW'
-      })
-      this.records.unshift(record)
-      this.updateCache()
-    })
-    Bus.$on('dispose-created', (dispose) => {
-      this.$message(`处理方法已创建：${dispose.author} ${dispose.method}`)
-    })
-    Bus.$on('dispose-updated', (dispose) => {
-      this.$message(`处理方法已更新：${dispose.author} ${dispose.method}`)
-    })
-  },
   methods: {
     async fetchData() {
       this.listLoading = true
@@ -394,53 +390,27 @@ export default {
       })
       this.listLoading = false
     },
-    async handleMakeDispose(scope) {
-      const response = await productDisposeApi.list({ params: {
-        from_record_id: scope.row.id,
-        all: 1
-      }})
-      const { data } = response.data
-      let action
-      let dispose = ProductDispose()
-      if (data.length && data.length > 0) {
-        action = 'update'
-        dispose = data[0]
-      } else {
-        action = 'create'
-        dispose.from_record_id = scope.row.id
-        dispose.product_batch_id = scope.row.batch ? scope.row.batch.id : null
+    handleSample() {
+      this.sampleFormInfo = {
+        type: 'FQC',
+        formData: TestRecord(),
+        visible: true
       }
-      this.$store.commit('qc/SET_FQC_DISPOSE_FORM', {
-        action,
-        formData: dispose,
-        visable: true
-      })
     },
     handleSave(scope) {
       this.updateRecordWithItems(scope)
-      this.updateCache()
     },
-    echoRequire(record) {
+    echoConclusion(record) {
       let result = ''
 
-      for (const item of record.items) {
-        if (item.item === '桥线') {
-          if ((item.spec.data.value && item.spec.data.value !== '做记录') || item.spec.data.max) {
-            result += '桥线,'
-          }
-        } else if (item.item === '表面张力') {
-          result += '表面张力,'
-        } else if (item.item === '混合粘度') {
-          result += '混合粘度,'
-        } else if (item.item === '黑点') {
-          result += '黑点,'
-        } else if (item.item === '重检粘度') {
-          result += '重检粘度,'
-        } else if (item.item === '红外匹配度') {
-          if (item.spec.value_type === 'INFO') {
-            result += '健鼎油注意红外,'
+      if (record.conclusion === 'NG') {
+        for (const item of record.items) {
+          if (item.conclusion === 'NG') {
+            result += `${item.item} NG, 值:${item.value};\n`
           }
         }
+      } else if (record.conclusion === 'PASS') {
+        result = '合格'
       }
 
       return result

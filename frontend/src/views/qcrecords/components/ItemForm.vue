@@ -114,72 +114,52 @@
 </template>
 
 <script>
-import Bus from '@/store/bus'
-import { deepClone } from '@/utils'
-import { valueTypes } from '@/views/mixins/const'
+import { TestRecordItem } from '@/defines/models'
+import { VALUE_TYPES } from '@/defines/consts'
 import testItemSuggestions from '@/views/mixins/testItemSuggestions'
 import { updateRecordItem, addRecordItem } from '@/api/qc'
 
 export default {
   name: 'ItemForm',
-  mixins: [
-    valueTypes,
-    testItemSuggestions
-  ],
+  mixins: [testItemSuggestions],
+  props: {
+    formInfo: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
-      action: 'update',
-      record: null,
+      action: '',
       recordIndex: -1,
-      item: this.newItem(),
       itemIndex: -1,
+      record: undefined,
+      item: this.newItem(),
+      visible: false,
+      valueTypes: VALUE_TYPES,
       rules: {
         item: { required: true, message: '必填项', trigger: 'blur' },
         'spec.value_type': { required: true, message: '必填项', trigger: 'blur' }
       },
-      visible: false,
       titleMap: {
         update: '编辑项目',
         create: '创建项目'
       }
     }
   },
-  mounted() {
-    Bus.$on('show-item-form', (scope, props) => {
-      this.visible = true
-      this.record = deepClone(scope.row)
-      this.recordIndex = scope.$index
-      this.action = 'create'
-      this.resetItem()
-
-      if (props) {
-        this.action = 'update'
-        this.itemIndex = props.$index
-        this.item = deepClone(props.row)
-      }
-    })
+  watch: {
+    formInfo(val) {
+      this.visible = val.visible
+      this.record = val.record
+      this.item = val.formData
+      this.recordIndex = val.recordIndex
+      this.itemIndex = val.itemIndex
+      this.action = val.action
+    }
   },
   methods: {
     newItem() {
-      return {
-        id: 0,
-        test_record_id: 0,
-        item: '',
-        spec: {
-          is_show: true,
-          value_type: '', // RANGE, INFO, VALUE
-          data: {
-            min: undefined,
-            max: undefined,
-            value: ''
-          }
-        },
-        value: '',
-        fake_value: '',
-        conclusion: '',
-        tester: '',
-        memo: ''
-      }
+      return TestRecordItem()
     },
     resetItem() {
       this.item = this.newItem()
@@ -191,11 +171,9 @@ export default {
             const { data } = response.data
             this.item = data
             this.record.items.push(this.item)
-            this.$emit('item-created', this.record, this.recordIndex, this.item)
+            this.$emit('item-changed', this.record, this.recordIndex, this.item, this.itemIndex)
             this.done()
           })
-        } else {
-          return false
         }
       })
     },
@@ -206,11 +184,9 @@ export default {
             const { data } = response.data
             this.item = data
             this.record.items.splice(this.itemIndex, 1, this.item)
-            this.$emit('item-updated', this.record, this.recordIndex, this.item, this.itemIndex)
+            this.$emit('item-changed', this.record, this.recordIndex, this.item, this.itemIndex)
             this.done()
           })
-        } else {
-          return false
         }
       })
     },

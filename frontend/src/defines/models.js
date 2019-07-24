@@ -174,7 +174,7 @@ export function TestRecord() {
   return {
     id: undefined,
     product_batch_id: undefined,
-    batch: undefined,
+    batch: ProductBatch(),
     show_reality: undefined,
     test_times: undefined,
     conclusion: undefined,
@@ -195,7 +195,7 @@ export function TestRecordItem() {
     test_record_id: undefined,
     testRecord: undefined,
     item: undefined,
-    spec: undefined,
+    spec: TestSpec(),
     value: undefined,
     fake_value: undefined,
     conclusion: undefined,

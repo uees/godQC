@@ -11,7 +11,7 @@
 
       <el-select
         v-model="listShowItems"
-        :multiple-limit="3"
+        :multiple-limit="5"
         multiple
         filterable
         clearable
@@ -32,9 +32,20 @@
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
-        icon="el-icon-refresh"
-        @click="fetchData"
+        icon="el-icon-search"
+        @click="handleSearch"
       />
+
+      <el-button
+        :loading="downloadLoading"
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="document"
+        @click="handleDownload"
+      >
+        导出到 Excel
+      </el-button>
     </div>
 
     <div class="filter-container">
@@ -55,7 +66,7 @@
         v-model="queryParams.category"
         clearable
         placeholder="类别"
-        @change="fetchData"
+        @change="handleSearch"
       >
         <el-option
           v-for="category in categories"
@@ -68,6 +79,7 @@
       <el-select
         v-model="queryParams.conclusion"
         clearable
+        style="width: 120px"
         placeholder="结论"
         @change="selectConclusion"
       >
@@ -86,18 +98,8 @@
         v-model="queryParams.has_memo"
         label="有备注"
         border
-        @change="fetchData"
+        @change="handleSearch"
       />
-
-      <el-button
-        :loading="downloadLoading"
-        style="margin:0 0 20px 20px;"
-        type="primary"
-        icon="document"
-        @click="handleDownload"
-      >
-        {{ $t('excel.export') }} Excel
-      </el-button>
     </div>
 
     <el-table
@@ -114,8 +116,8 @@
         align="center"
         label="取样时间"
       >
-        <template slot-scope="scope">
-          {{ echoTime(scope.row.created_at) }}
+        <template slot-scope="{row}">
+          {{ row.created_at | parseTime }}
         </template>
       </el-table-column>
 
@@ -146,7 +148,7 @@
         align="center"
       >
         <template slot-scope="scope">
-          <span>{{ echoItem(scope.row, name) }}</span>
+          <span>{{ itemValue(scope.row, name) }}</span>
         </template>
       </el-table-column>
 
@@ -155,7 +157,7 @@
         label="结论"
       >
         <template slot-scope="scope">
-          {{ echoConclusion(showReality(scope.row) ? scope.row.conclusion : 'PASS') }}
+          {{ showReality(scope.row) ? scope.row.conclusion : 'PASS' | conclusionLabel }}
         </template>
       </el-table-column>
 
@@ -169,8 +171,8 @@
         align="center"
         label="写装时间"
       >
-        <template slot-scope="scope">
-          {{ echoTime(scope.row.said_package_at) }}
+        <template slot-scope="{row}">
+          {{ row.said_package_at| parseTime }}
         </template>
       </el-table-column>
 
@@ -186,23 +188,24 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <router-link
+          <el-link
             v-if="real"
-            :to="{name: 'records.show-real', params: { id: scope.row.id }}"
+            type="primary"
+            @click="$router.push({name: 'ShowRecordReal', params: { id: String(scope.row.id) }})"
           >查看
-          </router-link>
-          <router-link
+          </el-link>
+          <el-link
             v-else
-            :to="{name: 'records.show', params: { id: scope.row.id }}"
+            type="primary"
+            @click="$router.push({name: 'ShowRecord', params: { id: String(scope.row.id) }})"
           >查看
-          </router-link>
-          <el-button
+          </el-link>
+          <el-link
             v-if="showReality(scope.row) && scope.row.conclusion === 'NG'"
-            type="text"
-            size="small"
+            type="primary"
             @click="showDispose(scope.row)"
           >处理办法
-          </el-button>
+          </el-link>
           <template v-if="real">
             <el-button
               type="text"
@@ -238,7 +241,7 @@
             />
             <el-table-column label="要求">
               <template slot-scope="props">
-                {{ echoSpec(props.row.spec) }}
+                {{ props.row.spec | qcspec }}
               </template>
             </el-table-column>
 
@@ -251,7 +254,7 @@
 
             <el-table-column label="结论">
               <template slot-scope="props">
-                {{ echoConclusion(showReality(scope.row, props.row) ? props.row.conclusion : 'PASS') }}
+                {{ showReality(scope.row, props.row) ? props.row.conclusion : 'PASS' | conclusionLabel }}
               </template>
             </el-table-column>
 
@@ -285,23 +288,25 @@
     </div>
 
     <item-form
-      @item-created="itemCreated"
-      @item-updated="itemUpdated"
+      :form-info="recordItemFormInfo"
+      @item-changed="itemChanged"
     />
-    <record-form @record-updated="recordUpdated" />
+    <record-form
+      :form-info="recordFormInfo"
+      @record-updated="recordUpdated"
+    />
   </div>
 </template>
 
 <script>
 import { qcRecordApi } from '@/api/qc'
-import Bus from '@/store/bus'
-import echoSpecMethod from '@/views/mixins/echoSpecMethod'
-import echoTimeMethod from '@/views/mixins/echoTimeMethod'
+import { qcspec, parseTime, conclusionLabel } from '@/filters/erp'
+import { pickerOptions } from '@/defines/consts'
 import testItemSuggestions from '@/views/mixins/testItemSuggestions'
 import pagination from '@/views/mixins/Pagination'
 import queryCategory from '@/views/mixins/queryCategory'
-import commonMethods from './mixin/commonMethods'
-import testOperation from './mixin/testOperation'
+import RecordTableStyle from '@/views/mixins/RecordTableStyle'
+import QCOperation from '@/views/mixins/QCOperation'
 import ItemForm from './components/ItemForm'
 import RecordForm from './components/RecordForm'
 
@@ -313,65 +318,44 @@ function cleanSpelChar(value) {
 }
 
 export default {
-  name: 'TestRecords',
-  components: {
-    ItemForm, RecordForm
-  },
+  name: 'RecordList',
+  filters: { qcspec, parseTime, conclusionLabel },
+  components: { ItemForm, RecordForm },
   mixins: [
-    echoSpecMethod,
-    echoTimeMethod,
+    RecordTableStyle,
+    QCOperation,
     testItemSuggestions,
-    commonMethods,
-    testOperation,
     queryCategory,
     pagination
   ],
+  props: {
+    real: { // 是否真实
+      type: Boolean,
+      default: true
+    },
+    qcType: { // FQC or IQC
+      type: String,
+      default: 'FQC'
+    }
+  },
   data() {
     return {
-      real: false, // 强制真实开关
       records: [],
       listLoading: false,
       downloadLoading: false,
       queryParams: {
         with: 'batch,items',
-        type: 'FQC', // FQC, IQC
+        type: this.qcType, // FQC, IQC
         tested: 1,
-        q: '',
-        conclusion: '',
-        category: '', // category id
-        show_reality: '',
-        created_at: '',
-        has_memo: ''
+        q: undefined,
+        conclusion: undefined,
+        category: undefined, // category id
+        show_reality: undefined,
+        created_at: undefined,
+        has_memo: undefined
       },
-      pageSizes: [20, 40, 100],
       pickerDate: null,
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      }
+      pickerOptions: pickerOptions
     }
   },
   computed: {
@@ -405,15 +389,13 @@ export default {
     }
   },
   created() {
-    this.initType()
-    this.initReal()
     this.fetchData()
   },
   mounted() {
-    Bus.$on('record-updated', (obj) => {
-      this.records.splice(this.updateIndex, 1, obj)
-      this.updateIndex = -1 // 重置 updateIndex
-    })
+    // Bus.$on('record-updated', (obj) => {
+    //  this.records.splice(this.updateIndex, 1, obj)
+    //  this.updateIndex = -1 // 重置 updateIndex
+    // })
   },
   methods: {
     fetchData() {
@@ -424,13 +406,9 @@ export default {
         if (this.real) {
           this.excludeOnlyShow()
         }
-        this.updateCache()
-        this.pagination(response)
+        this.paginate(response)
         this.listLoading = false
       })
-    },
-    initReal() {
-      this.real = this.$route.path.endsWith('/real')
     },
     selectConclusion() {
       if (!this.real) {
@@ -449,11 +427,11 @@ export default {
       this.fetchData()
     },
     showDispose(row) {
-      qcRecordApi.detail(row.id, { params: { with: 'willDispose' }}).then(response => {
+      qcRecordApi.show(row.id, { params: { with: 'willDispose' }}).then(response => {
         const { data } = response.data // data is record
 
         if (data.willDispose) {
-          this.$router.push({ name: 'disposes.show', params: { id: data.willDispose.id }})
+          this.$router.push({ name: 'Dispose', params: { id: `${data.willDispose.id}` }})
         } else {
           this.$message('无处理记录')
         }
@@ -496,16 +474,16 @@ export default {
         }
 
         return [
-          this.echoTime(record.created_at),
+          parseTime(record.created_at),
           productName,
           record.batch.batch_number
         ].concat(this.listShowItems.map(name => {
-          return this.echoItem(record, name)
+          return this.itemValue(record, name)
         })).concat([
           record.conclusion,
           record.testers,
-          this.echoTime(record.completed_at),
-          this.echoTime(record.said_package_at)
+          parseTime(record.completed_at),
+          parseTime(record.said_package_at)
         ])
       })
     }

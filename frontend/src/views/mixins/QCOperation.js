@@ -15,7 +15,6 @@ import { deepClone } from '@/utils'
 export default {
   data() {
     return {
-      real: false,
       listShowItems: ['粘度'],
       disposeFormInfo: {
         index: -1,

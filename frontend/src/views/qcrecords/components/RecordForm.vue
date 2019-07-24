@@ -59,7 +59,6 @@
 </template>
 
 <script>
-import { deepClone } from '@/utils'
 import { TestRecord } from '@/defines/models'
 import suffixSuggests from '@/views/mixins/suffixSuggests'
 import { qcRecordApi } from '@/api/qc'
@@ -96,19 +95,6 @@ export default {
   methods: {
     newRecord() {
       return TestRecord()
-    },
-    setOriginal(row) {
-      // js 对象是引用传值，所以这里会直接修改原始值
-      row._original = deepClone(row)
-    },
-    restore(row) {
-      // 恢复
-      const { _original } = row
-      for (const key of Object.keys(_original)) {
-        if (!key.startsWith('_')) {
-          row[key] = _original[key]
-        }
-      }
     },
     update() {
       this.$refs['obj_form'].validate(valid => {

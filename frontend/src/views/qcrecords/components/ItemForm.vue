@@ -35,12 +35,12 @@
           >
             <el-option
               v-for="_item in valueTypes"
-              :key="_item.code"
-              :label="_item.name"
-              :value="_item.code"
+              :key="_item.value"
+              :label="_item.label"
+              :value="_item.value"
             >
-              <span style="float: left">{{ _item.name }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ _item.code }}</span>
+              <span style="float: left">{{ _item.label }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ _item.value }}</span>
             </el-option>
           </el-select>
         </el-form-item>

@@ -8,7 +8,7 @@
         icon="document"
         @click="handleDownload"
       >
-        {{ $t('excel.export') }} Excel
+        导出到 Excel
       </el-button>
 
       <div
@@ -16,12 +16,12 @@
         class="link-div"
       >
         被
-        <router-link
-          :to="{name: 'disposes.show', params: {id: record.disposed.id }}"
-          class="link"
+        <el-link
+          type="primary"
+          @contextmenu="$router.push({name: 'Dispose', params: {id: `${record.disposed.id}` }})"
         >
           处理
-        </router-link>
+        </el-link>
         后的检测记录
       </div>
 
@@ -43,11 +43,11 @@
           <tr>
             <td>{{ productName }}</td>
             <td>{{ record.batch.batch_number }}</td>
-            <td>{{ echoConclusion(record.conclusion) }}</td>
+            <td>{{ record.conclusion | conclusionLabel }}</td>
             <td>{{ record.testers }}</td>
-            <th>{{ echoTime(record.created_at) }}</th>
-            <th>{{ echoTime(record.completed_at) }}</th>
-            <th>{{ echoTime(record.said_package_at) }}</th>
+            <th>{{ record.created_at | parseTime }}</th>
+            <th>{{ record.completed_at | parseTime }}</th>
+            <th>{{ record.said_package_at | parseTime }}</th>
             <th>{{ record.memo }}</th>
             <td v-if="record.test_times">{{ record.test_times }}</td>
           </tr>
@@ -56,7 +56,7 @@
 
       <el-table
         v-loading="listLoading"
-        :data="filterItems(record)"
+        :data="allowedItems(record.items)"
         element-loading-text="拼命加载中"
         border
         fit
@@ -68,7 +68,7 @@
         />
         <el-table-column label="要求">
           <template slot-scope="props">
-            {{ echoSpec(props.row.spec) }}
+            {{ props.row.spec | qcspec }}
           </template>
         </el-table-column>
 
@@ -85,7 +85,7 @@
 
         <el-table-column label="结论">
           <template slot-scope="props">
-            {{ echoConclusion(showReality(record) ? props.row.conclusion : 'PASS') }}
+            {{ showReality(record) ? props.row.conclusion : 'PASS' | conclusionLabel }}
           </template>
         </el-table-column>
 
@@ -103,29 +103,34 @@
         v-if="showReality(record) && record.willDispose"
         class="link-div"
       >
-        <router-link
-          :to="{name: 'disposes.show', params: {id: record.willDispose.id }}"
-          class="link"
+        <el-link
+          type="primary"
+          @click="$router.push({name: 'Dispose', params: {id: record.willDispose.id }})"
         >
           处理办法
-        </router-link>
+        </el-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import echoTimeMethod from '@/views/mixins/echoTimeMethod'
-import echoSpecMethod from '@/views/mixins/echoSpecMethod'
+import { qcspec, parseTime, conclusionLabel } from '@/filters/erp'
 import { qcRecordApi } from '@/api/qc'
+import { TestRecord, ProductDispose } from '@/defines/models'
 
 export default {
   name: 'ShowRecord',
-  mixins: [
-    echoTimeMethod,
-    echoSpecMethod
-  ],
+  filters: {
+    qcspec,
+    parseTime,
+    conclusionLabel
+  },
   props: {
+    real: { // 是否真实
+      type: Boolean,
+      default: true
+    },
     id: {
       type: String,
       required: true
@@ -133,7 +138,6 @@ export default {
   },
   data() {
     return {
-      real: false,
       record: this.newRecord(),
       fileType: 'xlsx',
       autoWidth: true,
@@ -154,61 +158,19 @@ export default {
     }
   },
   created() {
-    this.initReal()
     this.fetchData()
   },
   methods: {
     newRecord() {
-      return {
-        id: 0,
-        product_batch_id: 0,
-        test_times: 0,
-        conclusion: '',
-        testers: '',
-        completed_at: null,
-        said_package_at: null,
-        created_at: {
-          date: '',
-          timezone_type: '',
-          timezone: ''
-        },
-        updated_at: {
-          date: '',
-          timezone_type: '',
-          timezone: ''
-        },
-        memo: '',
-        show_reality: false,
-        batch: this.newBatch(),
-        items: [],
-        willDispose: this.newDispose(),
-        disposed: this.newDispose()
-      }
-    },
-    newBatch() {
-      return {
-        id: 0,
-        product_name: '',
-        product_name_suffix: '',
-        batch_number: '',
-        type: '',
-        memo: ''
-      }
-    },
-    newDispose() {
-      return {
-        id: 0,
-        product_batch_id: 0,
-        from_record_id: 0,
-        to_record_id: 0,
-        method: '',
-        author: '',
-        memo: ''
-      }
+      const record = TestRecord()
+      record.disposed = ProductDispose()
+      record.willDispose = ProductDispose()
+      record.items = []
+      return record
     },
     fetchData() {
       this.listLoading = true
-      qcRecordApi.detail(this.id, {
+      qcRecordApi.show(this.id, {
         params: { with: 'batch,items,willDispose,disposed' }
       }).then(response => {
         const { data } = response.data
@@ -217,38 +179,35 @@ export default {
         this.listLoading = false
       })
     },
-    initReal() {
-      this.real = this.$route.path.endsWith('/real')
-    },
-    showReality(record) {
+    showReality(record, item) {
+      if (this.real) {
+        return true
+      }
+
+      // 产品合格显示真实
       if (record.conclusion === 'PASS') {
         return true
       }
 
-      if (this.real) {
+      if (record.show_reality) {
         return true
       }
 
-      return record.show_reality
-    },
-    echoConclusion(conclusion) {
-      if (conclusion === 'PASS') {
-        return '合格'
+      if (item && item.conclusion === 'PASS') {
+        return true
       }
-      if (conclusion === 'NG') {
-        return '不合格'
-      }
+
+      return false
     },
-    filterItems(record) {
-      // 必须根据 real 判断
+    allowedItems(items) {
       if (this.real) {
-        return record.items.filter(item => {
+        return items.filter(item => {
           return item.spec.value_type !== 'ONLY_SHOW'
         })
       }
 
-      return record.items.filter(item => {
-        return item.is_show !== false
+      return items.filter(item => {
+        return item.is_show
       })
     },
     handleDownload() {
@@ -270,7 +229,7 @@ export default {
       const filterVal = ['item', 'spec', 'value', 'conclusion', 'tester', 'memo']
       const data = this.record.items.map(item => filterVal.map(key => {
         if (key === 'spec') {
-          return this.echoSpec(item['spec'])
+          return qcspec(item['spec'])
         }
         if (key === 'value') {
           return this.showReality(this.record) ? item['value'] : item['fake_value']
@@ -290,9 +249,9 @@ export default {
       data.unshift([
         this.productName,
         this.record.batch.batch_number,
-        this.echoConclusion(this.record.conclusion),
+        conclusionLabel(this.record.conclusion),
         this.record.testers,
-        this.echoTime(this.record.created_at),
+        parseTime(this.record.created_at),
         this.record.test_times
       ])
 
@@ -331,10 +290,5 @@ export default {
   color: #666;
   padding: 10px;
   margin: 20px 0;
-}
-
-.link {
-  text-decoration: underline;
-  color: blue;
 }
 </style>

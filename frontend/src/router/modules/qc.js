@@ -35,36 +35,23 @@ const qcRouter = {
       meta: { title: '检测记录(真)', name: 'ShowRecord' }
     },
     {
-      path: 'fqc',
-      component: () => import('@/views/nested'),
-      redirect: 'testing',
-      name: 'FQC',
-      meta: {
-        roles: ['admin', 'fqc'],
-        title: '成品检测',
-        icon: 'chart'
-      },
-      children: [
-        {
-          path: 'testing',
-          component: () => import('@/views/fqc/Testing'),
-          name: 'FQCTesting',
-          meta: { title: '在检产品', icon: 'example' }
-        },
-        {
-          path: 'index',
-          component: () => import('@/views/fqc/index'),
-          name: 'FQCIndex',
-          meta: { title: '产品检测记录', icon: 'guide' }
-        },
-        {
-          path: 'index/real',
-          component: () => import('@/views/fqc/RealIndex'),
-          hidden: true,
-          name: 'FQCRealIndex',
-          meta: { title: '产品检测记录(真)' }
-        }
-      ]
+      path: 'fqc/testing',
+      component: () => import('@/views/fqc/Testing'),
+      name: 'FQCTesting',
+      meta: { roles: ['admin', 'fqc'], title: '在检产品', icon: 'example' }
+    },
+    {
+      path: 'fqc/list',
+      component: () => import('@/views/fqc/index'),
+      name: 'FQCIndex',
+      meta: { roles: ['admin', 'fqc'], title: '产品检测记录', icon: 'guide' }
+    },
+    {
+      path: 'fqc/list/real',
+      component: () => import('@/views/fqc/RealIndex'),
+      hidden: true,
+      name: 'FQCRealIndex',
+      meta: { roles: ['admin', 'fqc'], title: '产品检测记录(真)' }
     },
     {
       path: 'iqc',
@@ -77,19 +64,19 @@ const qcRouter = {
       children: [
         {
           path: 'testing',
-          component: () => import('@/views/qcrecords/testing'),
+          component: () => import('@/views/qcrecords/Testing'),
           name: 'IQCTesting',
           meta: { title: '在检材料', icon: 'example' }
         },
         {
           path: 'index',
-          component: () => import('@/views/qcrecords/index'),
+          component: () => import('@/views/qcrecords/RecordList'),
           name: 'IQCIndex',
           meta: { title: '来料检测记录', icon: 'guide' }
         },
         {
           path: 'index/real',
-          component: () => import('@/views/qcrecords/index'),
+          component: () => import('@/views/qcrecords/RecordList'),
           hidden: true,
           name: 'IQCIndexReal',
           meta: { title: '来料检测记录(真)' }

@@ -2,13 +2,23 @@
   <div>
     <div class="main-context">
       <div class="author"><span>处理人：</span> {{ dispose.author }}</div>
-      <div class="time"><span>创建时间：</span> {{ echoTime(dispose.created_at) }}</div>
+
+      <div class="time"><span>创建时间：</span> {{ dispose.created_at | parseTime }}</div>
+
       <div class="batch">
         <span>品名：</span> {{ dispose.batch.product_name }} {{ dispose.batch.product_name_suffix }},
         <span>批号：</span> {{ dispose.batch.batch_number }},
       </div>
+
       <div class="method">
         <span>处理办法：</span> {{ dispose.method }}
+      </div>
+
+      <div
+        v-if="dispose.memo"
+        class="method"
+      >
+        {{ dispose.memo }}
       </div>
 
       <div
@@ -24,17 +34,16 @@
 </template>
 
 <script>
-import echoTimeMethod from '@/views/mixins/echoTimeMethod'
+import { parseTime } from '@/filters/erp'
 import { productDisposeApi } from '@/api/qc'
+import { ProductBatch, ProductDispose } from '@/defines/models'
 
 export default {
   name: 'Dispose',
-  mixins: [
-    echoTimeMethod
-  ],
+  filters: { parseTime },
   props: {
     id: {
-      type: Number,
+      type: String,
       required: true
     }
   },
@@ -51,40 +60,14 @@ export default {
   },
   methods: {
     newDispose() {
-      return {
-        id: 0,
-        created_at: {
-          date: '',
-          timezone_type: '',
-          timezone: ''
-        },
-        updated_at: {
-          date: '',
-          timezone_type: '',
-          timezone: ''
-        },
-        product_batch_id: 0,
-        from_record_id: 0,
-        to_record_id: 0,
-        method: '',
-        author: '',
-        memo: '',
-        batch: {
-          id: 0,
-          product_name: '',
-          product_name_suffix: '',
-          batch_number: '',
-          type: '',
-          memo: ''
-        }
-      }
+      const dispose = ProductDispose()
+      dispose.batch = ProductBatch()
+      return dispose
     },
-    fetchData() {
-      productDisposeApi.detail(this.id, { params: { with: 'batch' }}).then(response => {
-        const { data } = response.data
-        this.dispose = data
-        // this.$route.meta.title = `${this.dispose.batch.batch_number} 处理方法`
-      })
+    async fetchData() {
+      const response = await productDisposeApi.show(this.id, { params: { with: 'batch' }})
+      const { data } = response.data
+      this.dispose = data
     }
   }
 }

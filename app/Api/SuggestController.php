@@ -36,7 +36,7 @@ class SuggestController extends Controller
     {
         $this->authorize('create', Suggest::class);
 
-        $data = $request->get('data');
+        $data = $request->get('json_data');
         // 格式化数据
         if (!is_null($data)) {
             $data = is_array($data) ? $data : json_decode($data);
@@ -63,7 +63,7 @@ class SuggestController extends Controller
 
         $suggest->fill($request->only(['name', 'parent_id', 'memo']));
 
-        $data = $request->get('data');
+        $data = $request->get('json_data');
         // 格式化数据
         if (!is_null($data)) {
             $data = is_array($data) ? $data : json_decode($data);

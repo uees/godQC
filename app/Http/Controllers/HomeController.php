@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return redirect('/erp.html');
+        return redirect('/index.html');
     }
 
     // 更新 metas 数据，支持模板和粘度

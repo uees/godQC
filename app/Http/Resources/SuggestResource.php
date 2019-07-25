@@ -20,7 +20,7 @@ class SuggestResource extends Resource
             'updated_at' => $this->updated_at,
             'parent_id' => (int)$this->parent_id,
             'name' => $this->name,
-            'data' => $this->data,
+            'json_data' => $this->data,  // 用 data 做响应会出现奇怪的问题, 所以这里命名为 json_data
             'memo' => $this->memo,
             'parent' => SuggestResource::make($this->whenLoaded('parent')),
             'children' => SuggestResource::collection($this->whenLoaded('children')),

@@ -15,6 +15,7 @@ app/storage/
 /public/storage
 /public/static
 /public/erp.html
+/public/index.html
 /public/favicon.ico
 /storage/*.key
 .env.*.php

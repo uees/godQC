@@ -107,8 +107,8 @@
 
 <script>
 import { deepClone } from '@/utils'
-import list from '@/views/mixins/DataList'
-import pagination from '@/views/mixins/Pagination'
+import DataList from '@/views/mixins/DataList'
+import Pagination from '@/views/mixins/Pagination'
 import { qcWayApi } from '@/api/qc'
 import { parseTime } from '@/filters/erp'
 import FormDialog from './dialog'
@@ -120,8 +120,8 @@ export default {
     FormDialog
   },
   mixins: [
-    list,
-    pagination
+    DataList,
+    Pagination
   ],
   data() {
     return {

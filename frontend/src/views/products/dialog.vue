@@ -103,47 +103,17 @@
 </template>
 
 <script>
-import dialog from '@/views/mixins/DataFormDialog'
+import DataFormDialog from '@/views/mixins/DataFormDialog'
 import queryCategory from '@/views/mixins/queryCategory'
 import { productApi } from '@/api/basedata'
-import JsonEditor from '../../components/JsonEditor/index'
-
-export function newObj() {
-  return {
-    id: null,
-    category_id: 1, // 默认ID 1 是 `未分类`
-    internal_name: '',
-    market_name: '',
-    spec: '',
-    part_a: '',
-    part_b: '',
-    ab_ratio: '',
-    color: '',
-    label_viscosity: '',
-    viscosity_width: '',
-    metas: null,
-    category: {},
-    customers: [],
-    testWay: {},
-    created_at: {
-      date: '',
-      timezone_type: '',
-      timezone: ''
-    },
-    updated_at: {
-      date: '',
-      timezone_type: '',
-      timezone: ''
-    },
-    with: 'category,testWay' // 加载关系
-  }
-}
+import { Product } from '@/defines/models'
+import JsonEditor from '@/components/JsonEditor/index'
 
 export default {
   name: 'Dialog',
   components: { JsonEditor },
   mixins: [
-    dialog,
+    DataFormDialog,
     queryCategory
   ],
   data() {
@@ -158,7 +128,9 @@ export default {
   },
   methods: {
     newObj() {
-      return newObj()
+      const obj = Product()
+      obj.with = 'category,testWay' // 加载关系
+      return obj
     }
   }
 }

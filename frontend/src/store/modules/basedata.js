@@ -15,17 +15,6 @@ const basedata = {
     SET_CATEGORIES: (state, categories) => {
       state.categories = categories
     },
-    /**
-     SET_MEASURES(state, payload) {
-      state.measures = payload.measures
-    },
-     SET_WAREHOUSES(state, payload) {
-      state.warehouses = payload.warehouses
-    },
-     SET_WORKSHOPS(state, payload) {
-      state.workshops = payload.workshops
-    },
-     */
     SET_SUGGESTS(state, suggests) {
       state.suggests = suggests
     }
@@ -34,7 +23,7 @@ const basedata = {
   actions: {
     fetchCategory({ commit, state }) {
       return new Promise((resolve, reject) => {
-        categoryApi.list({ notAuth: true }).then(response => {
+        categoryApi.list({ params: { all: 1 }}).then(response => {
           // 无分页，全部加载
           const { data } = response.data // 无分页
           commit('SET_CATEGORIES', data)
@@ -47,7 +36,7 @@ const basedata = {
     fetchSuggest({ commit, state }) {
       return new Promise((resolve, reject) => {
         // 无分页，全部加载
-        suggestApi.list({ params: { all: 1 }, notAuth: true }).then(response => {
+        suggestApi.list({ params: { all: 1 }}).then(response => {
           const { data } = response.data
           commit('SET_SUGGESTS', data)
           resolve(response)

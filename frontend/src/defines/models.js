@@ -102,7 +102,7 @@ export function Product() {
     spec: undefined,
     label_viscosity: undefined,
     viscosity_width: undefined,
-    metas: undefined,
+    metas: {},
     customers: undefined,
     testWay: undefined,
     created_at: undefined,
@@ -163,7 +163,7 @@ export function Suggest() {
     parent: undefined,
     children: undefined,
     name: undefined,
-    data: undefined,
+    json_data: [],
     memo: undefined,
     created_at: undefined,
     updated_at: undefined

@@ -6,7 +6,7 @@ const qcRouter = {
   redirect: 'noRedirect',
   name: 'Test',
   meta: {
-    title: '检测系统',
+    title: '检测模块',
     icon: 'table'
   },
   children: [

@@ -47,8 +47,8 @@
     >
 
       <el-table-column label="创建时间">
-        <template slot-scope="scope">
-          {{ echoTime(scope.row.created_at) }}
+        <template slot-scope="{row}">
+          {{ row.created_at | parseTime }}
         </template>
       </el-table-column>
 
@@ -114,21 +114,21 @@
 </template>
 
 <script>
-import list from '@/views/mixins/DataList'
-import pagination from '@/views/mixins/Pagination'
+import { parseTime } from '@/filters/erp'
+import DataList from '@/views/mixins/DataList'
+import Pagination from '@/views/mixins/Pagination'
 import { qcMethodApi } from '@/api/qc'
 import FormDialog from './dialog'
-import echoTimeMethod from '@/views/mixins/echoTimeMethod'
 
 export default {
   name: 'TestMethods',
+  filters: { parseTime },
   components: {
     FormDialog
   },
   mixins: [
-    list,
-    pagination,
-    echoTimeMethod
+    DataList,
+    Pagination
   ],
   data() {
     return {

@@ -18,18 +18,17 @@
           label="名称"
           prop="name"
         >
-          <!--prop 属性设置为需校验的字段名-->
           <el-input v-model="obj.name" />
         </el-form-item>
 
         <el-form-item
-          label="型号"
-          prop="父级"
+          label="父级"
+          prop="parent_id"
         >
           <el-select v-model="obj.parent_id">
             <el-option
               :value="0"
-              label="无父类"
+              label="无父级"
             />
             <el-option
               v-for="item in topSuggests"
@@ -41,7 +40,7 @@
         </el-form-item>
 
         <el-form-item label="数据">
-          <json-editor v-model="obj.data" />
+          <json-editor v-model="obj.json_data" />
         </el-form-item>
 
         <el-form-item label="备注">
@@ -71,36 +70,15 @@
 
 <script>
 import { mapState } from 'vuex'
-import dialog from '@/views/mixins/DataFormDialog'
+import DataFormDialog from '@/views/mixins/DataFormDialog'
 import { suggestApi } from '@/api/basedata'
-import JsonEditor from '../../components/JsonEditor/index'
-
-export function newObj() {
-  return {
-    id: 0,
-    parent_id: 0,
-    name: '',
-    data: [],
-    memo: '',
-    created_at: {
-      date: '',
-      timezone_type: '',
-      timezone: ''
-    },
-    updated_at: {
-      date: '',
-      timezone_type: '',
-      timezone: ''
-    }
-  }
-}
+import JsonEditor from '@/components/JsonEditor/index'
+import { Suggest } from '@/defines/models'
 
 export default {
   name: 'Dialog',
   components: { JsonEditor },
-  mixins: [
-    dialog
-  ],
+  mixins: [DataFormDialog],
   data() {
     return {
       api: suggestApi,
@@ -115,18 +93,15 @@ export default {
       suggests: state => state.suggests
     })
   },
-  created() {
+  async created() {
     if (this.suggests.length === 0) {
-      this.$store.dispatch('basedata/FetchSuggest').then(() => {
-        this.initTopSuggests()
-      })
-    } else {
-      this.initTopSuggests()
+      await this.$store.dispatch('basedata/fetchSuggest')
     }
+    this.initTopSuggests()
   },
   methods: {
     newObj() {
-      return newObj()
+      return Suggest()
     },
     initTopSuggests() {
       this.topSuggests = this.suggests.filter(suggest => !suggest.parent_id)
@@ -134,6 +109,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>

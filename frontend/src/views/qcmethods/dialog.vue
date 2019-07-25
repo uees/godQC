@@ -58,26 +58,8 @@
 
 <script>
 import dialog from '@/views/mixins/DataFormDialog'
+import { TestMethod } from '@/defines/models'
 import { qcMethodApi } from '@/api/qc'
-
-export function newObj() {
-  return {
-    id: 0,
-    name: '',
-    file: '',
-    content: '',
-    created_at: {
-      date: '',
-      timezone_type: '',
-      timezone: ''
-    },
-    updated_at: {
-      date: '',
-      timezone_type: '',
-      timezone: ''
-    }
-  }
-}
 
 export default {
   name: 'Dialog',
@@ -94,7 +76,7 @@ export default {
   },
   methods: {
     newObj() {
-      return newObj()
+      return TestMethod()
     }
   }
 }

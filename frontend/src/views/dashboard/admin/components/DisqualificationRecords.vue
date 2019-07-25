@@ -9,8 +9,8 @@
       label="取样时间"
       align="center"
     >
-      <template slot-scope="scope">
-        {{ echoTime(scope.row.created_at) }}
+      <template slot-scope="{row}">
+        {{ row.created_at | parseTime }}
       </template>
     </el-table-column>
     <el-table-column
@@ -55,13 +55,11 @@
 </template>
 
 <script>
-import echoTimeMethod from '@/views/mixins/echoTimeMethod'
+import { parseTime } from '@/filters/erp'
 
 export default {
   name: 'DisqualificationRecords',
-  mixins: [
-    echoTimeMethod
-  ],
+  filters: { parseTime },
   props: {
     failedRecords: {
       type: Array,

@@ -213,8 +213,7 @@ export default {
   data() {
     return {
       api: a9060PatternTestApi,
-      products: [],
-      testers: []
+      products: []
     }
   },
   mounted() {

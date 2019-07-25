@@ -243,6 +243,7 @@
                   :key="props.row.id"
                   v-model="props.row.value"
                   :item="props.row.item"
+                  placeholder="结果"
                   @blur="onItemValueBlur(scope, props)"
                 />
               </template>

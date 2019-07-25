@@ -48,25 +48,28 @@
     >
       <el-table-column
         prop="id"
-        label="ID"
+        label="序号"
+        width="80"
       />
       <el-table-column
         :sortable="true"
         prop="parent_id"
         label="Parent ID"
+        width="100"
       />
       <el-table-column
         :sortable="true"
         prop="name"
         label="名称"
+        width="200"
       />
       <el-table-column
         prop="data"
         label="数据"
-        width="500"
       >
-        <template slot-scope="scope">
-          <json-editor :value="scope.row.data" />
+        <template slot-scope="{row}">
+          <!-- <json-editor :value="row.json_data" /> -->
+          <span>{{ row.json_data }}</span>
         </template>
       </el-table-column>
 
@@ -122,20 +125,20 @@
 import list from '@/views/mixins/DataList'
 import { suggestApi } from '@/api/basedata'
 import pagination from '@/views/mixins/Pagination'
-import JsonEditor from '@/components/JsonEditor'
+// import JsonEditor from '@/components/JsonEditor'
+import { parseTime } from '@/filters/erp'
 import FormDialog from './dialog'
-import echoTimeMethod from '@/views/mixins/echoTimeMethod'
 
 export default {
   name: 'Suggests',
+  filters: { parseTime },
   components: {
-    JsonEditor,
+    // JsonEditor,
     FormDialog
   },
   mixins: [
     list,
-    pagination,
-    echoTimeMethod
+    pagination
   ],
   data() {
     return {
@@ -143,15 +146,8 @@ export default {
     }
   },
   methods: {
-    refreshStore() {
-      this.$store.dispatch('basedata/FetchSuggest')
-    },
-    updateDone() {
-      // fixed JsonEditor bug
-      this.fetchData()
-    },
-    createDone() {
-      this.fetchData()
+    async refreshStore() {
+      await this.$store.dispatch('basedata/fetchSuggest')
     }
   }
 }

@@ -102,7 +102,7 @@ export default {
   },
   async created() {
     if (this.suggests.length === 0) {
-      await this.$store.dispatch('basedata/FetchSuggest')
+      await this.$store.dispatch('basedata/fetchSuggest')
     }
     this.initAuthors()
     this.initMethods()

@@ -55,6 +55,7 @@
 import { qcWayApi, productSelectTestWay } from '@/api/qc'
 import Bus from '@/store/bus'
 import { deepClone } from '@/utils'
+import { TestWay } from '@/defines/models'
 import WayForm from '../qcways/dialog'
 
 export default {
@@ -88,21 +89,7 @@ export default {
   },
   methods: {
     newWay() {
-      return {
-        id: null,
-        name: '',
-        way: [],
-        created_at: {
-          date: '',
-          timezone_type: '',
-          timezone: ''
-        },
-        updated_at: {
-          date: '',
-          timezone_type: '',
-          timezone: ''
-        }
-      }
+      return TestWay()
     },
     resetWay() {
       this.testWay = this.newWay()

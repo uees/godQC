@@ -1,29 +1,23 @@
 import { mapState } from 'vuex'
 
 export default {
-  data() {
-    return {
-      templatesSuggestions: []
-    }
-  },
   computed: {
-    ...mapState('basedata', { // namespaced module
+    ...mapState('basedata', {
       suggests: state => state.suggests
-    })
-  },
-  created() {
-    this.fetchTemplates()
-  },
-  methods: {
-    fetchTemplates() {
+    }),
+    templatesSuggestions() {
       const suggest = this.suggests.find(suggest => {
         return suggest.parent_id === 0 && suggest.name === '检测报告模板'
       })
 
       if (suggest) {
-        this.templatesSuggestions = suggest.data
+        return suggest.json_data
       }
-    },
+
+      return []
+    }
+  },
+  methods: {
     querySearchTemplates(queryString, cb) {
       const templates = this.templatesSuggestions.map(template => {
         return { value: template, label: template }

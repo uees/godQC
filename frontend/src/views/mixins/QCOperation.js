@@ -10,7 +10,7 @@ import {
   cancelSayPackage
 } from '@/api/qc'
 import { ProductDispose, TestRecord, TestRecordItem } from '@/defines/models'
-import { deepClone } from '@/utils'
+import { deepClone, tstr } from '@/utils'
 
 export default {
   data() {
@@ -352,7 +352,8 @@ export default {
       }
 
       const cached_item = record._original.items[item_scope.$index]
-      if (cached_item.value !== item.value || cached_item.conclusion !== item.conclusion) {
+      // eslint-disable-next-line
+      if (tstr(cached_item.value) != tstr(item.value) || cached_item.conclusion !== item.conclusion) {
         this.updateRecordItem(scope, item_scope)
         this.checkDone(scope)
       }

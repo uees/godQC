@@ -52,8 +52,8 @@
     >
 
       <el-table-column label="创建时间">
-        <template slot-scope="scope">
-          {{ echoTime(scope.row.created_at) }}
+        <template slot-scope="{row}">
+          {{ row.created_at | parseTime }}
         </template>
       </el-table-column>
 
@@ -71,12 +71,12 @@
       />
 
       <el-table-column label="配比">
-        <template slot-scope="scope">
-          <span v-if="scope.row.part_a">
-            {{ scope.row.part_a }}:样品 = {{ scope.row.ab_ratio }}
+        <template slot-scope="{row}">
+          <span v-if="row.part_a">
+            {{ row.part_a }}:样品 = {{ row.ab_ratio }}
           </span>
-          <span v-if="scope.row.part_b">
-            样品:{{ scope.row.part_b }} = {{ scope.row.ab_ratio }}
+          <span v-else-if="row.part_b">
+            样品:{{ row.part_b }} = {{ row.ab_ratio }}
           </span>
         </template>
       </el-table-column>
@@ -175,19 +175,20 @@
 </template>
 
 <script>
-import list from '@/views/mixins/DataList'
-import pagination from '@/views/mixins/Pagination'
+import DataList from '@/views/mixins/DataList'
+import Pagination from '@/views/mixins/Pagination'
 import queryCategory from '@/views/mixins/queryCategory'
 import { productApi } from '@/api/basedata'
+import Bus from '@/store/bus'
+import { parseTime } from '@/filters/erp'
+import { productSelectTestWay, productUpdateTemplates } from '@/api/qc'
 import FormDialog from './dialog'
 import SelectWay from './SelectWay'
 import TemplateDialog from './TemplateDialog'
-import Bus from '@/store/bus'
-import echoTimeMethod from '@/views/mixins/echoTimeMethod'
-import { productSelectTestWay, productUpdateTemplates } from '@/api/qc'
 
 export default {
   name: 'Products',
+  filters: { parseTime },
   components: {
     FormDialog,
     TemplateDialog,
@@ -195,9 +196,8 @@ export default {
   },
   mixins: [
     queryCategory,
-    list,
-    pagination,
-    echoTimeMethod
+    DataList,
+    Pagination
   ],
   data() {
     return {
@@ -209,6 +209,11 @@ export default {
     }
   },
   methods: {
+    handleUpdate(scope) {
+      this.formDataIndex = scope.$index
+      this.formData = Object.assign({}, this.queryParams, scope.row) // 加载关系
+      this.formAction = 'update'
+    },
     showSelectWay(scope) {
       Bus.$emit('product-select-way', scope)
     },
@@ -238,11 +243,6 @@ export default {
           }
         })
       })
-    },
-    handleUpdate(row) {
-      this.updateIndex = this.tableData.indexOf(row)
-      this.propObj = Object.assign({}, this.queryParams, row) // 加载关系
-      this.action = 'update'
     },
     testWayUpdated(index, testWay) {
       const product = this.tableData[index]

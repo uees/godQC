@@ -261,8 +261,7 @@ export default {
   data() {
     return {
       api: h8100PatternTestApi,
-      products: [],
-      testers: []
+      products: []
     }
   },
   mounted() {

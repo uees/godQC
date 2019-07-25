@@ -2,13 +2,12 @@ import { qcMethodApi } from '@/api/qc'
 
 export default {
   methods: {
-    querySearchMethods(queryString, cb) {
-      qcMethodApi.list({
+    async querySearchMethods(queryString, cb) {
+      const response = await qcMethodApi.list({
         params: { q: queryString }
-      }).then(response => {
-        const { data } = response.data
-        cb(data)
       })
+      const { data } = response.data
+      cb(data)
     }
   }
 }

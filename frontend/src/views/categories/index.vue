@@ -47,8 +47,8 @@
     >
 
       <el-table-column label="创建时间">
-        <template slot-scope="scope">
-          {{ echoTime(scope.row.created_at) }}
+        <template slot-scope="{row}">
+          {{ row.created_at | parseTime }}
         </template>
       </el-table-column>
 
@@ -158,18 +158,18 @@ import FormDialog from './dialog'
 import SelectWay from './SelectWay'
 import TemplateDialog from './TemplateDialog'
 import Bus from '@/store/bus'
-import echoTimeMethod from '@/views/mixins/echoTimeMethod'
+import { parseTime } from '@/filters/erp'
 
 export default {
   name: 'Categories',
+  filters: { parseTime },
   components: {
     FormDialog,
     TemplateDialog,
     SelectWay
   },
   mixins: [
-    list,
-    echoTimeMethod
+    list
   ],
   data() {
     return {

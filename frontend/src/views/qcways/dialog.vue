@@ -197,53 +197,18 @@
 </template>
 
 <script>
-import dialog from '@/views/mixins/DataFormDialog'
+import DataFormDialog from '@/views/mixins/DataFormDialog'
 import testItemSuggestions from '@/views/mixins/testItemSuggestions'
 import testMethodSuggestions from '@/views/mixins/testMethodSuggestions'
 import { qcWayApi } from '@/api/qc'
-
-export function newWaysItem() {
-  return {
-    name: '',
-    method: '',
-    method_id: 0,
-    spec: {
-      is_show: true,
-      required: true,
-      value_type: '', // RANGE, INFO, VALUE
-      data: {
-        min: undefined,
-        max: undefined,
-        value: ''
-      }
-    }
-  }
-}
-
-export function newObj() {
-  return {
-    id: 0,
-    name: '',
-    way: [],
-    created_at: {
-      date: '',
-      timezone_type: '',
-      timezone: ''
-    },
-    updated_at: {
-      date: '',
-      timezone_type: '',
-      timezone: ''
-    }
-  }
-}
+import { TestWay, TestWayItem } from '@/defines/models'
 
 export default {
   name: 'Dialog',
   mixins: [
     testItemSuggestions,
     testMethodSuggestions,
-    dialog
+    DataFormDialog
   ],
   data() {
     return {
@@ -260,42 +225,33 @@ export default {
       ]
     }
   },
-  mounted() {
-    this.$nextTick(function() {
-      this.initSuggest()
-    })
-  },
   methods: {
     newObj() {
-      return newObj()
+      return TestWay()
     },
     create() {
-      this.$refs['obj_form'].validate(valid => {
+      this.$refs['obj_form'].validate(async valid => {
         if (valid) {
-          this.obj.user_id = this.user.id
+          const formData = this.obj
+          formData.user_id = this.user.id
           this.updateWay()
-          this.api.add(this.obj).then(response => {
-            const { data } = response.data
-            this.obj = data
-            this.done()
-          })
-        } else {
-          return false
+          const response = await this.api.store(formData)
+          const { data } = response.data
+          this.done(data)
+          this.resetObj()
         }
       })
     },
     update() {
-      this.$refs['obj_form'].validate(valid => {
+      this.$refs['obj_form'].validate(async valid => {
         if (valid) {
-          this.obj.modified_user_id = this.user.id
+          const formData = this.obj
+          formData.modified_user_id = this.user.id
           this.updateWay()
-          this.api.update(this.obj.id, this.obj).then(response => {
-            const { data } = response.data
-            this.obj = data
-            this.done()
-          })
-        } else {
-          return false
+          const response = await this.api.update(formData.id, formData)
+          const { data } = response.data
+          this.done(data)
+          this.resetObj()
         }
       })
     },
@@ -303,11 +259,11 @@ export default {
       this.selectTestMethods.push(item)
     },
     handleCreate() {
-      this.obj.way.push(newWaysItem())
+      this.obj.way.push(TestWayItem())
     },
     handleInsert(row) {
       const index = this.obj.way.indexOf(row)
-      this.obj.way.splice(index, 0, newWaysItem())
+      this.obj.way.splice(index, 0, TestWayItem())
     },
     handleDelete(row) {
       this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {

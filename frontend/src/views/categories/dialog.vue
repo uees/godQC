@@ -57,26 +57,7 @@
 <script>
 import dialog from '@/views/mixins/DataFormDialog'
 import { categoryApi } from '@/api/basedata'
-
-export function newObj() {
-  return {
-    id: 0,
-    slug: '',
-    name: '',
-    memo: '',
-    metas: null,
-    created_at: {
-      date: '',
-      timezone_type: '',
-      timezone: ''
-    },
-    updated_at: {
-      date: '',
-      timezone_type: '',
-      timezone: ''
-    }
-  }
-}
+import { Category } from '@/defines/models'
 
 export default {
   name: 'Dialog',
@@ -94,19 +75,17 @@ export default {
   },
   methods: {
     newObj() {
-      return newObj()
+      return Category()
     },
     update() {
-      this.$refs['obj_form'].validate(valid => {
+      this.$refs['obj_form'].validate(async valid => {
         if (valid) {
           const postData = Object.assign({}, this.obj, { with: 'testWay' })
-          this.api.update(this.obj.id, postData).then(response => {
-            const { data } = response.data
-            this.obj = data
-            this.done()
-          })
-        } else {
-          return false
+          postData.modified_user_id = this.user.id
+          const response = await this.api.update(this.obj.id, postData)
+          const { data } = response.data
+          this.done(data)
+          this.resetObj()
         }
       })
     }

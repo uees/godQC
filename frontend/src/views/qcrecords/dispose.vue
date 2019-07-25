@@ -25,9 +25,12 @@
         v-if="dispose.to_record_id"
         class="link"
       >
-        <router-link :to="{name: 'records.show', params: { id: dispose.to_record_id }}">
+        <el-link
+          type="primary"
+          @click="$router.push({name: 'ShowRecordReal', params: { id: dispose.to_record_id+'' }})"
+        >
           经处理后的检测结果
-        </router-link>
+        </el-link>
       </div>
     </div>
   </div>
@@ -102,10 +105,5 @@ export default {
   width: 100%;
   background-color: #f7f7f7;
   padding: 20px 10px;
-}
-
-.link {
-  text-decoration: underline;
-  color: blue;
 }
 </style>

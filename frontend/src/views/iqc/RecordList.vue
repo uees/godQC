@@ -1,8 +1,8 @@
 <template>
   <record-list
-    key="FQCIndex"
+    key="IQCRecordList"
     :real="false"
-    qc-type="FQC"
+    qc-type="IQC"
   />
 </template>
 
@@ -10,7 +10,7 @@
 import RecordList from '@/views/qcrecords/RecordList'
 
 export default {
-  name: 'FQCIndex',
+  name: 'IQCRecordList',
   components: { RecordList }
 }
 </script>

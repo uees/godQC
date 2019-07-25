@@ -17,7 +17,7 @@ import qcRouter from './modules/qc'
  * alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
  *                                if not set alwaysShow, only more than one route under the children
  *                                it will becomes nested mode, otherwise not show the root menu
- * redirect: noredirect           if `redirect:noredirect` will no redirect in the breadcrumb
+ * redirect: 'noRedirect'         if `redirect:'noRedirect'` will no redirect in the breadcrumb
  * name:'router-name'             the name is used by <keep-alive> (must set!!!)
  * meta : {
     roles: ['admin','editor']     will control the page roles (you can set multiple roles)
@@ -47,14 +47,38 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/404',
-    component: () => import('@/views/errorPage/404'),
-    hidden: true
+    path: '/error',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'ErrorPages',
+    hidden: true,
+    children: [
+      {
+        path: '404',
+        component: () => import('@/views/errorPage/404'),
+        name: 'Page404',
+        meta: { title: '404 未找到页面', noCache: true }
+      },
+      {
+        path: '401',
+        component: () => import('@/views/errorPage/401'),
+        name: 'Page401',
+        meta: { title: '401 无权限', noCache: true }
+      }
+    ]
   },
   {
-    path: '/401',
-    component: () => import('@/views/errorPage/401'),
-    hidden: true
+    path: '/profile',
+    component: Layout,
+    redirect: 'index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/errorPage/401'),
+        name: 'Profile',
+        meta: { title: '个人中心', icon: 'table', noCache: true }
+      }
+    ]
   },
   {
     path: '/',

@@ -135,12 +135,12 @@
           <el-button
             type="text"
             size="small"
-            @click="handleUpdate(scope.row)"
+            @click="handleUpdate(scope)"
           >编辑</el-button>
           <el-button
             type="text"
             size="small"
-            @click="handleDelete(scope.row)"
+            @click="handleDelete(scope)"
           >删除</el-button>
         </template>
       </el-table-column>

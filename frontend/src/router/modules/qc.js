@@ -3,7 +3,7 @@ import Layout from '@/layout'
 const qcRouter = {
   path: '/test',
   component: Layout,
-  redirect: '/test/methods',
+  redirect: 'noRedirect',
   name: 'Test',
   meta: {
     title: '检测系统',
@@ -41,59 +41,42 @@ const qcRouter = {
       meta: { roles: ['admin', 'fqc'], title: '在检产品', icon: 'example' }
     },
     {
-      path: 'fqc/list',
-      component: () => import('@/views/fqc/index'),
-      name: 'FQCIndex',
+      path: 'fqc/records',
+      component: () => import('@/views/fqc/RecordList'),
+      name: 'FQCRecordList',
       meta: { roles: ['admin', 'fqc'], title: '产品检测记录', icon: 'guide' }
     },
     {
-      path: 'fqc/list/real',
-      component: () => import('@/views/fqc/RealIndex'),
+      path: 'fqc/records/real',
+      component: () => import('@/views/fqc/RealRecordList'),
       hidden: true,
-      name: 'FQCRealIndex',
+      name: 'FQCRealRecordList',
       meta: { roles: ['admin', 'fqc'], title: '产品检测记录(真)' }
     },
     {
-      path: 'iqc',
-      name: 'IQC',
-      meta: {
-        roles: ['admin', 'iqc'],
-        title: '来料检测',
-        icon: 'component'
-      },
-      children: [
-        {
-          path: 'testing',
-          component: () => import('@/views/qcrecords/Testing'),
-          name: 'IQCTesting',
-          meta: { title: '在检材料', icon: 'example' }
-        },
-        {
-          path: 'index',
-          component: () => import('@/views/qcrecords/RecordList'),
-          name: 'IQCIndex',
-          meta: { title: '来料检测记录', icon: 'guide' }
-        },
-        {
-          path: 'index/real',
-          component: () => import('@/views/qcrecords/RecordList'),
-          hidden: true,
-          name: 'IQCIndexReal',
-          meta: { title: '来料检测记录(真)' }
-        }
-      ]
+      path: 'iqc/testing',
+      component: () => import('@/views/iqc/Testing'),
+      name: 'IQCTesting',
+      meta: { title: '在检材料', icon: 'example', roles: ['admin', 'iqc'] }
     },
     {
-      path: 'patterns',
-      component: () => import('@/views/nested'), // Parent router-view
-      children: [
-        {
-          path: 'index',
-          component: () => import('@/views/qcrecords/patternTest'),
-          name: 'PatternTest',
-          meta: { title: '型式检验', icon: 'table' }
-        }
-      ]
+      path: 'iqc/records',
+      component: () => import('@/views/iqc/RecordList'),
+      name: 'IQCRecordList',
+      meta: { title: '来料检测记录', icon: 'guide', roles: ['admin', 'iqc'] }
+    },
+    {
+      path: 'iqc/records/real',
+      component: () => import('@/views/iqc/RealRecordList'),
+      hidden: true,
+      name: 'IQCRealRecordList',
+      meta: { title: '来料检测记录(真)', roles: ['admin', 'iqc'] }
+    },
+    {
+      path: 'patterns/H-8100',
+      component: () => import('@/views/fqc/PatternH9100'),
+      name: 'PatternTestH8100',
+      meta: { title: '型式检验 H-8100/H-9100', icon: 'table' }
     },
     {
       path: 'methods',

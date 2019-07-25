@@ -15,14 +15,16 @@
         v-if="real && record.disposed"
         class="link-div"
       >
-        被
-        <el-link
-          type="primary"
-          @contextmenu="$router.push({name: 'Dispose', params: {id: `${record.disposed.id}` }})"
-        >
-          处理
-        </el-link>
-        后的检测记录
+        <p>
+          <el-link
+            type="primary"
+            @click="$router.push({name: 'Dispose', params: {id: `${record.disposed.id}` }})"
+          >
+            处理办法
+          </el-link>
+        </p>
+
+        被处理后的检测记录：
       </div>
 
       <table class="record-table">
@@ -105,7 +107,7 @@
       >
         <el-link
           type="primary"
-          @click="$router.push({name: 'Dispose', params: {id: record.willDispose.id }})"
+          @click="$router.push({name: 'Dispose', params: {id: String(record.willDispose.id) }})"
         >
           处理办法
         </el-link>
@@ -289,6 +291,6 @@ export default {
 .link-div {
   color: #666;
   padding: 10px;
-  margin: 20px 0;
+  margin-bottom: 20px;
 }
 </style>

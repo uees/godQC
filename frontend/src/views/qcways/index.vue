@@ -48,7 +48,7 @@
 
       <el-table-column label="创建时间">
         <template slot-scope="scope">
-          {{ echoTime(scope.row.created_at) }}
+          {{ scope.row.created_at | parseTime }}
         </template>
       </el-table-column>
 
@@ -68,13 +68,13 @@
           <el-button
             type="text"
             size="small"
-            @click="handleUpdate(scope.row)"
+            @click="handleUpdate(scope)"
           >编辑
           </el-button>
           <el-button
             type="text"
             size="small"
-            @click="handleDelete(scope.row)"
+            @click="handleDelete(scope)"
           >删除
           </el-button>
         </template>
@@ -106,21 +106,22 @@
 </template>
 
 <script>
+import { deepClone } from '@/utils'
 import list from '@/views/mixins/DataList'
 import pagination from '@/views/mixins/Pagination'
 import { qcWayApi } from '@/api/qc'
+import { parseTime } from '@/filters/erp'
 import FormDialog from './dialog'
-import echoTimeMethod from '@/views/mixins/echoTimeMethod'
 
 export default {
   name: 'TestWays',
+  filters: { parseTime },
   components: {
     FormDialog
   },
   mixins: [
     list,
-    pagination,
-    echoTimeMethod
+    pagination
   ],
   data() {
     return {
@@ -128,19 +129,19 @@ export default {
     }
   },
   methods: {
-    handleUpdate(row) {
-      this.updateIndex = this.tableData.indexOf(row)
-      this.propObj = Object.assign({}, row)
+    handleUpdate(scope) {
+      this.formDataIndex = scope.$index
+      this.formData = deepClone(scope.row)
 
       // required 支持
-      this.propObj.way = this.propObj.way.map(item => {
+      this.formData.way = this.formData.way.map(item => {
         if (typeof item.spec.required === 'undefined') {
           item.spec.required = true
         }
         return item
       })
 
-      this.action = 'update'
+      this.formAction = 'update'
     }
   }
 }

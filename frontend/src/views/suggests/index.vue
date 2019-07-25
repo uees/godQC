@@ -112,7 +112,7 @@
     <form-dialog
       :action="formAction"
       :form-data="formData"
-      @actionDone="actionDone"
+      @action-done="actionDone"
       @close="formDialogClose"
     />
   </div>

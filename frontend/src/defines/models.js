@@ -56,7 +56,7 @@ export function DisqualificationStatistics() {
   }
 }
 
-export function PatternTest() {
+export function H8100PatternTest() {
   return {
     id: undefined,
     product_name: undefined,
@@ -66,6 +66,17 @@ export function PatternTest() {
     nai_suan_jian: undefined,
     h12_xian_ying: undefined,
     h24_xian_ying: undefined,
+    tester: undefined,
+    created_at: undefined,
+    updated_at: undefined
+  }
+}
+
+export function A9060PatternTest() {
+  return {
+    id: undefined,
+    product_name: undefined,
+    batch_number: undefined,
     ge_ye_xian_ying: undefined,
     ge_ye_bao_guang: undefined,
     die_ban: undefined,

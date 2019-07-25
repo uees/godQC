@@ -24,6 +24,7 @@ class AuthServiceProvider extends ServiceProvider
         'App\TestRecordItem' => 'App\Policies\TestRecordItemPolicy',
         'App\TestWay' => 'App\Policies\TestWayPolicy',
         'App\PatternTest' => 'App\Policies\PatternTestPolicy',
+        'App\A9060PatternTest' => 'App\Policies\A9060PatternTestPolicy',
         'App\ProductBatch' => 'App\Policies\ProductBatchPolicy',
         'App\Suggest' => 'App\Policies\SuggestPolicy',
     ];
@@ -36,5 +37,12 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+
+        Gate::before(function ($user, $ability) {
+            // 管理员具有所有权限
+            if ($user->hasRole('admin')) {
+                return true;
+            }
+        });
     }
 }

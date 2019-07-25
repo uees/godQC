@@ -38,11 +38,7 @@ export default {
       }
     },
     action(val) {
-      if (val === 'create' || val === 'update') {
-        this.dialogFormVisible = true
-      } else {
-        this.dialogFormVisible = false
-      }
+      this.dialogFormVisible = val === 'create' || val === 'update'
     }
   },
 
@@ -53,34 +49,34 @@ export default {
     resetObj() {
       this.obj = this.newObj()
     },
-    async create() {
+    create() {
       this.$refs['obj_form'].validate(async valid => {
         if (valid) {
           const formData = this.obj
           formData.user_id = this.user.id
           const response = await this.api.store(formData)
           const { data } = response.data
-          this.obj = data // 灰常重要！！！
           this.done(data)
+          this.resetObj()
         }
       })
     },
-    async update() {
+    update() {
       this.$refs['obj_form'].validate(async valid => {
         if (valid) {
           const formData = this.obj
           formData.modified_user_id = this.user.id
           const response = await this.api.update(formData.id, formData)
           const { data } = response.data
-          this.obj = data // 灰常重要！！！
           this.done(data)
+          this.resetObj()
         }
       })
     },
-    done() {
+    done(data) {
       // 当一个子组件改变了一个带 .sync 的 prop 的值时，这个变化也会同步到父组件中所绑定的值
       // this.$emit('update:formData', this.obj) // <comp :obj.sync="obj"></comp>
-      this.$emit('action-done', this.obj)
+      this.$emit('action-done', data)
       this.$notify({
         title: '成功',
         message: '操作成功',
@@ -92,7 +88,6 @@ export default {
     close() {
       this.$emit('close')
       this.dialogFormVisible = false
-      this.resetObj()
     }
   }
 }

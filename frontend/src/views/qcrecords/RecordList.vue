@@ -404,7 +404,7 @@ export default {
         const { data } = response.data
         this.records = data
         if (this.real) {
-          this.excludeOnlyShow()
+          this.excludeWithOnlyShow(this.records)
         }
         this.paginate(response)
         this.listLoading = false

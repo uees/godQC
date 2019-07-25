@@ -14,11 +14,10 @@ use Illuminate\Http\Request;
 */
 
 Route::post('auth/login', 'AuthController@login');
+Route::post('auth/refresh', 'AuthController@refresh');
 
-// jwt.refresh 会做验证和必要时刷新 token
 Route::middleware('jwt.auth')->group(function () {
     Route::get('auth/me', 'AuthController@me');
-    Route::post('auth/refresh', 'AuthController@refresh');
     Route::post('auth/logout', 'AuthController@logout');
 
     Route::post('categories/{category}/qc-ways', 'CategoryController@selectTestWay');
@@ -51,7 +50,8 @@ Route::middleware('jwt.auth')->group(function () {
         'qc-methods' => 'QCMethodController',
         'qc-records' => 'QCRecordController',
         'qc-ways' => 'QCWayController',
-        'pattern-tests' => 'PatternTestController',
+        'pattern-tests/h-8100' => 'PatternTestController',
+        'pattern-tests/a-9060' => 'A9060PatternTestController',
         'roles' => 'RoleController',
         'users' => 'UserController',
         'suggests' => 'SuggestController',

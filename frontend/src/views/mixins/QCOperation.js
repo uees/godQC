@@ -156,9 +156,7 @@ export default {
         }
       }
 
-      const cached_record = this.cacheRecords[scope.$index]
-
-      if (record.conclusion !== cached_record.conclusion) {
+      if (record.conclusion !== record._original.conclusion) {
         this.updateRecord(scope)
       }
     },

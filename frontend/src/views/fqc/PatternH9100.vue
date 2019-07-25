@@ -243,15 +243,15 @@
 
 <script>
 import { parseTime } from '@/filters/erp'
-import { PatternTest } from '@/defines/models'
 import { productApi } from '@/api/basedata'
-import { patternTestApi } from '@/api/qc'
+import { h8100PatternTestApi } from '@/api/qc'
+import { H8100PatternTest } from '@/defines/models'
 import testersSuggestions from '@/views/mixins/testersSuggestions'
 import Pagination from '@/views/mixins/Pagination'
 import InlineCrud from '@/views/mixins/InlineCrud'
 
 export default {
-  name: 'PatternTest',
+  name: 'PatternTestH8100',
   filters: { parseTime },
   mixins: [
     testersSuggestions,
@@ -260,7 +260,7 @@ export default {
   ],
   data() {
     return {
-      api: patternTestApi,
+      api: h8100PatternTestApi,
       products: [],
       testers: []
     }
@@ -272,7 +272,7 @@ export default {
   },
   methods: {
     newObj() {
-      return PatternTest()
+      return H8100PatternTest()
     },
     querySearchProducts(queryString, cb) {
       productApi.list({ params: { q: queryString, sort_by: 'internal_name', order: 'asc' }}).then(response => {

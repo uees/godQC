@@ -1,16 +1,17 @@
 <?php
 
+
 namespace App\Policies;
 
 use App\User;
-use App\PatternTest;
+use App\A9060PatternTest;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PatternTestPolicy
+class A9060PatternTestPolicy
 {
     use HandlesAuthorization;
 
-    public function view(User $user, PatternTest $patternTest)
+    public function view(User $user, A9060PatternTest $patternTest)
     {
         return true;
     }
@@ -20,12 +21,12 @@ class PatternTestPolicy
         return $user->hasRole('fqc');
     }
 
-    public function update(User $user, PatternTest $patternTest)
+    public function update(User $user, A9060PatternTest $patternTest)
     {
         return $user->hasRole('fqc');
     }
 
-    public function delete(User $user, PatternTest $patternTest)
+    public function delete(User $user, A9060PatternTest $patternTest)
     {
         return $user->hasRole('fqc');
     }

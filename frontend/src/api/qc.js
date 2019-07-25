@@ -6,7 +6,8 @@ export const qcRecordApi = new RestApi({ url: 'qc-records' })
 export const qcWayApi = new RestApi({ url: 'qc-ways' })
 export const productDisposeApi = new RestApi({ url: 'product-disposes' })
 export const productBatchApi = new RestApi({ url: 'product-batches' })
-export const patternTestApi = new RestApi({ url: 'pattern-tests' })
+export const h8100PatternTestApi = new RestApi({ url: 'pattern-tests/h-8100' })
+export const a9060PatternTestApi = new RestApi({ url: 'pattern-tests/a-9060' })
 
 export function categorySelectTestWay(category_id, test_way_id) {
   return request.post(`categories/${category_id}/qc-ways`, { test_way_id })

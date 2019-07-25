@@ -76,7 +76,13 @@ const qcRouter = {
       path: 'patterns/H-8100',
       component: () => import('@/views/fqc/PatternH9100'),
       name: 'PatternTestH8100',
-      meta: { title: '型式检验 H-8100/H-9100', icon: 'table' }
+      meta: { title: '型式检验H-8100/H-9100', icon: 'table' }
+    },
+    {
+      path: 'patterns/A-9060',
+      component: () => import('@/views/fqc/PatternA9060'),
+      name: 'PatternTestA9060',
+      meta: { title: '型式检验湿膜', icon: 'table' }
     },
     {
       path: 'methods',

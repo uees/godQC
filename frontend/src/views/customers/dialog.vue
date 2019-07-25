@@ -56,35 +56,14 @@
 </template>
 
 <script>
-import dialog from '@/views/mixins/DataFormDialog'
+import DataFormDialog from '@/views/mixins/DataFormDialog'
+import { Customer } from '@/defines/models'
 import { customerApi } from '@/api/basedata'
-
-export function newObj() {
-  return {
-    id: 0,
-    name: '',
-    address: '',
-    contacts: '',
-    tel: '',
-    requirements: [],
-    products: [],
-    created_at: {
-      date: '',
-      timezone_type: '',
-      timezone: ''
-    },
-    updated_at: {
-      date: '',
-      timezone_type: '',
-      timezone: ''
-    }
-  }
-}
 
 export default {
   name: 'Dialog',
   mixins: [
-    dialog
+    DataFormDialog
   ],
   data() {
     return {
@@ -96,11 +75,8 @@ export default {
   },
   methods: {
     newObj() {
-      return newObj()
+      return Customer()
     }
   }
 }
 </script>
-
-<style scoped>
-</style>

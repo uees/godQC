@@ -7,13 +7,16 @@
       :select-when-unmatched="true"
       :placeholder="placeholder"
       @blur="$emit('blur')"
+      @input="$emit('input', value)"
       @select="handleSelect"
     />
     <el-input
       v-else
       v-model="value"
       :placeholder="placeholder"
+      autocomplete="on"
       @blur="$emit('blur')"
+      @input="$emit('input', value)"
     />
   </div>
 </template>
@@ -75,19 +78,15 @@ export default {
       return null
     }
   },
-  watch: {
-    // 传递 input 事件
-    value: function(val) {
-      this.$emit('input', val)
-    },
-    dataValue(val) {
-      this.value = val
-    }
-  },
   async created() {
     if (this.suggests.length === 0) {
       await this.$store.dispatch('basedata/fetchSuggest')
     }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.value = this.dataValue
+    })
   },
   methods: {
     hasSuggest() {

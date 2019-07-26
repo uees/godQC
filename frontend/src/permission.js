@@ -9,7 +9,7 @@ import getPageTitle from '@/utils/getPageTitle'
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 // permission judge function
-function hasPermission(roles, permissionRoles) {
+export function hasPermission(roles, permissionRoles) {
   if (!permissionRoles) {
     return true
   }

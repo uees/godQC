@@ -21,6 +21,7 @@
           <el-autocomplete
             v-model="formData.method"
             :fetch-suggestions="queryMethods"
+            autocomplete="on"
             placeholder="请输入内容"
           />
         </el-form-item>
@@ -52,7 +53,7 @@
       >
         <el-button
           type="primary"
-          @click="disposeForm.action==='create' ? create() : update()"
+          @click="action==='create' ? create() : update()"
         >确 定</el-button>
       </div>
     </el-dialog>
@@ -75,8 +76,6 @@ export default {
   data() {
     return {
       loading: false,
-      authors: [],
-      methods: [],
       rules: {
         method: { required: true, message: '必填项', trigger: 'blur' },
         author: { required: true, message: '必填项', trigger: 'blur' }
@@ -90,7 +89,29 @@ export default {
   computed: {
     ...mapState('basedata', { // namespaced module
       suggests: state => state.suggests
-    })
+    }),
+    authors() {
+      const suggest = this.suggests.find(suggest => {
+        return suggest.parent_id === 0 && suggest.name === '处理人'
+      })
+
+      if (suggest) {
+        return suggest.json_data
+      }
+
+      return []
+    },
+    methods() {
+      const suggest = this.suggests.find(suggest => {
+        return suggest.parent_id === 0 && suggest.name === '处理方法'
+      })
+
+      if (suggest) {
+        return suggest.json_data
+      }
+
+      return []
+    }
   },
   watch: {
     formInfo(val) {
@@ -104,30 +125,13 @@ export default {
     if (this.suggests.length === 0) {
       await this.$store.dispatch('basedata/fetchSuggest')
     }
-    this.initAuthors()
-    this.initMethods()
   },
   methods: {
-    newDispose() {
+    newObj() {
       return ProductDispose()
     },
-    initAuthors() {
-      const suggest = this.suggests.find(suggest => {
-        return suggest.parent_id === 0 && suggest.name === '处理人'
-      })
-
-      if (suggest) {
-        this.authors = suggest.data
-      }
-    },
-    initMethods() {
-      const suggest = this.suggests.find(suggest => {
-        return suggest.parent_id === 0 && suggest.name === '处理方法'
-      })
-
-      if (suggest) {
-        this.methods = suggest.data
-      }
+    resetObj() {
+      this.formData = this.newObj()
     },
     queryAuthors(queryString, cb) {
       const users = this.authors.map(name => {
@@ -148,18 +152,29 @@ export default {
       cb(results)
     },
     create() {
-      productDisposeApi.store(this.dispose).then(response => {
-        this.$emit('action-done', this.dispose, this.index)
-        this.close()
+      this.$refs['obj_form'].validate(async valid => {
+        if (valid) {
+          const response = await productDisposeApi.store(this.formData)
+          const { data } = response.data
+          this.$emit('action-done', data, this.recordIndex)
+          this.resetObj()
+          this.close()
+        }
       })
     },
     update() {
-      productDisposeApi.update(this.dispose.id, this.dispose).then(response => {
-        this.$emit('action-done', this.dispose, this.index)
-        this.close()
+      this.$refs['obj_form'].validate(async valid => {
+        if (valid) {
+          const response = await productDisposeApi.update(this.formData.id, this.formData)
+          const { data } = response.data
+          this.$emit('action-done', data, this.recordIndex)
+          this.resetObj()
+          this.close()
+        }
       })
     },
     close() {
+      // this.$emit('close')
       this.visible = false
     }
   }

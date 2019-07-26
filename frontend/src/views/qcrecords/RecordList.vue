@@ -267,7 +267,7 @@
               label="备注"
             />
             <el-table-column
-              v-if="real"
+              v-if="real && isAdmin"
               align="center"
               label="操作"
               width="100"
@@ -319,7 +319,9 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { deepClone } from '@/utils'
+import { hasPermission } from '@/permission'
 import { qcRecordApi } from '@/api/qc'
 import { qcspec, parseTime, conclusionLabel } from '@/filters/erp'
 import { pickerOptions } from '@/defines/consts'
@@ -380,6 +382,12 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'roles'
+    ]),
+    isAdmin() {
+      return hasPermission(this.roles, ['admin'])
+    },
     filename: function() {
       let fname = '检测流水'
       if (this.queryParams.q) {

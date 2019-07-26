@@ -256,7 +256,7 @@ export default {
       data.items = scope.row.items
       this.setOriginal(data)
       this.records.splice(scope.$index, 1, data)
-      this.$message('更新成功')
+      // this.$message('更新成功')
     },
     async updateRecordWithItems(scope) {
       // api request 也会更新 items

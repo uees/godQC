@@ -194,7 +194,7 @@
           <el-button
             type="text"
             size="small"
-            @click="handleEditRecordForm(scope)"
+            @click="handleEditRecord(scope)"
           >编辑</el-button>
           <el-button
             type="text"

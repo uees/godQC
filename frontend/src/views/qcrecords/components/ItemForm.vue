@@ -14,6 +14,7 @@
       >
 
         <el-form-item
+          v-if="!tested"
           label="检测项目"
           prop="item"
         >
@@ -26,6 +27,7 @@
         </el-form-item>
 
         <el-form-item
+          v-if="!tested"
           label="值类型"
           prop="spec.value_type"
         >
@@ -46,6 +48,18 @@
         </el-form-item>
 
         <el-form-item
+          v-if="!tested"
+          label="单位"
+          prop="spec.data.unit"
+        >
+          <el-input
+            v-model="item.spec.data.unit"
+            placeholder="单位"
+          />
+        </el-form-item>
+
+        <el-form-item
+          v-if="!tested"
           label="要求"
           prop="spec.data.value"
         >
@@ -89,6 +103,57 @@
           />
         </el-form-item>
 
+        <el-form-item
+          v-if="!tested"
+          label="其他要求"
+          prop="spec.data.memo"
+        >
+          <el-input
+            v-model="item.spec.data.memo"
+            :rows="2"
+            type="textarea"
+            placeholder="其他要求"
+          />
+        </el-form-item>
+
+        <el-form-item
+          v-if="tested"
+          label="检测值"
+          prop="value"
+        >
+          <el-input
+            v-model="item.value"
+            placeholder="检测值"
+          />
+        </el-form-item>
+
+        <el-form-item
+          v-if="tested"
+          label="结论"
+          prop="conclusion"
+        >
+          <el-select v-model="item.conclusion">
+            <el-option
+              v-for="_item in conclusions"
+              :key="_item.value"
+              :label="_item.label"
+              :value="_item.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item
+          v-if="tested"
+          label="备注"
+        >
+          <el-input
+            v-model="item.memo"
+            :rows="2"
+            type="textarea"
+            placeholder="备注"
+          />
+        </el-form-item>
+
         <el-form-item label="是否展示">
           <el-switch v-model="item.spec.is_show" />
         </el-form-item>
@@ -99,14 +164,8 @@
         class="dialog-footer"
       >
         <el-button
-          v-if="action==='create'"
           type="primary"
-          @click="create"
-        >确 定</el-button>
-        <el-button
-          v-else
-          type="primary"
-          @click="update"
+          @click="action==='create' ? create() : update()"
         >确 定</el-button>
       </div>
     </el-dialog>
@@ -115,7 +174,7 @@
 
 <script>
 import { TestRecordItem } from '@/defines/models'
-import { VALUE_TYPES } from '@/defines/consts'
+import { VALUE_TYPES, CONCLUSIONS } from '@/defines/consts'
 import testItemSuggestions from '@/views/mixins/testItemSuggestions'
 import { updateRecordItem, addRecordItem } from '@/api/qc'
 
@@ -136,6 +195,8 @@ export default {
       record: undefined,
       item: this.newItem(),
       visible: false,
+      tested: false,
+      conclusions: CONCLUSIONS,
       valueTypes: VALUE_TYPES,
       rules: {
         item: { required: true, message: '必填项', trigger: 'blur' },
@@ -154,7 +215,12 @@ export default {
       this.item = val.formData
       this.recordIndex = val.recordIndex
       this.itemIndex = val.itemIndex
-      this.action = val.action
+      this.tested = val.tested
+      if (val.tested) {
+        this.action = 'update'
+      } else {
+        this.action = val.action
+      }
     }
   },
   methods: {

@@ -56,7 +56,7 @@
       </el-table-column>
 
       <el-table-column
-        width="150"
+        width="200"
         align="center"
         label="品名"
       >
@@ -187,7 +187,7 @@
       <el-table-column
         align="center"
         label="操作"
-        width="220"
+        width="200"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
@@ -272,6 +272,16 @@ export default {
   methods: {
     newObj() {
       return H8100PatternTest()
+    },
+    validateForm(row) {
+      if (!row.product_name || !row.batch_number) {
+        this.$message({
+          message: '品名和批号必填',
+          type: 'error'
+        })
+        return false
+      }
+      return true
     },
     querySearchProducts(queryString, cb) {
       productApi.list({ params: { q: queryString, sort_by: 'internal_name', order: 'asc' }}).then(response => {

@@ -210,17 +210,17 @@
             <el-button
               type="text"
               size="small"
-              @click="handleCancelArchive(scope)"
+              @click="cancelArchive(scope)"
             >取消归档</el-button>
             <el-button
               type="text"
               size="small"
-              @click="handleShowRecordEditForm(scope)"
+              @click="handleEditRecord(scope)"
             >编辑</el-button>
             <el-button
               type="text"
               size="small"
-              @click="handleDeleteRecord(scope)"
+              @click="deleteRecord(scope)"
             >删除</el-button>
           </template>
         </template>
@@ -266,6 +266,26 @@
               prop="memo"
               label="备注"
             />
+            <el-table-column
+              v-if="real"
+              align="center"
+              label="操作"
+              width="100"
+              class-name="small-padding fixed-width"
+            >
+              <template slot-scope="item_scope">
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="handleEditRecordItem(scope, item_scope)"
+                >编辑</el-button>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="deleteRecordItem(scope, item_scope)"
+                >删除</el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </template>
       </el-table-column>
@@ -299,6 +319,7 @@
 </template>
 
 <script>
+import { deepClone } from '@/utils'
 import { qcRecordApi } from '@/api/qc'
 import { qcspec, parseTime, conclusionLabel } from '@/filters/erp'
 import { pickerOptions } from '@/defines/consts'
@@ -391,12 +412,6 @@ export default {
   created() {
     this.fetchData()
   },
-  mounted() {
-    // Bus.$on('record-updated', (obj) => {
-    //  this.records.splice(this.updateIndex, 1, obj)
-    //  this.updateIndex = -1 // 重置 updateIndex
-    // })
-  },
   methods: {
     fetchData() {
       this.listLoading = true
@@ -436,6 +451,18 @@ export default {
           this.$message('无处理记录')
         }
       })
+    },
+    handleEditRecordItem(scope, item_scope) {
+      // 重写方法
+      this.recordItemFormInfo = {
+        tested: true,
+        action: 'update',
+        record: scope.row,
+        recordIndex: scope.$index,
+        itemIndex: item_scope.$index,
+        formData: deepClone(item_scope.row),
+        visible: true
+      }
     },
     filterItems(record) {
       // 必须根据 real 判断

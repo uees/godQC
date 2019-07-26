@@ -108,7 +108,7 @@ export default {
         this.disposeFormInfo = info
       })
     },
-    handleEditRecordForm(scope) {
+    handleEditRecord(scope) {
       this.recordFormInfo = {
         index: scope.$index,
         formData: deepClone(scope.row),

@@ -36,12 +36,11 @@
           label="检测项目"
           width="180"
         >
-          <template slot-scope="scope">
+          <template slot-scope="{row}">
             <el-autocomplete
-              v-model="scope.row.name"
+              v-model="row.name"
               :fetch-suggestions="querySearchItems"
               :select-when-unmatched="true"
-              size="small"
             />
           </template>
         </el-table-column>
@@ -50,9 +49,9 @@
           align="center"
           label="检测方法"
         >
-          <template slot-scope="scope">
+          <template slot-scope="{row}">
             <el-autocomplete
-              v-model="scope.row.method"
+              v-model="row.method"
               :fetch-suggestions="querySearchMethods"
               :debounce="300"
               value-key="name"
@@ -66,10 +65,11 @@
         <el-table-column
           align="center"
           label="检测值数据类型"
+          width="120"
         >
-          <template slot-scope="scope">
+          <template slot-scope="{row}">
             <el-select
-              v-model="scope.row.spec.value_type"
+              v-model="row.spec.value_type"
               placeholder="请选择"
             >
               <el-option
@@ -87,10 +87,23 @@
 
         <el-table-column
           align="center"
+          label="单位"
+          width="100"
+        >
+          <template slot-scope="{row}">
+            <el-input
+              v-model="row.spec.data.unit"
+              placeholder="单位"
+            />
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          align="center"
           label="要求"
         >
-          <template slot-scope="scope">
-            <template v-if="scope.row.spec.value_type === 'RANGE'">
+          <template slot-scope="{row}">
+            <template v-if="row.spec.value_type === 'RANGE'">
               <el-row :gutter="20">
                 <el-col :span="12">
                   <el-tooltip
@@ -100,7 +113,7 @@
                     placement="top-start"
                   >
                     <el-input-number
-                      v-model="scope.row.spec.data.min"
+                      v-model="row.spec.data.min"
                       :precision="2"
                       :step="0.1"
                       size="mini"
@@ -115,7 +128,7 @@
                     placement="top-start"
                   >
                     <el-input-number
-                      v-model="scope.row.spec.data.max"
+                      v-model="row.spec.data.max"
                       :precision="2"
                       :step="0.1"
                       size="mini"
@@ -126,8 +139,24 @@
             </template>
             <el-input
               v-else
-              v-model="scope.row.spec.data.value"
+              v-model="row.spec.data.value"
+              :rows="2"
+              type="textarea"
               placeholder="要求值"
+            />
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          label="备注"
+          align="center"
+        >
+          <template slot-scope="{row}">
+            <el-input
+              v-model="row.spec.data.memo"
+              :rows="2"
+              type="textarea"
+              placeholder="备注"
             />
           </template>
         </el-table-column>
@@ -135,18 +164,20 @@
         <el-table-column
           align="center"
           label="是否展示"
+          width="100"
         >
-          <template slot-scope="scope">
-            <el-switch v-model="scope.row.spec.is_show" />
+          <template slot-scope="{row}">
+            <el-switch v-model="row.spec.is_show" />
           </template>
         </el-table-column>
 
         <el-table-column
           align="center"
-          label="必填值"
+          label="是否必填"
+          width="100"
         >
-          <template slot-scope="scope">
-            <el-switch v-model="scope.row.spec.required" />
+          <template slot-scope="{row}">
+            <el-switch v-model="row.spec.required" />
           </template>
         </el-table-column>
 
@@ -160,12 +191,12 @@
             <el-button
               type="text"
               size="small"
-              @click="handleInsert(scope.row)"
+              @click="handleInsert(scope)"
             >插入</el-button>
             <el-button
               type="text"
               size="small"
-              @click="handleDelete(scope.row)"
+              @click="handleDelete(scope)"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -261,18 +292,18 @@ export default {
     handleCreate() {
       this.obj.way.push(TestWayItem())
     },
-    handleInsert(row) {
-      const index = this.obj.way.indexOf(row)
-      this.obj.way.splice(index, 0, TestWayItem())
+    handleInsert(scope) {
+      // const index = this.obj.way.indexOf(row)
+      this.obj.way.splice(scope.$index, 0, TestWayItem())
     },
-    handleDelete(row) {
+    handleDelete(scope) {
       this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const index = this.obj.way.indexOf(row)
-        this.obj.way.splice(index, 1)
+        // const index = this.obj.way.indexOf(row)
+        this.obj.way.splice(scope.$index, 1)
       })
     },
     updateWay() {

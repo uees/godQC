@@ -94,8 +94,8 @@ export default {
     }
     return {
       loginForm: {
-        email: 'fqc@szrd.com',
-        password: '123456'
+        email: '',
+        password: ''
       },
       loginRules: {
         email: [

@@ -103,10 +103,11 @@
 </template>
 
 <script>
-import DataFormDialog from '@/views/mixins/DataFormDialog'
-import queryCategory from '@/views/mixins/queryCategory'
+import { deepClone } from '@/utils'
 import { productApi } from '@/api/basedata'
 import { Product } from '@/defines/models'
+import DataFormDialog from '@/views/mixins/DataFormDialog'
+import queryCategory from '@/views/mixins/queryCategory'
 import JsonEditor from '@/components/JsonEditor/index'
 
 export default {
@@ -126,10 +127,20 @@ export default {
       }
     }
   },
+  watch: {
+    // hook mixins
+    formData(val) {
+      if (val) {
+        this.obj = deepClone(val)
+        this.obj.with = 'category,testWay'
+      }
+    }
+  },
   methods: {
     newObj() {
       const obj = Product()
-      obj.with = 'category,testWay' // 加载关系
+      // 加载关系
+      obj.with = 'category,testWay'
       return obj
     }
   }

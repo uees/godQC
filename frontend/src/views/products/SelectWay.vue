@@ -44,18 +44,17 @@
 
     <way-form
       :action="WayFormAction"
-      :form-data="WayFormObj"
-      @action-done="createWayDone"
-      @close="updateWayDone"
+      :form-data="WayFormData"
+      @action-done="onWayFormActionDone"
     />
   </div>
 </template>
 
 <script>
 import { qcWayApi, productSelectTestWay } from '@/api/qc'
-import Bus from '@/store/bus'
 import { deepClone } from '@/utils'
 import { TestWay } from '@/defines/models'
+import Bus from '@/store/bus'
 import WayForm from '../qcways/dialog'
 
 export default {
@@ -65,19 +64,21 @@ export default {
   },
   data() {
     return {
-      product: null,
-      tableDataIndex: -1,
+      product: undefined,
+      productIndex: -1,
       testWay: this.newWay(),
       dialogFormVisible: false,
+
+      // WayForm props
       WayFormAction: '',
-      WayFormObj: this.newWay()
+      WayFormData: this.newWay()
     }
   },
   mounted() {
     Bus.$on('product-select-way', (scope) => {
       // 初始化
       this.product = deepClone(scope.row)
-      this.tableDataIndex = scope.$index
+      this.productIndex = scope.$index
       if (this.product.testWay) {
         this.testWay = this.product.testWay
       } else {
@@ -97,32 +98,28 @@ export default {
     queryWays(queryString, cb) {
       qcWayApi.list({ params: { q: queryString }}).then(response => {
         const { data } = response.data
-        // 调用 callback 返回建议列表的数据
         cb(data)
       })
     },
     handleCreateWay() {
       this.WayFormAction = 'create'
-      this.WayFormObj = this.newWay()
+      this.WayFormData = this.newWay()
     },
     handleEditWay() {
       this.WayFormAction = 'update'
-      this.WayFormObj = this.testWay
+      this.WayFormData = this.testWay
     },
     submit() {
       productSelectTestWay(this.product.id, this.testWay.id).then(() => {
-        this.$emit('test-way-updated', this.tableDataIndex, this.testWay)
+        this.$emit('test-way-selected', this.productIndex, this.testWay)
         this.done()
       })
     },
     handleSelect(way) {
       this.testWay = Object.assign({}, way)
     },
-    createWayDone() {
-      this.testWay = Object.assign({}, this.WayFormObj)
-    },
-    updateWayDone() {
-      this.testWay = Object.assign({}, this.WayFormObj)
+    onWayFormActionDone(way) {
+      this.testWay = way
     },
     done() {
       this.$notify({
@@ -131,13 +128,13 @@ export default {
         type: 'success',
         duration: 2000
       })
+      this.resetWay()
       this.close()
     },
     close() {
       this.dialogFormVisible = false
       this.WayFormAction = ''
-      this.WayFormObj = null
-      this.resetWay()
+      this.WayFormData = undefined
     }
   }
 }

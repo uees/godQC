@@ -100,13 +100,11 @@
       :action="formAction"
       :form-data="formData"
       @action-done="actionDone"
-      @close="formDialogClose"
     />
   </div>
 </template>
 
 <script>
-import { deepClone } from '@/utils'
 import DataList from '@/views/mixins/DataList'
 import Pagination from '@/views/mixins/Pagination'
 import { qcWayApi } from '@/api/qc'
@@ -126,22 +124,6 @@ export default {
   data() {
     return {
       api: qcWayApi
-    }
-  },
-  methods: {
-    handleUpdate(scope) {
-      this.formDataIndex = scope.$index
-      this.formData = deepClone(scope.row)
-
-      // required 支持
-      this.formData.way = this.formData.way.map(item => {
-        if (typeof item.spec.required === 'undefined') {
-          item.spec.required = true
-        }
-        return item
-      })
-
-      this.formAction = 'update'
     }
   }
 }

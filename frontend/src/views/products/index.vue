@@ -169,7 +169,8 @@
       @close="formDialogClose"
     />
 
-    <select-way @test-way-updated="testWayUpdated" />
+    <select-way @test-way-selected="testWaySelected" />
+
     <template-dialog @template-updated="templateUpdated" />
   </div>
 </template>
@@ -209,11 +210,6 @@ export default {
     }
   },
   methods: {
-    handleUpdate(scope) {
-      this.formDataIndex = scope.$index
-      this.formData = Object.assign({}, this.queryParams, scope.row) // 加载关系
-      this.formAction = 'update'
-    },
     showSelectWay(scope) {
       Bus.$emit('product-select-way', scope)
     },
@@ -244,11 +240,10 @@ export default {
         })
       })
     },
-    testWayUpdated(index, testWay) {
+    testWaySelected(index, testWay) {
       const product = this.tableData[index]
       product.testWay = testWay
-
-      this.tableData.splice(index, 1, product)
+      // this.tableData.splice(index, 1, product)
     },
     templateUpdated(index, templates) {
       const product = this.tableData[index]
@@ -258,8 +253,7 @@ export default {
       } else {
         product.metas = { templates }
       }
-
-      this.tableData.splice(index, 1, product)
+      // this.tableData.splice(index, 1, product)
     },
     displayTemplates(templates) {
       let result = ''

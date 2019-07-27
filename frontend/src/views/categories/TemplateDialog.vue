@@ -77,11 +77,11 @@
 </template>
 
 <script>
-import JsonEditor from '../../components/JsonEditor/index'
-import Bus from '@/store/bus'
-import templatesSuggestions from '@/views/mixins/templatesSuggestions'
 import { deepClone } from '@/utils'
 import { categoryUpdateTemplates } from '@/api/qc'
+import JsonEditor from '@/components/JsonEditor/index'
+import Bus from '@/store/bus'
+import templatesSuggestions from '@/views/mixins/templatesSuggestions'
 
 export default {
   name: 'TemplateDialog',
@@ -93,8 +93,8 @@ export default {
   ],
   data() {
     return {
-      category: null,
-      tableDataIndex: -1,
+      category: undefined,
+      categoryIndex: -1,
       visible: false,
       templates: []
     }
@@ -103,7 +103,7 @@ export default {
     Bus.$on('category-select-template', (scope) => {
       // 初始化
       this.category = deepClone(scope.row)
-      this.tableDataIndex = scope.$index
+      this.categoryIndex = scope.$index
       if (this.category.metas && this.category.metas.templates) {
         this.templates = this.category.metas.templates
       } else {
@@ -114,6 +114,9 @@ export default {
     })
   },
   methods: {
+    resetTemplates() {
+      this.templates = []
+    },
     newTemplate() {
       return {
         name: '',
@@ -128,13 +131,7 @@ export default {
       this.templates.splice(scope.$index, 0, this.newTemplate())
     },
     deleteTemplate(scope) {
-      this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.templates.splice(scope.$index, 1)
-      })
+      this.templates.splice(scope.$index, 1)
     },
     submit() {
       this.cleanData()
@@ -157,7 +154,8 @@ export default {
         return template
       })
       categoryUpdateTemplates(this.category.id, this.templates).then(response => {
-        this.$emit('template-updated', this.tableDataIndex, this.templates)
+        this.$emit('template-updated', this.categoryIndex, this.templates)
+        this.resetTemplates()
         this.close()
       })
     },

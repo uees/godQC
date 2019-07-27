@@ -87,11 +87,11 @@
 </template>
 
 <script>
-import JsonEditor from '@/components/JsonEditor/index'
-import Bus from '@/store/bus'
-import templatesSuggestions from '@/views/mixins/templatesSuggestions'
 import { deepClone } from '@/utils'
 import { productUpdateTemplates } from '@/api/qc'
+import Bus from '@/store/bus'
+import JsonEditor from '@/components/JsonEditor/index'
+import templatesSuggestions from '@/views/mixins/templatesSuggestions'
 
 export default {
   name: 'TemplateDialog',
@@ -103,10 +103,10 @@ export default {
   ],
   data() {
     return {
-      product: null,
-      tableDataIndex: -1,
+      product: undefined,
+      productIndex: -1,
       visible: false,
-      templates: [],
+      templates: [], // will set to product.metas.templates
       cancelCategoryTemplate: false
     }
   },
@@ -114,7 +114,7 @@ export default {
     Bus.$on('product-select-template', (scope) => {
       // 初始化
       this.product = deepClone(scope.row)
-      this.tableDataIndex = scope.$index
+      this.productIndex = scope.$index
       if (this.product.metas && this.product.metas.templates) {
         this.templates = this.product.metas.templates
       } else {
@@ -125,6 +125,9 @@ export default {
     })
   },
   methods: {
+    resetTemplates() {
+      this.templates = []
+    },
     newTemplate() {
       return {
         name: '',
@@ -139,13 +142,7 @@ export default {
       this.templates.splice(scope.$index, 0, this.newTemplate())
     },
     deleteTemplate(scope) {
-      this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.templates.splice(scope.$index, 1)
-      })
+      this.templates.splice(scope.$index, 1)
     },
     submit() {
       this.cleanData()
@@ -168,7 +165,8 @@ export default {
         return template
       })
       productUpdateTemplates(this.product.id, this.templates, this.cancelCategoryTemplate).then(() => {
-        this.$emit('template-updated', this.tableDataIndex, this.templates)
+        this.$emit('template-updated', this.productIndex, this.templates)
+        this.resetTemplates()
         this.close()
       })
     },

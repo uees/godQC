@@ -144,7 +144,7 @@
       @close="formDialogClose"
     />
 
-    <select-way @test-way-updated="testWayUpdated" />
+    <select-way @test-way-selected="testWaySelected" />
 
     <template-dialog @template-updated="templateUpdated" />
   </div>
@@ -210,22 +210,19 @@ export default {
         })
       })
     },
-    testWayUpdated(index, testWay) {
+    testWaySelected(index, testWay) {
       const category = this.tableData[index]
       category.testWay = testWay
-
-      this.tableData.splice(index, 1, category)
+      // this.tableData.splice(index, 1, category)
     },
     templateUpdated(index, templates) {
       const category = this.tableData[index]
-
       if (category.metas) {
         category.metas.templates = templates
       } else {
         category.metas = { templates }
       }
-
-      this.tableData.splice(index, 1, category)
+      // this.tableData.splice(index, 1, category)
     },
     displayTemplates(templates) {
       let result = ''

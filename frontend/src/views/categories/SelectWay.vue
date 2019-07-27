@@ -34,31 +34,56 @@
           type="primary"
           @click="submit"
         >确 定</el-button>
+        <el-button
+          v-if="testWay.id"
+          type="success"
+          icon="el-icon-edit"
+          @click="handleEditWay"
+        >编辑</el-button>
+        <el-button
+          v-else
+          type="warning"
+          @click="handleCreateWay"
+        >创建</el-button>
       </div>
     </el-dialog>
+
+    <way-form
+      :action="WayFormAction"
+      :form-data="WayFormData"
+      @action-done="onWayFormActionDone"
+    />
   </div>
 </template>
 
 <script>
 import { qcWayApi, categorySelectTestWay } from '@/api/qc'
-import Bus from '@/store/bus'
 import { deepClone } from '@/utils'
 import { TestWay } from '@/defines/models'
+import Bus from '@/store/bus'
+import WayForm from '../qcways/dialog'
 
 export default {
   name: 'SelectWay',
+  components: {
+    WayForm
+  },
   data() {
     return {
       category: null,
-      tableDataIndex: -1,
+      categoryIndex: -1,
       testWay: this.newWay(),
-      dialogFormVisible: false
+      dialogFormVisible: false,
+
+      // WayForm props
+      WayFormAction: '',
+      WayFormData: this.newWay()
     }
   },
   mounted() {
     Bus.$on('category-select-way', (scope) => {
       this.category = deepClone(scope.row)
-      this.tableDataIndex = scope.$index
+      this.categoryIndex = scope.$index
       if (this.category.testWay) {
         this.testWay = this.category.testWay
       } else {
@@ -77,16 +102,26 @@ export default {
     queryWays(queryString, cb) {
       qcWayApi.list({ params: { q: queryString }}).then(response => {
         const { data } = response.data
-        // 调用 callback 返回建议列表的数据
         cb(data)
       })
+    },
+    handleCreateWay() {
+      this.WayFormAction = 'create'
+      this.WayFormData = this.newWay()
+    },
+    handleEditWay() {
+      this.WayFormAction = 'update'
+      this.WayFormData = this.testWay
     },
     handleSelect(testWay) {
       this.testWay = Object.assign({}, testWay)
     },
+    onWayFormActionDone(way) {
+      this.testWay = way
+    },
     submit() {
       categorySelectTestWay(this.category.id, this.testWay.id).then(response => {
-        this.$emit('test-way-updated', this.tableDataIndex, this.testWay)
+        this.$emit('test-way-selected', this.categoryIndex, this.testWay)
         this.done()
       })
     },
@@ -97,11 +132,13 @@ export default {
         type: 'success',
         duration: 2000
       })
+      this.resetWay()
       this.close()
     },
     close() {
       this.dialogFormVisible = false
-      this.resetWay()
+      this.WayFormAction = ''
+      this.WayFormData = undefined
     }
   }
 }

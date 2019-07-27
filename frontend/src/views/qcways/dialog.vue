@@ -57,7 +57,7 @@
               value-key="name"
               suffix-icon="el-icon-edit"
               placeholder="检测方法"
-              @select="handleSelect"
+              @select="handleSelect(row)"
             />
           </template>
         </el-table-column>
@@ -74,12 +74,12 @@
             >
               <el-option
                 v-for="item in valueTypes"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
               >
-                <span style="float: left">{{ item.name }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
+                <span style="float: left">{{ item.label }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
               </el-option>
             </el-select>
           </template>
@@ -228,11 +228,13 @@
 </template>
 
 <script>
+import { deepClone } from '@/utils'
+import { qcWayApi } from '@/api/qc'
+import { TestWay, TestWayItem } from '@/defines/models'
+import { VALUE_TYPES } from '@/defines/consts'
 import DataFormDialog from '@/views/mixins/DataFormDialog'
 import testItemSuggestions from '@/views/mixins/testItemSuggestions'
 import testMethodSuggestions from '@/views/mixins/testMethodSuggestions'
-import { qcWayApi } from '@/api/qc'
-import { TestWay, TestWayItem } from '@/defines/models'
 
 export default {
   name: 'Dialog',
@@ -244,76 +246,48 @@ export default {
   data() {
     return {
       api: qcWayApi,
-      selectTestMethods: [],
       objRules: {
         name: { required: true, message: '必填项', trigger: 'blur' }
       },
-      valueTypes: [
-        { code: 'RANGE', name: '范围' },
-        { code: 'INFO', name: '信息' },
-        { code: 'VALUE', name: '具体值' },
-        { code: 'ONLY_SHOW', name: '仅展示' }
-      ]
+      valueTypes: VALUE_TYPES
     }
   },
+
+  watch: {
+    // hook mixins
+    formData(val) {
+      if (val) {
+        // required 支持
+        val.way = val.way.map(item => {
+          if (typeof item.spec.required === 'undefined') {
+            item.spec.required = true
+          }
+          return item
+        })
+
+        this.obj = deepClone(val)
+      }
+    }
+  },
+
   methods: {
     newObj() {
       return TestWay()
     },
-    create() {
-      this.$refs['obj_form'].validate(async valid => {
-        if (valid) {
-          const formData = this.obj
-          formData.user_id = this.user.id
-          this.updateWay()
-          const response = await this.api.store(formData)
-          const { data } = response.data
-          this.done(data)
-          this.resetObj()
-        }
-      })
-    },
-    update() {
-      this.$refs['obj_form'].validate(async valid => {
-        if (valid) {
-          const formData = this.obj
-          formData.modified_user_id = this.user.id
-          this.updateWay()
-          const response = await this.api.update(formData.id, formData)
-          const { data } = response.data
-          this.done(data)
-          this.resetObj()
-        }
-      })
-    },
-    handleSelect(item) {
-      this.selectTestMethods.push(item)
+    handleSelect(row) {
+      // 返回一个闭包, very good!
+      return (method) => {
+        row.method_id = method.id
+      }
     },
     handleCreate() {
       this.obj.way.push(TestWayItem())
     },
     handleInsert(scope) {
-      // const index = this.obj.way.indexOf(row)
       this.obj.way.splice(scope.$index, 0, TestWayItem())
     },
     handleDelete(scope) {
-      this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        // const index = this.obj.way.indexOf(row)
-        this.obj.way.splice(scope.$index, 1)
-      })
-    },
-    updateWay() {
-      this.obj.way = this.obj.way.map(element => {
-        const method = this.selectTestMethods.find(method => method.name === element.method)
-        if (method) {
-          element.method_id = method.id
-        }
-        return element
-      })
+      this.obj.way.splice(scope.$index, 1)
     }
   }
 }

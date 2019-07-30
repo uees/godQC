@@ -238,7 +238,7 @@ export function TestWay() {
   return {
     id: undefined,
     name: undefined,
-    way: undefined,
+    way: [],
     created_at: undefined,
     updated_at: undefined
   }

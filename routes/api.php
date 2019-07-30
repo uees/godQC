@@ -40,6 +40,11 @@ Route::middleware('jwt.auth')->group(function () {
     Route::get('qc-records/{testRecord}/archive', 'QCRecordController@archive');
     Route::get('qc-records/{testRecord}/archive/cancel', 'QCRecordController@cancelArchived');
 
+    Route::post('mix-qc-records/sample', 'MixinTestRecordController@sample');
+    Route::get('mix-qc-records/{testRecord}/test-done', 'MixinTestRecordController@testDone');
+    Route::get('mix-qc-records/{testRecord}/archive', 'MixinTestRecordController@archive');
+    Route::get('mix-qc-records/{testRecord}/archive/cancel', 'MixinTestRecordController@cancelArchived');
+
     Route::apiResources([
         'categories' => 'CategoryController',
         'customers' => 'CustomerController',
@@ -49,6 +54,7 @@ Route::middleware('jwt.auth')->group(function () {
         'product-disposes' => 'ProductDisposeController',
         'qc-methods' => 'QCMethodController',
         'qc-records' => 'QCRecordController',
+        'mix-qc-records' => 'MixinTestRecordController',
         'qc-ways' => 'QCWayController',
         'pattern-tests/h-8100' => 'PatternTestController',
         'pattern-tests/a-9060' => 'A9060PatternTestController',
@@ -64,6 +70,15 @@ Route::middleware('jwt.auth')->group(function () {
         Route::put('{testRecord}/{testRecordItem}', 'QCRecordItemController@update')->name('update');
         Route::patch('{testRecord}/{testRecordItem}', 'QCRecordItemController@update')->name('update');
         Route::delete('{testRecord}/{testRecordItem}', 'QCRecordItemController@destroy')->name('destroy');
+    });
+
+    Route::prefix('mix-qc-record-items')->name('mix-record-items.')->group(function () {
+        Route::get('{testRecord}', 'MixinTestRecordItemController@index')->name('index');
+        Route::post('{testRecord}', 'MixinTestRecordItemController@store')->name('store');
+        Route::get('{testRecord}/{testRecordItem}', 'MixinTestRecordItemController@show')->name('show');
+        Route::put('{testRecord}/{testRecordItem}', 'MixinTestRecordItemController@update')->name('update');
+        Route::patch('{testRecord}/{testRecordItem}', 'MixinTestRecordItemController@update')->name('update');
+        Route::delete('{testRecord}/{testRecordItem}', 'MixinTestRecordItemController@destroy')->name('destroy');
     });
 
     Route::prefix('statistics')->group(function () {

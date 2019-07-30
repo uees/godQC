@@ -3,6 +3,7 @@ import request from '../utils/request'
 
 export const qcMethodApi = new RestApi({ url: 'qc-methods' })
 export const qcRecordApi = new RestApi({ url: 'qc-records' })
+export const mixQcRecordApi = new RestApi({ url: 'mix-qc-records' })
 export const qcWayApi = new RestApi({ url: 'qc-ways' })
 export const productDisposeApi = new RestApi({ url: 'product-disposes' })
 export const productBatchApi = new RestApi({ url: 'product-batches' })
@@ -34,7 +35,9 @@ export function customerAddProduct(customer_id, product_id) {
 }
 
 export function getBatchDispose(product_name, batch_number, type) {
-  return request.get('product-batches/disposes', { params: { product_name, batch_number, type }})
+  return request.get('product-batches/disposes', {
+    params: { product_name, batch_number, type }
+  })
 }
 
 export function qcSample(data) {
@@ -79,6 +82,38 @@ export function addRecordItem(record_id, data) {
 
 export function getRecordItem(record_id, item_id) {
   return request.get(`qc-record-items/${record_id}/${item_id}`)
+}
+
+export function mixQcSample(data) {
+  return request.post('mix-qc-records/sample', data)
+}
+
+export function mixTestDone(record_id) {
+  return request.get(`mix-qc-records/${record_id}/test-done`)
+}
+
+export function mixArchive(record_id) {
+  return request.get(`mix-qc-records/${record_id}/archive`)
+}
+
+export function cancelMixArchive(record_id) {
+  return request.get(`mix-qc-records/${record_id}/archive/cancel`)
+}
+
+export function updateMixRecordItem(record_id, item_id, data) {
+  return request.patch(`mix-qc-record-items/${record_id}/${item_id}`, data)
+}
+
+export function deleteMixRecordItem(record_id, item_id) {
+  return request.delete(`mix-qc-record-items/${record_id}/${item_id}`)
+}
+
+export function addMixRecordItem(record_id, data) {
+  return request.post(`mix-qc-record-items/${record_id}`, data)
+}
+
+export function getMixRecordItem(record_id, item_id) {
+  return request.get(`mix-qc-record-items/${record_id}/${item_id}`)
 }
 
 export function makeTestStatistics(year, month, type) {

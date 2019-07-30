@@ -16,7 +16,7 @@ class CreateMixinTestRecordItemsTable extends Migration
         Schema::create('mixin_test_record_items', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('mixin_test_record_id');
-            $table->string('name', 64);
+            $table->string('item', 64);
             $table->text('spec')->nullable();
             $table->string('value')->nullable();
             $table->string('fake_value')->nullable();

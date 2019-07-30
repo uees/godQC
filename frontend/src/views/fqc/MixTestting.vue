@@ -6,7 +6,7 @@
         type="danger"
         icon="el-icon-plus"
         @click="handleSample"
-      >取样
+      >添加
       </el-button>
 
       <el-input
@@ -34,12 +34,46 @@
           :value="item.value"
         />
       </el-select>
+    </div>
+
+    <div class="filter-container">
+      <el-input
+        v-model="queryParams.part_a_name"
+        style="width: 200px"
+        class="filter-item"
+        placeholder="Part A"
+        @keyup.enter.native="handleSearch"
+      />
+
+      <el-input
+        v-model="queryParams.part_a_batch"
+        style="width: 200px; margin-left: 10px;"
+        class="filter-item"
+        placeholder="Part A Batch"
+        @keyup.enter.native="handleSearch"
+      />
+
+      <el-input
+        v-model="queryParams.part_b_name"
+        style="width: 200px; margin-left: 10px;"
+        class="filter-item"
+        placeholder="Part B"
+        @keyup.enter.native="handleSearch"
+      />
+
+      <el-input
+        v-model="queryParams.part_b_batch"
+        style="width: 200px; margin-left: 10px;"
+        class="filter-item"
+        placeholder="Part B Batch"
+        @keyup.enter.native="handleSearch"
+      />
 
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
-        icon="el-icon-refresh"
+        icon="el-icon-search"
         @click="handleSearch"
       />
     </div>
@@ -88,6 +122,15 @@
         label="固化剂批次"
         align="center"
       />
+
+      <el-table-column
+        label="配油"
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <span>{{ row | mixinTips }}</span>
+        </template>
+      </el-table-column>
 
       <el-table-column
         label="注意事项"
@@ -298,7 +341,7 @@ import {
   cancelMixArchive
 } from '@/api/qc'
 import { CONCLUSIONS } from '@/defines/consts'
-import { TestRecord } from '@/defines/models'
+import { MixTestRecord } from '@/defines/models'
 import { qcspec, parseTime, conclusionLabel, noteMatters, mixinTips } from '@/filters/erp'
 import testersSuggestions from '@/views/mixins/testersSuggestions'
 import testItemSuggestions from '@/views/mixins/testItemSuggestions'
@@ -307,7 +350,7 @@ import QCOperation from '@/views/mixins/QCOperation'
 import DisposeForm from '@/views/qcrecords/components/DisposeForm'
 import ItemForm from '@/views/qcrecords/components/ItemForm'
 import ValueInput from '@/views/qcrecords/components/ValueInput'
-import RecordForm from '@/views/qcrecords/components/RecordForm'
+import RecordForm from './components/MixRecordForm'
 import QcSample from './components/MixQcSample'
 
 export default {
@@ -335,9 +378,12 @@ export default {
         q: undefined,
         with: 'product,items',
         said_package: undefined,
-        type: this.qcType, // FQC, IQC
         testing: 1,
-        all: 1
+        all: 1,
+        part_a_name: undefined,
+        part_a_batch: undefined,
+        part_b_name: undefined,
+        part_b_batch: undefined
       },
       listShowItems: ['混合粘度'],
       conclusions: CONCLUSIONS
@@ -360,8 +406,7 @@ export default {
     },
     handleSample() {
       this.sampleFormInfo = {
-        type: 'FQC',
-        formData: TestRecord(),
+        formData: MixTestRecord(),
         visible: true
       }
     },

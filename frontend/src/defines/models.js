@@ -186,15 +186,16 @@ export function TestRecord() {
     id: undefined,
     product_batch_id: undefined,
     batch: ProductBatch(),
-    show_reality: undefined,
     test_times: undefined,
     conclusion: undefined,
     testers: undefined,
-    is_archived: undefined,
     memo: undefined,
     items: undefined,
     willDispose: undefined,
     disposed: undefined,
+    is_archived: undefined,
+    show_reality: undefined,
+    completed_at: undefined,
     created_at: undefined,
     updated_at: undefined
   }
@@ -205,6 +206,44 @@ export function TestRecordItem() {
     id: undefined,
     test_record_id: undefined,
     testRecord: undefined,
+    item: undefined,
+    spec: TestSpec(),
+    value: undefined,
+    fake_value: undefined,
+    conclusion: undefined,
+    tester: undefined,
+    memo: undefined,
+    created_at: undefined,
+    updated_at: undefined
+  }
+}
+
+export function MixTestRecord() {
+  return {
+    id: undefined,
+    product_id: undefined,
+    product: Product(),
+    part_a_name: undefined,
+    part_a_batch: undefined,
+    part_b_name: undefined,
+    part_b_batch: undefined,
+    conclusion: undefined,
+    testers: undefined,
+    memo: undefined,
+    is_archived: undefined,
+    show_reality: undefined,
+    items: undefined,
+    completed_at: undefined,
+    created_at: undefined,
+    updated_at: undefined
+  }
+}
+
+export function MixTestRecordItem() {
+  return {
+    id: undefined,
+    mixin_test_record_id: undefined,
+    mixTestRecord: undefined,
     item: undefined,
     spec: TestSpec(),
     value: undefined,

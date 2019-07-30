@@ -80,8 +80,6 @@ export function noteMatters(record) {
       }
     } else if (item.item === '表面张力') {
       result += '测表面张力,'
-    } else if (item.item === '混合粘度') {
-      result += '测混合粘度,'
     } else if (item.item === '黑点') {
       result += '测黑点,'
     } else if (item.item === '重检粘度') {

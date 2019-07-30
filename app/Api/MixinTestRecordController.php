@@ -125,12 +125,11 @@ class MixinTestRecordController extends Controller
         $productName = $request->get('product_name');
         $productNameSuffix = $request->get('product_name_suffix');
         $product = Product::where('internal_name', $productName)->firstOrFail();
-        $part_a_name = $productName . $productNameSuffix;
 
         // 创建空白检测表单
         $testRecord = new MixinTestRecord();
         $testRecord->product()->associate($product);
-        $testRecord->part_a_name = $part_a_name;
+        $testRecord->part_a_name = $productName . $productNameSuffix;
         $testRecord->fill($request->only([
             'part_a_batch',
             'part_b_name',
@@ -144,7 +143,7 @@ class MixinTestRecordController extends Controller
         $items = [];
         foreach ($test_way as $item) {
             array_push($items, [
-                'name' => $item['name'],
+                'item' => $item['name'],
                 'spec' => $item['spec'],
             ]);
         }
@@ -265,7 +264,23 @@ class MixinTestRecordController extends Controller
                 ],
             ];
         }
-        $test_way = [$mixViscosity];
+        $mixinTips = $product->part_b ? $product->part_b . '; ' . $product->ab_ratio : '按配方配';
+
+        $peiyou = [
+            'name' => '配油',
+            'method' => '',
+            'method_id' => 0,
+            'spec' => [
+                'is_show' => false,
+                'required' => false,
+                'value_type' => 'INFO',
+                'data' => [
+                    'value' => $mixinTips,
+                ],
+            ]
+        ];
+
+        $test_way = [$peiyou, $mixViscosity];
 
         // 获取检测要求
         $testWay = TestWay::where('name', '感光阻焊油混合测试项目')->firstOrFail();

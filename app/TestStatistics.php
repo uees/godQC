@@ -16,6 +16,7 @@ class TestStatistics extends Model
         'once_disqualification_num',
         'disqualification_num',
         'force_accept_num',
+        // 'category_id',
     ];
 
     /**

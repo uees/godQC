@@ -138,7 +138,7 @@ class MixinTestRecordController extends Controller
         $testRecord->save();
 
         // 获取创建检测项目
-        $test_way = $this->makeTestWay($product);
+        $test_way = $this->makeTestWay($product, $request->get('part_a_batch'));
 
         $items = [];
         foreach ($test_way as $item) {

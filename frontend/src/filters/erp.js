@@ -84,6 +84,35 @@ export function noteMatters(record) {
       result += '测黑点,'
     } else if (item.item === '重检粘度') {
       result += '重检粘度,'
+    } else if (item.item === '混合粘度') {
+      result += '混合粘度,'
+    } else if (item.item === '注意事项' && item.spec.data) {
+      result += item.spec.data.value
+    }
+  }
+
+  return result
+}
+
+export function mixNoteMatters(record) {
+  let result = ''
+
+  // only 配油 混合粘度
+  if (record.items.length === 2) {
+    result += '主剂已经配其他固化剂测过，现在只测混合粘度'
+  }
+
+  for (const item of record.items) {
+    if (item.item === '桥线' && item.spec.data) {
+      if ((item.spec.data.value && item.spec.data.value !== '做记录') || item.spec.data.max) {
+        result += '桥线,'
+      }
+    } else if (item.item === '表面张力') {
+      result += '测表面张力,'
+    } else if (item.item === '黑点') {
+      result += '测黑点,'
+    } else if (item.item === '重检粘度') {
+      result += '重检粘度,'
     } else if (item.item === '注意事项' && item.spec.data) {
       result += item.spec.data.value
     }

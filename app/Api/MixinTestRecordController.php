@@ -222,7 +222,7 @@ class MixinTestRecordController extends Controller
         return $this->response()->failed('操作失败');
     }
 
-    protected function makeTestWay(Product $product)
+    protected function makeTestWay(Product $product, $part_a_batch)
     {
         // 混合粘度要求
         $viscosity_unit = $product->meta('viscosity_unit');  // 粘度单位
@@ -282,6 +282,10 @@ class MixinTestRecordController extends Controller
 
         $test_way = [$peiyou, $mixViscosity];
 
+        if ($this->isTested($part_a_batch)) {
+            return $test_way;
+        }
+
         // 获取检测要求
         $testWay = TestWay::where('name', '感光阻焊油混合测试项目')->firstOrFail();
         $this->mergeTestWay($test_way, $testWay->way);
@@ -292,6 +296,11 @@ class MixinTestRecordController extends Controller
         }
 
         return $test_way;
+    }
+
+    protected function isTested($part_a_batch)
+    {
+        return MixinTestRecord::where('part_a_batch', $part_a_batch)->exists();
     }
 
     /**

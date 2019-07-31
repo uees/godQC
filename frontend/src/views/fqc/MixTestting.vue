@@ -342,7 +342,7 @@ import {
 } from '@/api/qc'
 import { CONCLUSIONS } from '@/defines/consts'
 import { MixTestRecord } from '@/defines/models'
-import { qcspec, parseTime, conclusionLabel, noteMatters, mixinTips } from '@/filters/erp'
+import { qcspec, parseTime, conclusionLabel, mixinTips, mixNoteMatters } from '@/filters/erp'
 import testersSuggestions from '@/views/mixins/testersSuggestions'
 import testItemSuggestions from '@/views/mixins/testItemSuggestions'
 import RecordTableStyle from '@/views/mixins/RecordTableStyle'
@@ -355,7 +355,7 @@ import QcSample from './components/MixQcSample'
 
 export default {
   name: 'Testing',
-  filters: { qcspec, parseTime, conclusionLabel, noteMatters, mixinTips },
+  filters: { qcspec, parseTime, conclusionLabel, mixinTips, mixNoteMatters },
   components: {
     ItemForm,
     QcSample,

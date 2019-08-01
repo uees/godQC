@@ -34,40 +34,6 @@
           :value="item.value"
         />
       </el-select>
-    </div>
-
-    <div class="filter-container">
-      <el-input
-        v-model="queryParams.part_a_name"
-        style="width: 200px"
-        class="filter-item"
-        placeholder="Part A"
-        @keyup.enter.native="handleSearch"
-      />
-
-      <el-input
-        v-model="queryParams.part_a_batch"
-        style="width: 200px; margin-left: 10px;"
-        class="filter-item"
-        placeholder="Part A Batch"
-        @keyup.enter.native="handleSearch"
-      />
-
-      <el-input
-        v-model="queryParams.part_b_name"
-        style="width: 200px; margin-left: 10px;"
-        class="filter-item"
-        placeholder="Part B"
-        @keyup.enter.native="handleSearch"
-      />
-
-      <el-input
-        v-model="queryParams.part_b_batch"
-        style="width: 200px; margin-left: 10px;"
-        class="filter-item"
-        placeholder="Part B Batch"
-        @keyup.enter.native="handleSearch"
-      />
 
       <el-button
         class="filter-item"
@@ -137,7 +103,7 @@
         align="center"
       >
         <template slot-scope="{row}">
-          <span>{{ row | noteMatters }}</span>
+          <span>{{ row | mixNoteMatters }}</span>
         </template>
       </el-table-column>
 

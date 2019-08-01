@@ -154,7 +154,7 @@ export const asyncRoutes = [
     ]
   },
   // 404 要放最后
-  { path: '*', redirect: '/404', hidden: true }
+  { path: '*', redirect: '/error/404', hidden: true }
 ]
 
 const createRouter = () => new Router({

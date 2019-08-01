@@ -141,20 +141,23 @@ export default {
           const dispose = data
 
           if (dispose.id) {
-            await this.$confirm(`检测到此批号有返工处理记录:\n
+            try {
+              await this.$confirm(`检测到此批号有返工处理记录:\n
                   品名：${dispose.batch.product_name} ${dispose.batch.product_name_suffix}\n
                   批号：${dispose.batch.batch_number}\n
                   处理方式：${dispose.method}\n\n
                   是否此批次?`, '提示', {
-              confirmButtonText: '是',
-              cancelButtonText: '否',
-              type: 'info'
-            })
+                confirmButtonText: '是',
+                cancelButtonText: '否',
+                type: 'info'
+              })
+            } catch (err) {
+              await this.qcSample()
+            }
             await this.disposeSample(dispose.id)
-            return
+          } else {
+            await this.qcSample()
           }
-
-          await this.qcSample()
         }
       })
     },

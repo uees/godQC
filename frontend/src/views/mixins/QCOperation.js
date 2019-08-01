@@ -187,35 +187,37 @@ export default {
       }
     },
     async archive(scope) {
-      const record = scope.row
-      const index = scope.$index
       // 检测完成后才能归档
       // 不合格且没处理意见的不能归档
-      await this.$confirm('归档后，记录将归入检测记录列表', '提示', {
+      this.$confirm('归档后，记录将归入检测记录列表', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'info'
-      })
-      await archive(record.id)
-      this.records.splice(index, 1)
-      this.$message({
-        type: 'success',
-        message: '归档成功'
+      }).then(async () => {
+        const record = scope.row
+        const index = scope.$index
+        await archive(record.id)
+        this.records.splice(index, 1)
+        this.$message({
+          type: 'success',
+          message: '归档成功'
+        })
       })
     },
     async cancelArchive(scope) {
-      const record = scope.row
-      const index = scope.$index
-      await this.$confirm('取消归档后，记录将回到在检列表', '提示', {
+      this.$confirm('取消归档后，记录将回到在检列表', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'info'
-      })
-      await cancelArchive(record.id)
-      this.records.splice(index, 1)
-      this.$message({
-        type: 'success',
-        message: '已取消归档'
+      }).then(async () => {
+        const record = scope.row
+        const index = scope.$index
+        await cancelArchive(record.id)
+        this.records.splice(index, 1)
+        this.$message({
+          type: 'success',
+          message: '已取消归档'
+        })
       })
     },
     async sayPackage(scope) {
@@ -281,36 +283,33 @@ export default {
       // this.records.splice(record_scope.$index, 1, record_scope.row)
     },
     async deleteRecordItem(scope, item_scope) {
-      // handleDeleteRecordItem
-      // api request
-      await this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
+      }).then(async () => {
+        const record = scope.row
+        const item = item_scope.row
+        const itemIndex = item_scope.$index
+
+        await deleteRecordItem(record.id, item.id)
+        record.items.splice(itemIndex, 1)
+        this.setOriginal(record)
       })
-
-      const record = scope.row
-      const item = item_scope.row
-      const itemIndex = item_scope.$index
-
-      await deleteRecordItem(record.id, item.id)
-      record.items.splice(itemIndex, 1)
-      this.setOriginal(record)
     },
     async deleteRecord(scope) {
-      // handleDeleteRecord
-      await this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
+      }).then(async () => {
+        const record = scope.row
+        const index = scope.$index
+
+        await qcRecordApi.destroy(record.id)
+        this.records.splice(index, 1)
+        this.$message({ type: 'success', message: '删除成功!' })
       })
-
-      const record = scope.row
-      const index = scope.$index
-
-      await qcRecordApi.destroy(record.id)
-      this.records.splice(index, 1)
-      this.$message({ type: 'success', message: '删除成功!' })
     },
     onRecordMemoBlur(scope) {
       // scope is {row: {}, column: {}, $index: 0, store: {}}

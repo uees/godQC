@@ -221,10 +221,9 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        productSelectTestWay(scope.row.id, null).then(() => {
-          scope.row.testWay = null
-        })
+      }).then(async () => {
+        await productSelectTestWay(scope.row.id, null)
+        scope.row.testWay = null
       })
     },
     clearTemplates(scope) {
@@ -232,12 +231,11 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        productUpdateTemplates(scope.row.id, null).then(() => {
-          if (scope.row.metas) {
-            scope.row.metas.templates = null
-          }
-        })
+      }).then(async () => {
+        await productUpdateTemplates(scope.row.id, null)
+        if (scope.row.metas) {
+          scope.row.metas.templates = null
+        }
       })
     },
     testWaySelected(index, testWay) {

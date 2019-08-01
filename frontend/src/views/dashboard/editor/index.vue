@@ -19,8 +19,8 @@
     </div>
     <div>
       <img
-        :src="emptyGif"
-        class="emptyGif"
+        :src="welcomePng"
+        class="welcomePng"
       >
     </div>
   </div>
@@ -36,7 +36,7 @@ export default {
   components: { PanThumb },
   data() {
     return {
-      emptyGif: '/static/img/hello-world.gif'
+      welcomePng: '/static/img/welcome.png'
     }
   },
   computed: {
@@ -49,7 +49,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.emptyGif {
+.welcomePng {
   display: block;
   width: 45%;
   margin: 0 auto;

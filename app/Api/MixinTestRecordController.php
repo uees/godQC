@@ -135,7 +135,6 @@ class MixinTestRecordController extends Controller
             'part_b_name',
             'part_b_batch',
         ]));
-        $testRecord->save();
 
         // 获取创建检测项目
         $test_way = $this->makeTestWay($product, $request->get('part_a_batch'));
@@ -147,6 +146,8 @@ class MixinTestRecordController extends Controller
                 'spec' => $item['spec'],
             ]);
         }
+
+        $testRecord->save();
 
         $testRecord->items()->createMany($items);
 

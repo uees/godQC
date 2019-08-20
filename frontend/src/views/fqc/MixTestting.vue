@@ -281,6 +281,21 @@
 
     </el-table>
 
+    <div
+      v-show="!listLoading"
+      class="pagination-container"
+    >
+      <el-pagination
+        :total="total"
+        :current-page.sync="queryParams.page"
+        :page-sizes="pageSizes"
+        :page-size="queryParams.per_page"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
+
     <qc-sample
       :form-info="sampleFormInfo"
       @record-sampled="recordSampled"
@@ -311,6 +326,7 @@ import { MixTestRecord } from '@/defines/models'
 import { qcspec, parseTime, conclusionLabel, mixinTips, mixNoteMatters } from '@/filters/erp'
 import testersSuggestions from '@/views/mixins/testersSuggestions'
 import testItemSuggestions from '@/views/mixins/testItemSuggestions'
+import Pagination from '@/views/mixins/Pagination'
 import RecordTableStyle from '@/views/mixins/RecordTableStyle'
 import QCOperation from '@/views/mixins/QCOperation'
 import DisposeForm from '@/views/qcrecords/components/DisposeForm'
@@ -320,7 +336,7 @@ import RecordForm from './components/MixRecordForm'
 import QcSample from './components/MixQcSample'
 
 export default {
-  name: 'Testing',
+  name: 'MixTestting',
   filters: { qcspec, parseTime, conclusionLabel, mixinTips, mixNoteMatters },
   components: {
     ItemForm,
@@ -332,6 +348,7 @@ export default {
   mixins: [
     RecordTableStyle,
     QCOperation,
+    Pagination,
     testItemSuggestions,
     testersSuggestions
   ],
@@ -345,7 +362,7 @@ export default {
         with: 'product,items',
         said_package: undefined,
         testing: 1,
-        all: 1,
+        // all: 1,
         part_a_name: undefined,
         part_a_batch: undefined,
         part_b_name: undefined,
@@ -368,6 +385,7 @@ export default {
         this.setOriginal(record)
         return record
       })
+      this.paginate(response)
       this.listLoading = false
     },
     handleSample() {

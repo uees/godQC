@@ -56,13 +56,13 @@ const qcRouter = {
     {
       path: 'fqc/mix-testing',
       component: () => import('@/views/fqc/MixTestting'),
-      name: 'FQCMixTesting',
+      name: 'MixTestting',
       meta: { roles: ['admin', 'fqc'], title: '混合检测', icon: 'example' }
     },
     {
       path: 'fqc/mix-records',
       component: () => import('@/views/fqc/MixRecordList'),
-      name: 'FQCMixRecordList',
+      name: 'MixRecordList',
       meta: { roles: ['admin', 'fqc'], title: '混合检测记录', icon: 'guide' }
     },
     {

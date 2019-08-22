@@ -101,7 +101,7 @@ export default {
     update() {
       this.$refs['obj_form'].validate(async valid => {
         if (valid) {
-          const response = mixQcRecordApi.update(this.record.id, this.record)
+          const response = await mixQcRecordApi.update(this.record.id, this.record)
           const { data } = response.data
           this.record = data
           this.record.items = this.cachedItems // response 中无 items, 这里重新设置

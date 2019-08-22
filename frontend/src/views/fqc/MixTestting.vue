@@ -304,7 +304,6 @@
       :form-info="recordFormInfo"
       @record-updated="recordUpdated"
     />
-    <dispose-form :form-info="disposeFormInfo" />
     <item-form
       :form-info="recordItemFormInfo"
       @item-changed="itemChanged"
@@ -329,11 +328,10 @@ import testItemSuggestions from '@/views/mixins/testItemSuggestions'
 import Pagination from '@/views/mixins/Pagination'
 import RecordTableStyle from '@/views/mixins/RecordTableStyle'
 import QCOperation from '@/views/mixins/QCOperation'
-import DisposeForm from '@/views/qcrecords/components/DisposeForm'
-import ItemForm from '@/views/qcrecords/components/ItemForm'
 import ValueInput from '@/views/qcrecords/components/ValueInput'
 import RecordForm from './components/MixRecordForm'
 import QcSample from './components/MixQcSample'
+import ItemForm from './components/MixItemForm'
 
 export default {
   name: 'MixTestting',
@@ -342,7 +340,6 @@ export default {
     ItemForm,
     QcSample,
     ValueInput,
-    DisposeForm,
     RecordForm
   },
   mixins: [

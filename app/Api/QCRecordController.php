@@ -450,6 +450,25 @@ class QCRecordController extends Controller
             }
         }
 
+        // 从产品获取注意事项
+        $memo = $product->meta('memo');
+        if ($memo) {
+            $way_memo = [
+                'name' => '注意事项',
+                'method' => '',
+                'method_id' => 0,
+                'spec' => [
+                    'is_show' => true,
+                    'required' => false,
+                    'value_type' => 'INFO',
+                    'data' => [
+                        'value' => $memo,
+                    ],
+                ]
+            ];
+            $this->mergeTestWay($test_way, [$way_memo]);
+        }
+
         // 配油提示
         $mixinTips = '';
         if ($category->slug == 'H-8100' || $category->slug == 'H-9100') {

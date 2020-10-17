@@ -100,6 +100,7 @@
       :action="formAction"
       :form-data="formData"
       @action-done="actionDone"
+      @close="formDialogClose"
     />
   </div>
 </template>

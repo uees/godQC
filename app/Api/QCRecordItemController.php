@@ -44,23 +44,7 @@ class QCRecordItemController extends Controller
         if ($testRecord->items->contains($testRecordItem)) {
             // 创建 fake value
             if ($request->get('conclusion') == 'NG') {
-                if (is_null($testRecordItem->spec)) {
-                    $testRecordItem->fake_value = 'PASS';
-                } elseif ($testRecordItem->spec['value_type'] == 'INFO') {
-                    $testRecordItem->fake_value = 'PASS';
-                } elseif ($testRecordItem->spec['value_type'] == 'NUMBER') {
-                    $testRecordItem->fake_value = isset($testRecordItem->spec['data']['value']) && $testRecordItem->spec['data']['value']
-                        ? $testRecordItem->spec['data']['value']
-                        : 'PASS';
-                } elseif ($testRecordItem->spec['value_type'] == 'RANGE') {
-                    if (isset($testRecordItem->spec['data']['min']) && $testRecordItem->spec['data']['min']) {
-                        $testRecordItem->fake_value = $testRecordItem->spec['data']['min'];
-                    } elseif (isset($testRecordItem->spec['data']['max']) && $testRecordItem->spec['data']['max']) {
-                        $testRecordItem->fake_value = $testRecordItem->spec['data']['max'];
-                    } else {
-                        $testRecordItem->fake_value = 'PASS';
-                    }
-                }
+                $testRecordItem->fake_value = TestRecordItem::makeFakeValue($testRecordItem->spec);
             }
 
             $testRecordItem->fill($request->except('fake_value'))->save();

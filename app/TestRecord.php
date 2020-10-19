@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class TestRecord extends Model
 {
+    use RecordTrait;
+
     protected $fillable = [
         'product_batch_id',
         'show_reality',
@@ -14,6 +16,8 @@ class TestRecord extends Model
         'testers',
         'is_archived',
         'memo',
+        'push_state',
+        'is_created_doc',
     ];
 
     /**
@@ -31,6 +35,7 @@ class TestRecord extends Model
     protected $casts = [
         'show_reality' => 'boolean',
         'is_archived' => 'boolean',
+        'is_created_doc' => 'boolean'
     ];
 
     /**

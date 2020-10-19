@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class TestRecordItem extends Model
 {
+    use RecordItemTrait;
+
     protected $fillable = [
         'test_record_id',
         'item',

@@ -126,18 +126,7 @@ class QCRecordController extends Controller
             $items = $request->get('items');
             $items = is_array($items) ? $items : json_decode($items);
 
-            foreach ($items as $item) {
-                $testRecord->items()
-                    ->where('id', $item['id'])
-                    ->update([
-                        'value' => $item['value'],
-                        'fake_value' => $item['fake_value'],
-                        'tester' => $item['tester'],
-                        'conclusion' => $item['conclusion'],
-                        'memo' => $item['memo'],
-                    ]);
-            }
-
+            $testRecord->UpdateItems($items);
             $testRecord->load('items');  // 加载关系
         }
 
@@ -214,9 +203,9 @@ class QCRecordController extends Controller
                     $item['spec']['data']['value'] = '|PASS';
 
                     if ($label_viscosity = (int)$product->label_viscosity) {
-                        $viscosity_width = (int)$product->viscosity_width ?: 5;
-                        if ($viscosity_width > 10) {
-                            $viscosity_width = 10;
+                        $viscosity_width = (int)$product->viscosity_width ?: 15;
+                        if ($viscosity_width > 15) {
+                            $viscosity_width = 15;
                         }
 
                         $viscosity = random_int($label_viscosity - $viscosity_width, $label_viscosity + $viscosity_width);
@@ -225,15 +214,14 @@ class QCRecordController extends Controller
                     }
                 }
 
+                $value = 'PASS';
                 if (isset($item['spec']['data']['value']) && $item['spec']['data']['value']) {
                     $tmpArr = explode('|', $item['spec']['data']['value']);
                     $value = count($tmpArr) > 1 ? $tmpArr[1] : 'PASS';
-                } elseif (isset($item['spec']['data']['min']) && $item['spec']['data']['min']) {
-                    $value = $item['spec']['data']['min'];
                 } elseif (isset($item['spec']['data']['max']) && $item['spec']['data']['max']) {
                     $value = $item['spec']['data']['max'];
-                } else {
-                    $value = 'PASS';
+                } elseif (isset($item['spec']['data']['min']) && $item['spec']['data']['min']) {
+                    $value = $item['spec']['data']['min'];
                 }
 
                 // 未测试，但要展示的项目
@@ -407,7 +395,7 @@ class QCRecordController extends Controller
         }
     }
 
-    protected function makeTestWay(Product $product)
+    protected function makeTestWay(Product $product): array
     {
         // 获取类别的检测要求
         $category = $product->category;
@@ -469,19 +457,15 @@ class QCRecordController extends Controller
             $this->mergeTestWay($test_way, [$way_memo]);
         }
 
-        // 配油提示
+        // 配油提示(只实现了感光阻焊油墨)
         $mixinTips = '';
-        if ($category->slug == 'H-8100' || $category->slug == 'H-9100') {
+        if (in_array($category->slug, ['H-8100', 'H-9100', 'H-8100 SP', 'H-9100 SP'])) {
             if (!$this->hasItem($test_way, '固化剂') && !$this->hasItem($test_way, '配油')) {
-                $mixinTips = $product->part_b ? $product->part_b . '; ' . $product->ab_ratio : 'HD2; 3:1';
-            }
-        } elseif ($category->slug == 'H-8100 SP' || $category->slug == 'H-9100 SP') {
-            if (!$this->hasItem($test_way, '固化剂') && !$this->hasItem($test_way, '配油')) {
-                $mixinTips = $product->part_b ? $product->part_b . '; ' . $product->ab_ratio : 'HD12; 3:1';
+                $mixinTips = $product->part_b ? $product->part_b . '; ' . $product->ab_ratio : '见工单上固化剂与比例';
             }
         } elseif ($category->slug == 'H-8100B/H-9100B') {
             if (!$this->hasItem($test_way, '主剂') && !$this->hasItem($test_way, '配油')) {
-                $mixinTips = $product->part_a ? $product->part_a . '; ' . $product->ab_ratio : '8G; 3:1';
+                $mixinTips = $product->part_a ? $product->part_a . '; ' . $product->ab_ratio : '相应主剂与比例';
             }
         }
 

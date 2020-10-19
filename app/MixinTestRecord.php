@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MixinTestRecord extends Model
 {
+    use RecordTrait;
+
     protected $fillable = [
         'product_id',  // is part a batch id
         'part_a_name',

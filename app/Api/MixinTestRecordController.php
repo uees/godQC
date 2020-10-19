@@ -81,18 +81,7 @@ class MixinTestRecordController extends Controller
             $items = $request->get('items');
             $items = is_array($items) ? $items : json_decode($items);
 
-            foreach ($items as $item) {
-                $testRecord->items()
-                    ->where('id', $item['id'])
-                    ->update([
-                        'value' => $item['value'],
-                        'fake_value' => $item['fake_value'],
-                        'tester' => $item['tester'],
-                        'conclusion' => $item['conclusion'],
-                        'memo' => $item['memo'],
-                    ]);
-            }
-
+            $testRecord->updateItems($items);
             $testRecord->load('items');  // 加载关系
         }
 

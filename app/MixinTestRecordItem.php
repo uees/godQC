@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MixinTestRecordItem extends Model
 {
+    use RecordItemTrait;
+
     protected $fillable = [
         'mixin_test_record_id',
         'item',

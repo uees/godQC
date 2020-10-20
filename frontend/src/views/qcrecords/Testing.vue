@@ -227,10 +227,15 @@
             header-cell-class-name="table-header-th"
             style="width: 100%;"
           >
-            <el-table-column
-              prop="item"
-              label="项目"
-            />
+            <el-table-column label="项目">
+              <template slot-scope="{row}">
+                {{ row.item }}
+                <span
+                  v-if="row.spec.required === 'undefined' || row.spec.required"
+                  style="color: red"
+                >*</span>
+              </template>
+            </el-table-column>
             <el-table-column label="要求">
               <template slot-scope="{row}">
                 {{ row.spec | qcspec }}

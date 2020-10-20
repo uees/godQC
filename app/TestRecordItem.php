@@ -31,7 +31,7 @@ class TestRecordItem extends Model
             'data' => [
                 'min' => 0,
                 'max' => 0,
-                'value' => '',
+                'value' => '',  // INFO模式可以通过"|"分割, 例如: "要求|结果值"
                 'memo' => '',
                 'unit' => '',
             ],

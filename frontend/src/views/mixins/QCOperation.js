@@ -189,19 +189,27 @@ export default {
     async archive(scope) {
       // 检测完成后才能归档
       // 不合格且没处理意见的不能归档
-      this.$confirm('归档后，记录将归入检测记录列表', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'info'
-      }).then(async () => {
-        const record = scope.row
-        const index = scope.$index
-        await archive(record.id)
-        this.records.splice(index, 1)
+      const record = scope.row
+      const index = scope.$index
+
+      const notDoneItem = record.items.find(item => {
+        if (typeof item.spec.required === 'undefined' || item.spec.required) {
+          return !item.value
+        }
+        return false
+      })
+      if (notDoneItem) {
         this.$message({
-          type: 'success',
-          message: '归档成功'
+          type: 'error',
+          message: `必填项目* [${notDoneItem['item']}] 还未填`
         })
+        return
+      }
+      await archive(record.id)
+      this.records.splice(index, 1)
+      this.$message({
+        type: 'success',
+        message: '归档成功'
       })
     },
     async cancelArchive(scope) {

@@ -3,9 +3,9 @@ import random
 from datetime import datetime
 from glob import glob
 
-from celery.utils.log import get_task_logger
-
 from settings import SPA_ROOT, TEMPLATES_ROOT
+
+from celery.utils.log import get_task_logger
 
 from . import service
 from .common import today_reports_root

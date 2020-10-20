@@ -13,7 +13,7 @@ def get_product_by_internal_name(internal_name):
     return Product.query.filter_by(internal_name=internal_name).first()
 
 
-def get_record_product(record):
+def get_record_product(record: QCRecord):
     product_name = record.product_batch.product_name
     return get_product_by_internal_name(product_name)
 
@@ -51,7 +51,7 @@ def _has_template(templates, template):
     return False
 
 
-def set_record_reported(record):
+def set_record_reported(record: QCRecord):
     metas = record.metas
 
     if not metas:
@@ -61,6 +61,7 @@ def set_record_reported(record):
     metas.report_date = datetime.strftime(datetime.now(), '%Y-%m-%d')
 
     record.metas = metas
+    record.is_created_doc = True
     db_session.add(record)
 
     # 不自动提交会话

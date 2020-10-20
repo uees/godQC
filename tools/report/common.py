@@ -4,7 +4,7 @@ from datetime import datetime
 from settings import REPORTS_ROOT
 
 
-def today_reports_root():
+def today_reports_root() -> str:
     """ 返回当日报告文件夹路径 """
     today_dir_name = datetime.strftime(datetime.now(), '%Y-%m-%d')
     today_path = os.path.join(REPORTS_ROOT, today_dir_name)
@@ -13,13 +13,14 @@ def today_reports_root():
     return today_path
 
 
-def unique_filepath(path, filename):
+def unique_filepath(path: str, filename: str) -> str:
     """ 检查并生成唯一的文件名 """
-    shotname, extension = os.path.splitext(filename)
-    filepath = os.path.join(path, '%s.%s' % (shotname, extension))
+    filepath = os.path.join(path, filename)
 
     if os.path.exists(filepath):
-        filename = '%s(1).%s' % (shotname, extension)
+        shotname, extension = os.path.splitext(filename)
+        filename = '%s_.%s' % (shotname, extension)
+
         return unique_filepath(path, filename)
 
     return filepath

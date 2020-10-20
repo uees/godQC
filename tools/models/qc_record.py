@@ -24,10 +24,13 @@ class QCRecord(Base):
     said_package_at = Column(TIMESTAMP(True), nullable=True)
     memo = Column(Text, nullable=True)
     show_reality = Column(Boolean, default=False)
+    is_archived = Column(Boolean, default=False)
+    is_created_doc = Column(Boolean, default=False)
+    push_state = Column(String(128), default="no_push")
     created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('CURRENT_TIMESTAMP'))
     updated_at = Column(TIMESTAMP(True), nullable=True)
 
-    product_batch = relationship("ProductBatch", back_populates="test_records")
+    product_batch = relationship("ProductBatch", back_populates="test_records", lazy='joined')
     record_items = relationship("QCRecordItem", back_populates="test_record")
 
 
@@ -36,7 +39,7 @@ class QCRecordItem(Base):
     __table_args__ = (
         UniqueConstraint("test_record_id", "item"),
         {
-            "mysql_charset": "utf8",
+            "mysql_charset": "utf8mb4",
         }
     )
 
@@ -48,9 +51,6 @@ class QCRecordItem(Base):
     fake_value = Column(String(128), nullable=True)
     conclusion = Column(String(32), nullable=True)
     tester = Column(String(64), nullable=True)
-    is_archived = Column(Boolean, default=False)
-    is_created_doc = Column(Boolean, default=False)
-    push_state = Column(String(128), default="no_push")
     created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('CURRENT_TIMESTAMP'))
     updated_at = Column(TIMESTAMP(True), nullable=True)
 

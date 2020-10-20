@@ -1,4 +1,3 @@
-# -- coding: utf-8 -*-
 from datetime import datetime
 
 from models.base import db_session

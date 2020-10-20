@@ -1,5 +1,3 @@
-# -- coding: utf-8 -*-
-
 from sqlalchemy import TIMESTAMP, Column, ForeignKey, Integer, String, text
 from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import relationship
@@ -12,7 +10,7 @@ class Product(Base, MetaMixin):
 
     __tablename__ = 'products'
     __table_args__ = {
-        "mysql_charset": "utf8"
+        "mysql_charset": "utf8mb4"
     }
 
     id = Column(Integer, primary_key=True, autoincrement=True)

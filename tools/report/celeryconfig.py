@@ -1,5 +1,3 @@
-# -*- coding:utf-8 -*-
-
 import settings
 
 broker_url = "redis://{0.REDIS_HOST}:{0.REDIS_PORT}/0".format(settings)

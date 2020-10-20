@@ -1,5 +1,3 @@
-# -- coding: utf-8 -*-
-
 import json
 
 from sqlalchemy import (TIMESTAMP, Boolean, Column, ForeignKey, Integer,
@@ -14,7 +12,7 @@ class QCRecord(Base):
 
     __tablename__ = 'test_records'
     __table_args__ = {
-        "mysql_charset": "utf8"
+        "mysql_charset": "utf8mb4"
     }
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -50,6 +48,9 @@ class QCRecordItem(Base):
     fake_value = Column(String(128), nullable=True)
     conclusion = Column(String(32), nullable=True)
     tester = Column(String(64), nullable=True)
+    is_archived = Column(Boolean, default=False)
+    is_created_doc = Column(Boolean, default=False)
+    push_state = Column(String(128), default="no_push")
     created_at = Column(TIMESTAMP(True), nullable=True, server_default=text('CURRENT_TIMESTAMP'))
     updated_at = Column(TIMESTAMP(True), nullable=True)
 

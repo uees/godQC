@@ -1,5 +1,3 @@
-# -- coding: utf-8 -*-
-
 from sqlalchemy import TIMESTAMP, Column, Integer, String, Text, text
 from sqlalchemy.dialects.mysql import INTEGER
 from sqlalchemy.orm import relationship
@@ -11,7 +9,7 @@ class ProductBatch(Base):
 
     __tablename__ = 'product_batches'
     __table_args__ = {
-        "mysql_charset": "utf8"
+        "mysql_charset": "utf8mb4"
     }
 
     id = Column(Integer, primary_key=True, autoincrement=True)

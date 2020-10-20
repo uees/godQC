@@ -1,4 +1,3 @@
-# -*- coding:utf-8 -*-
 from celery.utils.log import get_task_logger
 
 from .celery import app

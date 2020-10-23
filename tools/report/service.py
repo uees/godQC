@@ -1,7 +1,6 @@
-from datetime import datetime
-
 from models.base import db_session
 from models.product import Product
+from models.product_batch import ProductBatch
 from models.qc_record import QCRecord
 
 
@@ -9,11 +8,15 @@ def get_record_by_id(record_id):
     return QCRecord.query.filter_by(id=record_id).first()
 
 
+def get_record_by_batch(batch):
+    return QCRecord.query.join(ProductBatch).filter(ProductBatch.batch_number == batch).first()
+
+
 def get_product_by_internal_name(internal_name):
     return Product.query.filter_by(internal_name=internal_name).first()
 
 
-def get_record_product(record: QCRecord):
+def get_product_by_record(record: QCRecord):
     product_name = record.product_batch.product_name
     return get_product_by_internal_name(product_name)
 
@@ -51,18 +54,7 @@ def _has_template(templates, template):
     return False
 
 
-def set_record_reported(record: QCRecord):
-    metas = record.metas
-
-    if not metas:
-        metas = {}
-
-    metas.has_report = True
-    metas.report_date = datetime.strftime(datetime.now(), '%Y-%m-%d')
-
-    record.metas = metas
+def set_record_created_doc(record: QCRecord):
     record.is_created_doc = True
     db_session.add(record)
-
-    # 不自动提交会话
-    # db_session.commit()
+    db_session.commit()

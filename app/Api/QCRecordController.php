@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 class QCRecordController extends Controller
 {
-    // query params: type, testing, tested, conclusion, test_times, all, said_package, category
+    // query params: type, testing, tested, conclusion, test_times, all, said_package, category, product_name
     public function index()
     {
         $perPage = $this->perPage();
@@ -73,6 +73,13 @@ class QCRecordController extends Controller
                     });
             });
 
+        }
+
+        // filter product_name
+        if ($product_name = \request('product_name')) {
+            $query->whereHas('batch', function (Builder $query) use ($product_name) {
+                $query->where('product_name', $product_name);
+            });
         }
 
         $query->orderBy($this->sortBy(), $this->order());
@@ -202,6 +209,7 @@ class QCRecordController extends Controller
                 if ($item['name'] == "混合粘度") {
                     $item['spec']['data']['value'] = '|PASS';
 
+                    // 设置填充粘度范围要求及 fake-value
                     if ($label_viscosity = (int)$product->label_viscosity) {
                         $viscosity_width = (int)$product->viscosity_width ?: 15;
                         if ($viscosity_width > 15) {
@@ -211,6 +219,11 @@ class QCRecordController extends Controller
                         $viscosity = random_int($label_viscosity - $viscosity_width, $label_viscosity + $viscosity_width);
 
                         $item['spec']['data']['value'] = $product->label_viscosity . '±' . $product->viscosity_width . '|' . $viscosity;
+                    }
+
+                    // 无粘度范围的跳过
+                    if ($item['spec']['data']['value'] = '|PASS') {
+                        continue;
                     }
                 }
 

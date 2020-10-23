@@ -9,7 +9,7 @@ use App\TestWay;
 
 class ProductController extends Controller
 {
-    // sort_by,order,with,q,category_id
+    // sort_by,order,with,q,category_id,internal_name
     public function index()
     {
         $perPage = $this->perPage();
@@ -17,7 +17,7 @@ class ProductController extends Controller
 
         $this->loadRelByQuery($query);
 
-        $this->parseWhere($query, ['category_id']);
+        $this->parseWhere($query, ['category_id', 'internal_name']);
 
         if ($search = \request('q')) {
             $condition = queryCondition('internal_name', $search);

@@ -7,12 +7,14 @@ from openpyxl import load_workbook
 from models.base import db_session
 from models.category import Category
 from models.product import Product
+from report.common import get_products_form_xls
 from settings import ROOT_PATH
 
 
-def fill_product_sheet(file, sheet):
-    wb = load_workbook(filename=file)
-    ws = wb[sheet]
+def fill_product_sheet(filepath):
+    """填充产品类别"""
+    wb = load_workbook(filepath)
+    ws = wb['products']
     for row_index in range(2, ws.max_row + 1):
         market_name = ws['E{}'.format(row_index)].value
         '''
@@ -70,30 +72,26 @@ def fill_product_sheet(file, sheet):
             else:
                 ws['F{}'.format(row_index)] = "undefined"
 
-    wb.save(file)
+    wb.save(filepath)
 
 
-def fetch_products(file, sheet):
-    wb = load_workbook(filename=file)
-    ws = wb[sheet]
-    for row in ws['A2:J{}'.format(ws.max_row)]:
-        internal_name, kind, label_viscosity, viscosity_width, market_name, category, part_a, part_b, ab_ratio, color = [cell.value for cell in row]
-        values = (internal_name, market_name, part_a, part_b, ab_ratio, color, label_viscosity, viscosity_width)
-        category = Category.query.filter_by(slug=category).first()
-        if internal_name:
-            product = Product(**dict(zip(("internal_name", "market_name", "part_a", "part_b", "ab_ratio", "color", "label_viscosity", "viscosity_width"), values)))
+def fetch_products(filepath):
+    category, products = get_products_form_xls(filepath)
+    for product in products:
+        if product["product"]:
+            product = Product(**product)
+            category = Category.query.filter_by(slug=category).first()
             product.category = category
             db_session.add(product)
 
     db_session.commit()
-    print("插入了 %s 行数据到 products 表." % str(ws.max_row - 1))
+    print("插入了 %d 行数据到 products 表." % len(products))
 
 
 if __name__ == "__main__":
-    fill_product_sheet(os.path.join(ROOT_PATH, "basedata/database.xlsx"),
-                       'products')
+    database_filepath = os.path.join(ROOT_PATH, "basedata/database.xlsx")
+    fill_product_sheet(database_filepath)
 
     Product.__table__.drop(checkfirst=True)
     Product.__table__.create()
-    fetch_products(os.path.join(ROOT_PATH, "basedata/database.xlsx"),
-                   "products")
+    fetch_products(database_filepath)

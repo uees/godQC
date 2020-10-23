@@ -3,12 +3,13 @@ import random
 from datetime import datetime
 from glob import glob
 
+from models.qc_record import QCRecord
 from settings import SPA_ROOT, TEMPLATES_ROOT
 
 from celery.utils.log import get_task_logger
 
 from . import service
-from .common import today_reports_root
+from .common import make_viscosity, make_viscosity_limit, today_reports_root
 from .pdf import add_watermark, create_watermark
 from .word import WordTemplate
 
@@ -18,10 +19,10 @@ logger = get_task_logger(__name__)
 class Generator(object):
     """ 检验报告生成器 """
 
-    def __init__(self, record):
+    def __init__(self, record: QCRecord):
         self.reports_root = today_reports_root()
         self.record = record
-        self.product = service.get_record_product(self.record)
+        self.product = service.get_product_by_record(record)
 
     def run(self):
         templates = self.get_templates()
@@ -36,18 +37,22 @@ class Generator(object):
             else:
                 self.generate_report(template)
 
+        service.set_record_created_doc(self.record)
+
     def generate_report(self, template):
         template_path = self.get_template_path(template.get("name"))
         context = self.make_context(template)
 
-        tp = WordTemplate(template_path)
-        tp.replace(context)
+        print(context)
 
-        report_file = self.report_filename(template)
+        wt = WordTemplate(template_path)
+        wt.replace(context)
+
+        report_file = self.get_report_filepath(template)
         if os.path.exists(report_file):
             logger.warning("{}已经存在了".format(report_file))
         else:
-            tp.save(report_file)
+            wt.save(report_file)
 
     def generate_pdf(self, templates_dir=None):
         basename = self.product.market_name.replace(' ', '')
@@ -65,7 +70,7 @@ class Generator(object):
         watermark = create_watermark(out_f_name, SPA_ROOT)
         add_watermark(watermark, f_path, out_f_path)
 
-    def report_filename(self, template):
+    def get_report_filepath(self, template):
         qc_date = datetime.strftime(datetime.now(), '%Y%m%d')
         batch = self.record.product_batch
 
@@ -89,13 +94,69 @@ class Generator(object):
     def make_context(self, template):
         context = self.product.to_dict()
         context['qc_date'] = datetime.strftime(datetime.now(), '%Y/%m/%d')
-        context['ftir'] = '{}%'.format(round(random.uniform(99.1, 99.8), 2))
+        context['batch'] = self.record.product_batch.batch_number
 
-        # todo template.get("options", {}) merge
+        # get self.record qc values
+        # viscosity, viscosity_limit
+        context['viscosity_limit'], context['viscosity'] = self.get_record_item('粘度')
+
+        # ftir
+        # context['ftir'] = '{}%'.format(round(random.uniform(99.1, 99.8), 2))
+        _, context['ftir'] = self.get_record_item("红外匹配度")
+        # 达因要求
+        context['dayinReq'], context['dayinVal'] = self.get_record_item('表面张力')
+
+        options = template.get("options", {})
+        if options:
+            if options.get('dayinReq'):  # dayinReq 达因要求
+                context['dayinReq'] = options.get('dayinReq')
+                context['dayinVal'] = options.get('dayinVal')  # dayinVal 达因值
+
+            if options.get('customer_code'):  # customer_code 物料编码
+                context['customer_code'] = options.get('customer_code')
+
+            if options.get('viscosity_limit'):  # viscosity_limit
+                context['viscosity_limit'] = options.get('viscosity_limit')
+                context['viscosity'] = options.get('viscosity') if options.get('viscosity') else make_viscosity(context['viscosity_limit'])
+
+            if options.get('shuanzhi'):  # shuanzhi 酸值
+                context['shuanzhi'] = options.get('shuanzhi')
+
+        self.check_context(context)
 
         return context
 
+    def check_context(self, context):
+        if 'customer_code' not in context:
+            context['customer_code'] = ''
+
+        if not context['viscosity_limit']:
+            context['viscosity_limit'], context['viscosity'] = make_viscosity_limit(self.product)
+
+    def get_record_item(self, name) -> (str, str):
+        """
+        获取检测项目的值，优先获取 fake_value
+        """
+        # 关于粘度有混合粘度的优先获取混合粘度
+        if name == "粘度" and self.record.has_item("混合粘度"):
+            name = "混合粘度"
+
+        for item in self.record.record_items:
+            if item.item == name:
+                value = item.fake_value if item.fake_value else item.value
+                if not value:
+                    value = 'PASS'
+
+                spec = item.get_spec()
+
+                return spec, value
+
+        return '', ''
+
     def get_templates(self):
+        if not self.product:  # fix
+            return []
+
         return service.get_product_templates(self.product)
 
     def get_template_path(self, template_file):

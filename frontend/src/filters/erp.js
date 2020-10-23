@@ -38,9 +38,7 @@ export function qcspec(spec) {
   } else if (spec.value_type === 'ONLY_SHOW') {
     // value is "要求|结果值"
     const tmpArr = spec.data.value.split('|')
-    if (tmpArr.length > 0) {
-      result = tmpArr[0]
-    }
+    result = tmpArr[0]
   }
 
   if (spec.data.memo) {

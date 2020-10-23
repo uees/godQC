@@ -31,7 +31,15 @@ class QCRecord(Base):
     updated_at = Column(TIMESTAMP(True), nullable=True)
 
     product_batch = relationship("ProductBatch", back_populates="test_records", lazy='joined')
-    record_items = relationship("QCRecordItem", back_populates="test_record")
+    record_items = relationship("QCRecordItem", back_populates="test_record", lazy="select")
+
+    def has_item(self, name):
+        """判断是否有指定的检测项目"""
+        for item in self.record_items:
+            if item.item == name:
+                return True
+
+        return False
 
 
 class QCRecordItem(Base):
@@ -64,3 +72,29 @@ class QCRecordItem(Base):
         self._spec = json.dumps(spec)
 
     spec = synonym("_spec", descriptor=property(_get_spec, _set_spec))
+
+    def get_spec(self) -> str:
+        """获取规格要求"""
+        spec = self._get_spec()  # 注意 spec 是字典
+        result = ""
+        if 'unit' not in spec['data']:  # undefined to ''
+            spec['data']['unit'] = ''
+
+        if spec['value_type'] == "RANGE":
+            if spec['data']['min']:
+                result += f"≥ {spec['data']['min']}{spec['data']['unit']}, "
+            if spec['data']['max']:
+                result += f"≤ {spec['data']['max']}{spec['data']['unit']} "
+
+        elif spec['value_type'] == 'INFO' or spec['value_type'] == 'NUMBER' or not spec['value_type']:
+            if spec['data']['value']:
+                result = spec['data']['value']
+            if spec['data']['unit']:
+                result += spec['data']['unit']
+
+        elif spec['value_type'] == 'ONLY_SHOW':
+            if spec['data']['value']:
+                tmp_arr = spec['data']['value'].split('|', 1)
+                result = tmp_arr[0]
+
+        return result

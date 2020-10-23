@@ -22,7 +22,7 @@ class ReportTestCase(unittest.TestCase):
         self.assertIsInstance(record, QCRecord)
         self.assertEqual(record.product_batch.product_name, "8G04")
 
-        product = service.get_record_product(record)
+        product = service.get_product_by_record(record)
         self.assertIsInstance(product, Product)
         self.assertEqual(product.internal_name, "8G04")
 

@@ -1,3 +1,6 @@
+"""
+更新本地数据库中的产品相关信息
+"""
 import os
 
 from models.base import db_session

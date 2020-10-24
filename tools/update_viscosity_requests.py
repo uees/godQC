@@ -1,3 +1,6 @@
+"""
+更新产品相关信息, 利用 http api
+"""
 import logging
 import os
 

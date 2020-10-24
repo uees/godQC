@@ -43,8 +43,6 @@ class Generator(object):
         template_path = self.get_template_path(template.get("name"))
         context = self.make_context(template)
 
-        print(context)
-
         wt = WordTemplate(template_path)
         wt.replace(context)
 

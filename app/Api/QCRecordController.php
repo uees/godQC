@@ -208,7 +208,7 @@ class QCRecordController extends Controller
 
                 // 混合粘度
                 if ($item['name'] == "混合粘度") {
-                    $item['spec']['data']['value'] = '|PASS';
+                    $item['spec']['data']['value'] = '{viscosity_limit}|{viscosity}';
 
                     // 设置填充粘度范围要求及 fake-value
                     if ($label_viscosity = (int)$product->label_viscosity) {
@@ -220,11 +220,6 @@ class QCRecordController extends Controller
                         $viscosity = random_int($label_viscosity - $viscosity_width, $label_viscosity + $viscosity_width);
 
                         $item['spec']['data']['value'] = $product->label_viscosity . '±' . $product->viscosity_width . '|' . $viscosity;
-                    }
-
-                    // 无粘度范围的跳过
-                    if ($item['spec']['data']['value'] == '|PASS') {
-                        continue;
                     }
                 }
 

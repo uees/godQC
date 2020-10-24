@@ -77,7 +77,7 @@ class QCRecordItem(Base):
         """获取规格要求"""
         spec = self._get_spec()  # 注意 spec 是字典
         result = ""
-        if 'unit' not in spec['data']:  # undefined to ''
+        if 'unit' not in spec['data'] or spec['data']['unit'] is None:  # undefined to ''
             spec['data']['unit'] = ''
 
         if spec['value_type'] == "RANGE":

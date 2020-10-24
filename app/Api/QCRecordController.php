@@ -223,7 +223,7 @@ class QCRecordController extends Controller
                     }
 
                     // 无粘度范围的跳过
-                    if ($item['spec']['data']['value'] = '|PASS') {
+                    if ($item['spec']['data']['value'] == '|PASS') {
                         continue;
                     }
                 }

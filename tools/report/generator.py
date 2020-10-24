@@ -128,28 +128,34 @@ class Generator(object):
         if 'customer_code' not in context:
             context['customer_code'] = ''
 
-        if not context['viscosity_limit']:
-            context['viscosity_limit'], context['viscosity'] = make_viscosity_limit(self.product)
-
     def get_record_item(self, name) -> (str, str):
         """
-        获取检测项目的值，优先获取 fake_value
+        获取检测项目的值
         """
+        spec, value = '', ''
+
         # 关于粘度有混合粘度的优先获取混合粘度
         if name == "粘度" and self.record.has_item("混合粘度"):
             name = "混合粘度"
 
+        if name == "粘度":
+            # 从 product 获取粘度范围标准
+            spec, value = make_viscosity_limit(self.product)
+
         for item in self.record.record_items:
             if item.item == name:
-                value = item.fake_value if item.fake_value else item.value
+                # 不合格的获取 fake_value
+                value = item.fake_value if item.conclusion == "NG" else item.value
                 if not value:
                     value = 'PASS'
 
-                spec = item.get_spec()
+                # 保证粘度范围标准都是从 product 获取
+                if name != "粘度":
+                    spec = item.get_spec()
 
-                return spec, value
+                break
 
-        return '', ''
+        return spec, value
 
     def get_templates(self):
         if not self.product:  # fix

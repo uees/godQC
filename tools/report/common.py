@@ -41,6 +41,27 @@ def get_products_form_xls(filepath: str) -> (str, list):
     return category, products
 
 
+def write_products_xls(filepath, sheetname, products):
+    wb = load_workbook(filepath)
+    ws = wb[sheetname]
+    row = 2
+    for product in products:
+        ws[f'A{row}'] = product.internal_name
+        ws[f'B{row}'] = product.category.slug
+        ws[f'C{row}'] = product.label_viscosity
+        ws[f'D{row}'] = product.viscosity_width
+        ws[f'E{row}'] = product.market_name
+        ws[f'F{row}'] = product.category.slug
+        ws[f'G{row}'] = product.part_a
+        ws[f'H{row}'] = product.part_b
+        ws[f'I{row}'] = product.ab_ratio
+        ws[f'J{row}'] = product.color
+
+        row += 1
+
+    wb.save(filename=filepath)
+
+
 def make_viscosity(viscosity_limit):
     """根据粘度范围生成一个假粘度值"""
     if '±' in viscosity_limit:

@@ -28,6 +28,14 @@
         />
       </el-select>
 
+      <el-input
+        v-model="queryParams.product_name"
+        style="width: 200px;"
+        class="filter-item"
+        placeholder="完全匹配过滤"
+        @keyup.enter.native="handleSearch"
+      />
+
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
@@ -371,6 +379,7 @@ export default {
         type: this.qcType, // FQC, IQC
         tested: 1,
         q: undefined,
+        product_name: undefined,
         conclusion: undefined,
         category: undefined, // category id
         show_reality: undefined,

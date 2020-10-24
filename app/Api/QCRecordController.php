@@ -4,6 +4,7 @@ namespace App\Api;
 
 use App\Events\QCSampled;
 use App\Events\RecordDeleted;
+use App\Events\RecordArchived;
 use App\Http\Requests\ProductBatchRequest;
 use App\Http\Resources\TestRecordResource;
 use App\Category;
@@ -303,6 +304,8 @@ class QCRecordController extends Controller
         $testRecord->is_archived = true;
 
         if ($testRecord->save()) {
+            // 归档事件, 利用此事件生成报告
+            event(new RecordArchived($testRecord));
             return TestRecordResource::make($testRecord);
         }
 

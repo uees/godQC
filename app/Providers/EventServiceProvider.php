@@ -19,6 +19,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\RecordDeleted' => [
             'App\Listeners\UpdateTestsNum',
         ],
+        'App\Events\RecordArchived' => [
+            'App\Listeners\ReportTask',
+        ],
     ];
 
     /**

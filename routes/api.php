@@ -16,6 +16,8 @@ use Illuminate\Http\Request;
 Route::post('auth/login', 'AuthController@login');
 Route::post('auth/refresh', 'AuthController@refresh');
 
+Route::get('suggests/templates', 'SuggestController@templates');
+
 Route::middleware('jwt.auth')->group(function () {
     Route::get('auth/me', 'AuthController@me');
     Route::post('auth/logout', 'AuthController@logout');

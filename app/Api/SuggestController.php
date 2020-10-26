@@ -88,4 +88,14 @@ class SuggestController extends Controller
 
         return $this->response()->failed('操作失败');
     }
+
+    public function templates() {
+        $list = glob(base_path().'/tools/basedata/templates/*.docx');
+        $list = array_map(function ($item){
+            $item= iconv('GB2312', 'UTF-8', $item);  // 先用 iconv 转换编码
+            return str_ireplace(base_path().'/tools/basedata/templates/', '',$item);
+        }, $list);
+
+        return response()->json($list);
+    }
 }

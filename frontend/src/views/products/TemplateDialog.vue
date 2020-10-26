@@ -110,6 +110,28 @@ export default {
       cancelCategoryTemplate: false
     }
   },
+  computed: {
+    objectTemplates() {
+      // json-editor 会把数据转为 json 字符串 这里需要转换回去
+      return this.templates.map(template => {
+        let tips, options
+        if (typeof template.tips === 'string') {
+          tips = JSON.parse(template.tips)
+        }
+        if (typeof template.options === 'string') {
+          options = JSON.parse(template.options)
+        }
+
+        if (tips) {
+          template.tips = tips
+        }
+        if (options) {
+          template.options = options
+        }
+        return template
+      })
+    }
+  },
   mounted() {
     Bus.$on('product-select-template', (scope) => {
       // 初始化
@@ -145,27 +167,9 @@ export default {
       this.templates.splice(scope.$index, 1)
     },
     submit() {
-      this.cleanData()
-      // json-editor 会把数据转为 json 字符串 这里需要转换回去
-      this.templates = this.templates.map(template => {
-        let tips, options
-        if (typeof template.tips === 'string') {
-          tips = JSON.parse(template.tips)
-        }
-        if (typeof template.options === 'string') {
-          options = JSON.parse(template.options)
-        }
-
-        if (tips) {
-          template.tips = tips
-        }
-        if (options) {
-          template.options = options
-        }
-        return template
-      })
-      productUpdateTemplates(this.product.id, this.templates, this.cancelCategoryTemplate).then(() => {
-        this.$emit('template-updated', this.productIndex, this.templates)
+      // this.cleanData()
+      productUpdateTemplates(this.product.id, this.objectTemplates, this.cancelCategoryTemplate).then(() => {
+        this.$emit('template-updated', this.productIndex, this.objectTemplates)
         this.resetTemplates()
         this.close()
       })

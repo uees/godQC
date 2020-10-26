@@ -99,6 +99,28 @@ export default {
       templates: []
     }
   },
+  computed: {
+    objectTemplates() {
+      // json-editor 会把数据转为 json 字符串 这里需要转换回去
+      return this.templates.map(template => {
+        let tips, options
+        if (typeof template.tips === 'string') {
+          tips = JSON.parse(template.tips)
+        }
+        if (typeof template.options === 'string') {
+          options = JSON.parse(template.options)
+        }
+
+        if (tips) {
+          template.tips = tips
+        }
+        if (options) {
+          template.options = options
+        }
+        return template
+      })
+    }
+  },
   mounted() {
     Bus.$on('category-select-template', (scope) => {
       // 初始化
@@ -134,39 +156,14 @@ export default {
       this.templates.splice(scope.$index, 1)
     },
     submit() {
-      this.cleanData()
-      // json-editor 会把数据转为 json 字符串 这里需要转换回去
-      this.templates = this.templates.map(template => {
-        let tips, options
-        if (typeof template.tips === 'string') {
-          tips = JSON.parse(template.tips)
-        }
-        if (typeof template.options === 'string') {
-          options = JSON.parse(template.options)
-        }
-
-        if (tips) {
-          template.tips = tips
-        }
-        if (options) {
-          template.options = options
-        }
-        return template
-      })
-      categoryUpdateTemplates(this.category.id, this.templates).then(response => {
-        this.$emit('template-updated', this.categoryIndex, this.templates)
+      categoryUpdateTemplates(this.category.id, this.objectTemplates).then(response => {
+        this.$emit('template-updated', this.categoryIndex, this.objectTemplates)
         this.resetTemplates()
         this.close()
       })
     },
     close() {
       this.visible = false
-    },
-    cleanData() {
-      // 保留有模板名称的项
-      this.templates = this.templates.filter(element => {
-        return element.name
-      })
     }
   }
 }

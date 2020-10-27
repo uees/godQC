@@ -97,6 +97,7 @@ class Generator(object):
         # get self.record qc values
         # viscosity, viscosity_limit
         context['viscosity_limit'], context['viscosity'] = self.get_record_item('粘度')
+        context["exposure_spec"], context["exposure"] = self.get_record_item("感光性")
 
         # ftir
         # context['ftir'] = '{}%'.format(round(random.uniform(99.1, 99.8), 2))
@@ -127,6 +128,17 @@ class Generator(object):
     def check_context(self, context):
         if 'customer_code' not in context:
             context['customer_code'] = ''
+
+        if context["category_id"] in [6, 7]:  # 内外层湿膜级数fix
+            if float(context["exposure"]) < 5:
+                context["exposure"] = 5
+            elif float(context["exposure"]) > 8:
+                context["exposure"] = 8
+        elif context["category_id"] in [2, 3, 4, 18]:  # 阻焊级数fix
+            if float(context["exposure"]) > 11:
+                context["exposure"] = 11
+            elif float(context["exposure"]) < 9:
+                context["exposure"] = 9
 
     def get_record_item(self, name) -> (str, str):
         """

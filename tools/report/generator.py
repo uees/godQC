@@ -131,14 +131,14 @@ class Generator(object):
 
         if context["category_id"] in [6, 7]:  # 内外层湿膜级数fix
             if float(context["exposure"]) < 5:
-                context["exposure"] = 5
+                context["exposure"] = "5"
             elif float(context["exposure"]) > 8:
-                context["exposure"] = 8
+                context["exposure"] = "8"
         elif context["category_id"] in [2, 3, 4, 18]:  # 阻焊级数fix
             if float(context["exposure"]) > 11:
-                context["exposure"] = 11
+                context["exposure"] = "11"
             elif float(context["exposure"]) < 9:
-                context["exposure"] = 9
+                context["exposure"] = "9"
 
     def get_record_item(self, name) -> (str, str):
         """

@@ -11,6 +11,8 @@ class WordTemplate(object):
 
     def change_paragraph(self, paragraph, filter_format):
         for sformat, content in filter_format.items():
+            if not isinstance(content, str):  # fix TypeError: replace() argument 2 must be str
+                content = str(content)
             search_word = "{" + sformat + "}"
             needCheck = True if search_word in paragraph.text else False
             for run in paragraph.runs:

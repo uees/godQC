@@ -139,8 +139,10 @@ export default {
       this.productIndex = scope.$index
       if (this.product.metas && this.product.metas.templates) {
         this.templates = this.product.metas.templates
+        this.cancelCategoryTemplate = !!this.product.metas.cancel_category_template
       } else {
         this.templates = []
+        this.cancelCategoryTemplate = false
       }
       // 显示
       this.visible = true

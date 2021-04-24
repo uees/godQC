@@ -432,6 +432,9 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
+      if (!this.real) {
+        this.hiddenAMG5()
+      }
       qcRecordApi.list({ params: this.queryParams }).then(response => {
         const { data } = response.data
         this.records = data
@@ -441,6 +444,11 @@ export default {
         this.paginate(response)
         this.listLoading = false
       })
+    },
+    hiddenAMG5() {
+      if (this.queryParams.q) {
+        this.queryParams.q = this.queryParams.q.replace(/AMG5/gi, '')
+      }
     },
     selectConclusion() {
       if (!this.real) {

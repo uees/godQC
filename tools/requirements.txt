@@ -2,7 +2,7 @@ celery==5.0.1
 python-docx==4.6.1
 jupyter==1.0.0
 openpyxl==3.0.5
-Pillow==8.2.0
+Pillow==9.3.0
 PyMySQL==0.10.1
 PyPDF2==1.26.0
 python-dotenv==0.14.0
